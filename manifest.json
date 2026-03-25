@@ -1,0 +1,27 @@
+{
+  "name": "Ruchers VL",
+  "short_name": "Ruchers VL",
+  "description": "Carnet d'apiculteur numérique pour La Réunion",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#1A1208",
+  "theme_color": "#1A1208",
+  "orientation": "portrait-primary",
+  "lang": "fr",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect width='192' height='192' rx='40' fill='%231A1208'/><text y='145' x='20' font-size='140'>🐝</text></svg>",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' rx='100' fill='%231A1208'/><text y='390' x='50' font-size='380'>🐝</text></svg>",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["productivity", "utilities"],
+  "screenshots": []
+}
