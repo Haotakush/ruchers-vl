@@ -8,6 +8,7 @@
 
 let editingMouvIdx  = null;
 let mouvMapInstance = null;
+let _isSavingMouv   = false;
 let _mouvMarkers    = [];
 let _mouvLines      = [];
 
@@ -211,6 +212,21 @@ function populateMouvRucherSelect() {
    ============================================================ */
 
 async function saveMouvement() {
+  if (_isSavingMouv) return; // empêche le double-tap
+  _isSavingMouv = true;
+
+  const saveBtn = document.querySelector('#modal-mouvement .btn-save');
+  if (saveBtn) { saveBtn.disabled = true; saveBtn.textContent = '⏳ Enregistrement…'; }
+
+  try {
+    await _doSaveMouvement();
+  } finally {
+    _isSavingMouv = false;
+    if (saveBtn) { saveBtn.disabled = false; saveBtn.textContent = '✓ Enregistrer'; }
+  }
+}
+
+async function _doSaveMouvement() {
   const date    = document.getElementById('mouv-date').value;
   const origine = document.getElementById('mouv-origine').value;
   if (!date)    { toast('⚠️ Date obligatoire');              return; }
