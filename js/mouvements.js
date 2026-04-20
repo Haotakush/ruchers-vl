@@ -390,6 +390,12 @@ function renderMouvements() {
         ${gpsBadge}
         ${m.obs ? `<span class="badge badge-couvain">${m.obs}</span>` : ''}
       </div>
+      <button onclick="event.stopPropagation();openRecapDeclaration(${i})"
+        style="margin-top:10px;width:100%;padding:8px 0;border-radius:10px;border:1px solid rgba(212,130,10,0.35);
+               background:rgba(212,130,10,0.08);color:#D4820A;font-size:0.78rem;font-weight:600;
+               cursor:pointer;letter-spacing:0.01em;">
+        📋 Récapitulatif déclaration
+      </button>
     </div>`;
   }).join('');
 
@@ -398,5 +404,88 @@ function renderMouvements() {
     renderMouvMap();
   } else {
     initMouvMap();
+  }
+}
+
+/* ============================================================
+   RÉCAPITULATIF DÉCLARATION
+   ============================================================ */
+
+function openRecapDeclaration(idx) {
+  const m = mouvementsData[idx];
+  if (!m) return;
+
+  // Rucher d'origine complet
+  const rucher = (RUCHERS || []).find(r => r.id === m.origine) || {};
+  const gpsOrigine = (rucher.lat && rucher.lng)
+    ? `${rucher.lat.toFixed(5)}, ${rucher.lng.toFixed(5)}`
+    : '—';
+  const adresseOrigine = [rucher.lieu, rucher.cp].filter(Boolean).join(', ') || '—';
+
+  // Infos apiculteur
+  const nom     = PARAMS.nom     || '—';
+  const napi    = PARAMS.napi    || '—';
+  const adresse = PARAMS.adresse || '—';
+  const email   = PARAMS.email   || '—';
+
+  // Construire le texte brut pour le partage
+  const textePartage = `RÉCAPITULATIF MOUVEMENT DE COLONIES
+──────────────────────────────
+APICULTEUR
+Nom : ${nom}
+NAPI : ${napi}
+Adresse : ${adresse}
+
+RUCHER D'ORIGINE
+Identifiant : ${m.origine}${rucher.lieu ? ' — ' + rucher.lieu : ''}
+Adresse : ${adresseOrigine}
+GPS : ${gpsOrigine}
+
+MOUVEMENT
+Date : ${m.date}
+Nombre de colonies : ${m.nbColonies || '—'}
+Destination : ${m.destination !== '—' ? m.destination : '—'}
+Motif : ${m.motif !== '—' ? m.motif : '—'}
+${m.obs ? 'Observations : ' + m.obs : ''}
+
+Généré par Ruchers VL`;
+
+  // Injection dans le modal
+  document.getElementById('recap-nom').textContent     = nom;
+  document.getElementById('recap-napi').textContent    = napi;
+  document.getElementById('recap-adresse').textContent = adresse;
+  document.getElementById('recap-email').textContent   = email;
+  document.getElementById('recap-rucher-id').textContent  = `${m.origine}${rucher.lieu ? ' — ' + rucher.lieu : ''}`;
+  document.getElementById('recap-rucher-adr').textContent = adresseOrigine;
+  document.getElementById('recap-gps').textContent     = gpsOrigine;
+  document.getElementById('recap-date').textContent    = m.date;
+  document.getElementById('recap-nb').textContent      = m.nbColonies || '—';
+  document.getElementById('recap-dest').textContent    = m.destination !== '—' ? m.destination : '—';
+  document.getElementById('recap-motif').textContent   = m.motif !== '—' ? m.motif : '—';
+  const obsEl = document.getElementById('recap-obs-row');
+  if (m.obs) {
+    obsEl.style.display = 'flex';
+    document.getElementById('recap-obs').textContent = m.obs;
+  } else {
+    obsEl.style.display = 'none';
+  }
+
+  // Stocker le texte pour le bouton partager
+  window._recapTexte = textePartage;
+  window._recapEmail = email;
+
+  openModal('modal-recap');
+}
+
+function partagerRecap() {
+  const texte = window._recapTexte || '';
+  if (navigator.share) {
+    navigator.share({ title: 'Récapitulatif mouvement de colonies', text: texte })
+      .catch(() => {});
+  } else {
+    // Fallback : ouvrir le client email
+    const sujet = encodeURIComponent('Déclaration de mouvement de colonies');
+    const corps = encodeURIComponent(texte);
+    window.open(`mailto:?subject=${sujet}&body=${corps}`);
   }
 }

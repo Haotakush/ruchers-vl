@@ -1186,6 +1186,102 @@
   ">✕</button>
 </div>
 
+<!-- ============================================================
+     MODAL : RÉCAPITULATIF DÉCLARATION DE MOUVEMENT
+     ============================================================ -->
+<div class="modal-overlay" id="modal-recap">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title">📋 Récapitulatif déclaration</div>
+    <div class="modal-body" style="padding-bottom:8px;">
+
+      <!-- Bandeau info -->
+      <div style="background:#1a2a3a;border:1px solid #2a4a6a;border-radius:10px;padding:10px 14px;
+                  font-size:0.75rem;color:#aaa;line-height:1.6;margin-bottom:16px;">
+        ℹ️ Récapitulatif à utiliser pour remplir le formulaire en ligne sur
+        <strong style="color:#64B5F6;">MesDémarches</strong> ou à envoyer par email à la DDPP.
+      </div>
+
+      <!-- Apiculteur -->
+      <div style="font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;
+                  color:var(--honey);margin-bottom:8px;">👤 Apiculteur</div>
+      <div style="background:var(--card);border-radius:12px;padding:12px 14px;margin-bottom:14px;
+                  display:flex;flex-direction:column;gap:7px;">
+        <div style="display:flex;justify-content:space-between;font-size:0.82rem;">
+          <span style="color:var(--soft);">Nom</span>
+          <span id="recap-nom" style="font-weight:600;color:var(--ink);text-align:right;max-width:60%;">—</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;font-size:0.82rem;">
+          <span style="color:var(--soft);">NAPI</span>
+          <span id="recap-napi" style="font-weight:600;color:var(--honey);font-family:'DM Mono',monospace;">—</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;font-size:0.82rem;">
+          <span style="color:var(--soft);">Adresse</span>
+          <span id="recap-adresse" style="font-weight:600;color:var(--ink);text-align:right;max-width:60%;">—</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;font-size:0.82rem;">
+          <span style="color:var(--soft);">Email</span>
+          <span id="recap-email" style="font-weight:600;color:var(--ink);">—</span>
+        </div>
+      </div>
+
+      <!-- Rucher d'origine -->
+      <div style="font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;
+                  color:var(--honey);margin-bottom:8px;">📍 Rucher d'origine</div>
+      <div style="background:var(--card);border-radius:12px;padding:12px 14px;margin-bottom:14px;
+                  display:flex;flex-direction:column;gap:7px;">
+        <div style="display:flex;justify-content:space-between;font-size:0.82rem;">
+          <span style="color:var(--soft);">Identifiant</span>
+          <span id="recap-rucher-id" style="font-weight:600;color:var(--ink);text-align:right;max-width:60%;">—</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;font-size:0.82rem;">
+          <span style="color:var(--soft);">Adresse</span>
+          <span id="recap-rucher-adr" style="font-weight:600;color:var(--ink);text-align:right;max-width:60%;">—</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;font-size:0.82rem;">
+          <span style="color:var(--soft);">GPS</span>
+          <span id="recap-gps" style="font-weight:600;color:var(--honey);font-family:'DM Mono',monospace;font-size:0.75rem;">—</span>
+        </div>
+      </div>
+
+      <!-- Mouvement -->
+      <div style="font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;
+                  color:var(--honey);margin-bottom:8px;">🚛 Mouvement</div>
+      <div style="background:var(--card);border-radius:12px;padding:12px 14px;margin-bottom:14px;
+                  display:flex;flex-direction:column;gap:7px;">
+        <div style="display:flex;justify-content:space-between;font-size:0.82rem;">
+          <span style="color:var(--soft);">Date</span>
+          <span id="recap-date" style="font-weight:600;color:var(--ink);">—</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;font-size:0.82rem;">
+          <span style="color:var(--soft);">Nb colonies</span>
+          <span id="recap-nb" style="font-weight:600;color:var(--ink);">—</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;font-size:0.82rem;">
+          <span style="color:var(--soft);">Destination</span>
+          <span id="recap-dest" style="font-weight:600;color:var(--ink);text-align:right;max-width:60%;">—</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;font-size:0.82rem;">
+          <span style="color:var(--soft);">Motif</span>
+          <span id="recap-motif" style="font-weight:600;color:var(--ink);">—</span>
+        </div>
+        <div id="recap-obs-row" style="display:none;justify-content:space-between;font-size:0.82rem;">
+          <span style="color:var(--soft);">Observations</span>
+          <span id="recap-obs" style="font-weight:600;color:var(--ink);text-align:right;max-width:60%;">—</span>
+        </div>
+      </div>
+
+    </div>
+    <div class="modal-footer" style="gap:10px;">
+      <button class="btn-cancel" onclick="closeModal('modal-recap')">Fermer</button>
+      <button class="btn-save" onclick="partagerRecap()"
+        style="display:flex;align-items:center;gap:6px;justify-content:center;">
+        <span>📤</span> Partager
+      </button>
+    </div>
+  </div>
+</div>
+
 </div><!-- /app-container -->
 
 
