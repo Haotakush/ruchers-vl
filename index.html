@@ -303,7 +303,7 @@
       </select>
       <select class="form-select" style="font-size:0.82rem;padding:8px 10px;flex:1;"
         id="flt-force" onchange="renderJournal()">
-        <option value="">Toutes forces</option>
+        <option value="">Tous états</option>
         <option>Forte</option>
         <option>Moyenne</option>
         <option>Faible</option>
@@ -653,21 +653,9 @@
         </div>
       </div>
 
-      <!-- Météo -->
+      <!-- État général du rucher -->
       <div class="form-row">
-        <label class="form-label">Météo</label>
-        <div class="quick-btns" id="j-meteo-btns">
-          <button type="button" class="qbtn" onclick="selectQuick('j-meteo-btns','Ensoleillé',this)">☀️ Soleil</button>
-          <button type="button" class="qbtn" onclick="selectQuick('j-meteo-btns','Nuageux',this)">☁️ Nuageux</button>
-          <button type="button" class="qbtn" onclick="selectQuick('j-meteo-btns','Pluvieux',this)">🌧️ Pluie</button>
-          <button type="button" class="qbtn" onclick="selectQuick('j-meteo-btns','Venteux',this)">💨 Vent</button>
-        </div>
-        <input type="hidden" id="j-meteo" value="">
-      </div>
-
-      <!-- Force colonie -->
-      <div class="form-row">
-        <label class="form-label">Force de la colonie</label>
+        <label class="form-label">État général du rucher <span style="font-size:0.72rem;color:var(--soft);font-weight:400;">(appréciation globale)</span></label>
         <div class="quick-btns" id="j-force-btns">
           <button type="button" class="qbtn" onclick="selectQuick('j-force-btns','Forte',this)">💪 Forte</button>
           <button type="button" class="qbtn" onclick="selectQuick('j-force-btns','Moyenne',this)">👌 Moyenne</button>

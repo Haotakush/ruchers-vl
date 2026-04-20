@@ -276,7 +276,6 @@ async function _doSaveJournal() {
   const entry = {
     date,
     rucher,
-    meteo:        document.getElementById('j-meteo').value || '',
     force:        document.getElementById('j-force').value || '—',
     marquage:     marquageItems,
     nbRuches:     parseInt(document.getElementById('j-nb-ruches').textContent)    || 0,
@@ -430,7 +429,6 @@ async function _doSaveJournal() {
 function resetJournalForm() {
   document.getElementById('j-obs').value    = '';
   document.getElementById('j-rucher').value = '';
-  document.getElementById('j-meteo').value  = '';
   document.getElementById('j-force').value  = '';
   document.getElementById('j-nb-ruches').textContent    = '0';
   document.getElementById('j-nb-ruchettes').textContent = '0';
@@ -441,7 +439,7 @@ function resetJournalForm() {
     const inp = el.querySelector('.champ-libre-input');
     if (inp) inp.value = '';
   });
-  document.querySelectorAll('#j-force-btns .qbtn, #j-meteo-btns .qbtn').forEach(b => b.classList.remove('selected'));
+  document.querySelectorAll('#j-force-btns .qbtn').forEach(b => b.classList.remove('selected'));
 
   // Rappel
   const rtEl = document.getElementById('j-rappel-texte');
@@ -490,9 +488,6 @@ function renderJournal() {
 
 function buildJournalCard(v, idx) {
   const forceCls = { 'Forte':'badge-forte', 'Moyenne':'badge-moyenne', 'Faible':'badge-faible' }[v.force] || '';
-  const meteoIcons = { 'Ensoleillé':'☀️', 'Nuageux':'☁️', 'Pluvieux':'🌧️', 'Venteux':'💨' };
-  const meteoBadge = v.meteo
-    ? `<span class="meteo-badge">${meteoIcons[v.meteo] || '🌤️'} ${v.meteo}</span>` : '';
 
   const marquageBadges = v.marquage?.length
     ? v.marquage.map(m => `<span class="badge badge-marquage">🪨 ${m}</span>`).join('')
@@ -530,7 +525,6 @@ function buildJournalCard(v, idx) {
       <div class="entry-tags" style="margin-bottom:6px;">${intv}</div>
       <div class="entry-tags">
         ${v.force && v.force !== '—' ? `<span class="badge ${forceCls}">${v.force}</span>` : ''}
-        ${meteoBadge}
         ${mediaBadges}
       </div>
       ${v.obs ? `<div class="entry-sub" style="margin-top:6px;">💬 ${v.obs}</div>` : ''}
@@ -565,7 +559,6 @@ async function delJournal(docId, i) {
 function openCompteRendu(idx) {
   const v = journalData[idx];
   if (!v) return;
-  const meteoIcons = { 'Ensoleillé':'☀️', 'Nuageux':'☁️', 'Pluvieux':'🌧️', 'Venteux':'💨' };
   const forceCls = { 'Forte':'badge-forte', 'Moyenne':'badge-moyenne', 'Faible':'badge-faible' }[v.force] || '';
 
   let html = `
@@ -578,15 +571,9 @@ function openCompteRendu(idx) {
         <button class="btn-rucher-action" onclick="openEditJournal(${idx})" title="Modifier">✏️</button>
       </div>`;
 
-  if (v.meteo) html += `
-    <div style="margin-bottom:12px;">
-      <div class="cr-label">Météo</div>
-      <div>${meteoIcons[v.meteo] || '🌤️'} ${v.meteo}</div>
-    </div>`;
-
   if (v.force && v.force !== '—') html += `
     <div style="margin-bottom:12px;">
-      <div class="cr-label">Force colonie</div>
+      <div class="cr-label">État général du rucher</div>
       <span class="badge ${forceCls}">${v.force}</span>
     </div>`;
 
@@ -690,12 +677,7 @@ function openEditJournal(idx) {
   document.getElementById('j-nb-ruches').textContent    = v.nbRuches    || 0;
   document.getElementById('j-nb-ruchettes').textContent = v.nbRuchettes || 0;
 
-  // Météo — cocher le bouton
-  document.querySelectorAll('#j-meteo-btns .qbtn').forEach(btn => {
-    if (v.meteo && btn.onclick?.toString().includes(`'${v.meteo}'`)) btn.classList.add('selected');
-  });
-
-  // Force — cocher le bouton
+  // État général — cocher le bouton
   document.querySelectorAll('#j-force-btns .qbtn').forEach(btn => {
     if (v.force && btn.textContent.includes(v.force)) btn.classList.add('selected');
   });
