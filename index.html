@@ -1,1781 +1,862 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="Ruchers VL">
-  <meta name="theme-color" content="#1A1208">
-  <title>Ruchers VL</title>
-  <link rel="manifest" href="manifest.json">
-  <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%231A1208'/><text y='.9em' font-size='72' x='12'>🐝</text></svg>">
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-storage-compat.js"></script>
-  <link rel="stylesheet" href="css/style.css">
-  <style>
-    /* =====================================================
-       LOADING SCREEN — Écran de chargement
-       ===================================================== */
-    #loading-screen {
-      position: fixed;
-      inset: 0;
-      background: #1A1208;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 99999;
-      opacity: 1;
-      transition: opacity 0.45s ease;
-    }
-    #loading-screen.ls-fade-out {
-      opacity: 0;
-      pointer-events: none;
-    }
-    .ls-content {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 10px;
-      padding: 0 24px;
-    }
-    /* Conteneur de l'orbite */
-    .ls-bee-wrap {
-      position: relative;
-      width: 96px;
-      height: 96px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-bottom: 6px;
-    }
-    /* Pot de miel au centre qui pulse */
-    .ls-center {
-      font-size: 2.2rem;
-      animation: ls-center-pulse 2s ease-in-out infinite;
-      line-height: 1;
-    }
-    /* Bras qui tourne */
-    .ls-orbit {
-      position: absolute;
-      inset: 0;
-      animation: ls-spin 2.2s linear infinite;
-    }
-    /* L'abeille, en haut du bras, qui contre-tourne pour rester droite */
-    .ls-bee {
-      position: absolute;
-      top: 2px;
-      left: 50%;
-      font-size: 1.6rem;
-      line-height: 1;
-      transform: translateX(-50%);
-      animation: ls-counter 2.2s linear infinite;
-      filter: drop-shadow(0 2px 6px rgba(212,137,42,0.5));
-    }
-    @keyframes ls-spin {
-      to { transform: rotate(360deg); }
-    }
-    @keyframes ls-counter {
-      to { transform: translateX(-50%) rotate(-360deg); }
-    }
-    @keyframes ls-center-pulse {
-      0%, 100% { transform: scale(1);    opacity: 0.85; }
-      50%       { transform: scale(1.12); opacity: 1;    }
-    }
-    /* Titre */
-    .ls-title {
-      font-family: 'Playfair Display', serif;
-      font-size: 1.9rem;
-      font-weight: 700;
-      color: #FFF8E7;
-      letter-spacing: 0.02em;
-      margin-top: 4px;
-    }
-    /* Message animé */
-    .ls-msg {
-      font-family: 'DM Sans', sans-serif;
-      font-size: 0.85rem;
-      color: #D4892A;
-      min-height: 22px;
-      transition: opacity 0.3s ease;
-      text-align: center;
-    }
-    /* Dots de chargement */
-    .ls-dots {
-      display: flex;
-      gap: 7px;
-      margin-top: 6px;
-    }
-    .ls-dots span {
-      width: 7px;
-      height: 7px;
-      border-radius: 50%;
-      background: #D4892A;
-      animation: ls-dot 1.4s ease-in-out infinite;
-    }
-    .ls-dots span:nth-child(2) { animation-delay: 0.22s; }
-    .ls-dots span:nth-child(3) { animation-delay: 0.44s; }
-    @keyframes ls-dot {
-      0%, 80%, 100% { transform: scale(0.7); opacity: 0.3; }
-      40%            { transform: scale(1.2); opacity: 1;   }
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ruchers VL — Carnet de bord apicole numérique</title>
+<meta name="description" content="Ruchers VL est votre carnet de bord apicole numérique. Suivez vos ruchers, tracez vos traitements et générez votre registre d'élevage légal automatiquement.">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --honey: #D4892A;
+    --honey-light: #FFD88A;
+    --dark: #1A1208;
+    --dark2: #231A0D;
+    --card: #2a1e10;
+    --border: #3a2a18;
+    --soft: #b89060;
+    --fg: #FFF8E7;
+    --green: #81C784;
+    --blue: #90CAF9;
+    --purple: #CE93D8;
+    --red: #EF9A9A;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: var(--dark);
+    color: var(--fg);
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(26,18,8,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    padding: 14px 24px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .nav-logo { font-size: 1.1rem; font-weight: 800; color: var(--honey); }
+  .nav-cta {
+    background: var(--honey); color: var(--dark); font-weight: 700;
+    padding: 8px 18px; border-radius: 10px; text-decoration: none;
+    font-size: 0.88rem; transition: opacity 0.2s;
+  }
+  .nav-cta:hover { opacity: 0.85; }
+
+  /* ── SECTIONS ── */
+  section { padding: 80px 24px; max-width: 960px; margin: 0 auto; }
+  .section-full { max-width: 100%; padding: 80px 0; }
+  .section-full > .inner { max-width: 960px; margin: 0 auto; padding: 0 24px; }
+
+  .label {
+    display: inline-block;
+    font-size: 0.72rem; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.1em; color: var(--honey);
+    background: rgba(212,137,42,0.12); border: 1px solid rgba(212,137,42,0.25);
+    border-radius: 20px; padding: 4px 12px; margin-bottom: 16px;
+  }
+  h2 {
+    font-size: clamp(1.6rem, 4vw, 2.2rem);
+    font-weight: 800; line-height: 1.25;
+    margin-bottom: 12px;
+  }
+  .sub {
+    font-size: 1rem; color: var(--soft); line-height: 1.7;
+    max-width: 580px; margin-bottom: 48px;
+  }
+
+  /* ── HERO ── */
+  #hero {
+    min-height: 100vh;
+    display: flex; flex-direction: column; justify-content: center;
+    padding-top: 40px; padding-bottom: 40px;
+    background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(212,137,42,0.12) 0%, transparent 70%);
+  }
+  .hero-bee { font-size: 4rem; margin-bottom: 20px; display: block; }
+  #hero h1 {
+    font-size: clamp(2.2rem, 6vw, 3.6rem);
+    font-weight: 900; line-height: 1.15;
+    margin-bottom: 20px;
+  }
+  .highlight { color: var(--honey); }
+  #hero p {
+    font-size: clamp(1rem, 2.5vw, 1.2rem);
+    color: var(--soft); max-width: 540px;
+    margin-bottom: 36px; line-height: 1.7;
+  }
+  .hero-btns { display: flex; gap: 12px; flex-wrap: wrap; }
+  .btn-primary {
+    background: var(--honey); color: var(--dark);
+    font-weight: 800; font-size: 1rem;
+    padding: 14px 28px; border-radius: 12px;
+    text-decoration: none; transition: transform 0.15s, opacity 0.15s;
+    display: inline-flex; align-items: center; gap: 8px;
+  }
+  .btn-primary:hover { transform: translateY(-2px); opacity: 0.9; }
+  .btn-secondary {
+    background: transparent; color: var(--soft);
+    font-weight: 600; font-size: 1rem;
+    padding: 14px 24px; border-radius: 12px;
+    border: 1px solid var(--border);
+    text-decoration: none; transition: border-color 0.15s, color 0.15s;
+    display: inline-flex; align-items: center; gap: 8px;
+  }
+  .btn-secondary:hover { border-color: var(--honey); color: var(--honey); }
+  .hero-badges {
+    display: flex; gap: 10px; flex-wrap: wrap;
+    margin-top: 40px;
+  }
+  .badge-pill {
+    background: rgba(255,248,231,0.06);
+    border: 1px solid var(--border);
+    border-radius: 20px; padding: 6px 14px;
+    font-size: 0.8rem; color: var(--soft);
+    display: flex; align-items: center; gap: 6px;
+  }
+
+  /* ── PROBLÈME ── */
+  #probleme { border-top: 1px solid var(--border); }
+  .prob-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 16px; margin-top: 16px;
+  }
+  .prob-card {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--border);
+    border-radius: 14px; padding: 20px;
+  }
+  .prob-card .icon { font-size: 1.6rem; margin-bottom: 10px; }
+  .prob-card h3 { font-size: 0.95rem; font-weight: 700; margin-bottom: 6px; }
+  .prob-card p { font-size: 0.82rem; color: var(--soft); line-height: 1.6; }
+  .arrow-right {
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.4rem; color: var(--honey);
+  }
+
+  /* ── WORKFLOW ── */
+  #workflow { border-top: 1px solid var(--border); }
+  .workflow-steps {
+    display: flex; flex-direction: column; gap: 0;
+    position: relative; margin-top: 8px;
+  }
+  .workflow-step {
+    display: flex; gap: 20px; align-items: flex-start;
+    padding: 24px 0;
+    border-bottom: 1px dashed var(--border);
+  }
+  .workflow-step:last-child { border-bottom: none; }
+  .step-num {
+    min-width: 40px; height: 40px;
+    border-radius: 50%;
+    background: rgba(212,137,42,0.15);
+    border: 2px solid var(--honey);
+    color: var(--honey); font-weight: 800; font-size: 1rem;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .step-content h3 { font-size: 1rem; font-weight: 700; margin-bottom: 4px; }
+  .step-content p { font-size: 0.84rem; color: var(--soft); line-height: 1.6; }
+
+  /* ── SECTIONS APP ── */
+  #sections-app { border-top: 1px solid var(--border); }
+  .sections-flow {
+    display: flex; flex-direction: column; gap: 12px;
+    margin-top: 8px;
+  }
+  .section-row {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: 12px; align-items: center;
+  }
+  .app-section-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px; padding: 20px;
+    position: relative; overflow: hidden;
+  }
+  .app-section-card::before {
+    content: ''; position: absolute;
+    top: 0; left: 0; right: 0; height: 3px;
+  }
+  .card-ruchers::before { background: var(--blue); }
+  .card-journal::before { background: var(--green); }
+  .card-sanitaire::before { background: var(--purple); }
+  .card-mouvements::before { background: var(--honey); }
+  .card-registre::before { background: linear-gradient(90deg, var(--honey), var(--green)); }
+
+  .card-icon { font-size: 1.8rem; margin-bottom: 8px; }
+  .card-title { font-size: 1rem; font-weight: 800; margin-bottom: 6px; }
+  .card-desc { font-size: 0.8rem; color: var(--soft); line-height: 1.6; margin-bottom: 10px; }
+  .card-tags { display: flex; flex-wrap: wrap; gap: 5px; }
+  .tag {
+    background: rgba(255,255,255,0.06);
+    border-radius: 6px; padding: 3px 8px;
+    font-size: 0.72rem; color: var(--soft);
+  }
+
+  .flow-arrow {
+    display: flex; flex-direction: column;
+    align-items: center; gap: 4px;
+    color: var(--honey); font-size: 0.72rem;
+    font-weight: 600; white-space: nowrap;
+  }
+  .flow-arrow svg { width: 20px; height: 30px; }
+
+  /* Registre card — pleine largeur */
+  .registre-card {
+    background: linear-gradient(135deg, #1a2a1a 0%, var(--card) 100%);
+    border: 1px solid rgba(129,199,132,0.3);
+    border-radius: 16px; padding: 28px;
+    margin-top: 12px;
+    position: relative; overflow: hidden;
+  }
+  .registre-card::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 3px;
+    background: linear-gradient(90deg, var(--green), var(--honey), var(--blue));
+  }
+  .sections-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 10px; margin-top: 16px;
+  }
+  .section-item {
+    background: rgba(255,255,255,0.05);
+    border-radius: 10px; padding: 10px 12px;
+    display: flex; align-items: flex-start; gap: 8px;
+  }
+  .section-item .snum {
+    background: rgba(129,199,132,0.15);
+    color: var(--green); font-weight: 700;
+    font-size: 0.75rem; border-radius: 6px;
+    padding: 2px 7px; flex-shrink: 0; margin-top: 1px;
+  }
+  .section-item p { font-size: 0.78rem; color: var(--soft); line-height: 1.4; }
+  .section-item p strong { color: var(--fg); display: block; margin-bottom: 2px; }
+
+  /* ── CONNEXIONS ── */
+  #connexions { border-top: 1px solid var(--border); }
+  .connexion-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 14px; margin-top: 16px;
+  }
+  .connexion-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px; padding: 18px;
+  }
+  .connexion-card .from-to {
+    display: flex; align-items: center; gap: 8px;
+    margin-bottom: 10px;
+  }
+  .chip {
+    padding: 3px 10px; border-radius: 20px;
+    font-size: 0.73rem; font-weight: 700;
+  }
+  .chip-blue { background: rgba(144,202,249,0.15); color: var(--blue); }
+  .chip-green { background: rgba(129,199,132,0.15); color: var(--green); }
+  .chip-purple { background: rgba(206,147,216,0.15); color: var(--purple); }
+  .chip-honey { background: rgba(212,137,42,0.15); color: var(--honey-light); }
+  .chip-amber { background: rgba(255,183,77,0.15); color: #FFB74D; }
+  .connexion-card p { font-size: 0.8rem; color: var(--soft); line-height: 1.6; }
+
+  /* ── PDF ── */
+  #registre-pdf { border-top: 1px solid var(--border); }
+  .pdf-preview {
+    background: #fff;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+    max-width: 420px;
+  }
+  .pdf-header {
+    background: var(--dark); padding: 16px 20px;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .pdf-header .icon { font-size: 1.8rem; }
+  .pdf-header .info { flex: 1; }
+  .pdf-header .title { font-size: 0.95rem; font-weight: 700; color: var(--honey); }
+  .pdf-header .sub { font-size: 0.72rem; color: var(--soft); margin: 0; }
+  .pdf-body { padding: 16px 20px; }
+  .pdf-section {
+    display: flex; align-items: flex-start; gap: 10px;
+    padding: 8px 0;
+    border-bottom: 1px solid #f0ebe0;
+  }
+  .pdf-section:last-child { border-bottom: none; }
+  .pdf-num {
+    background: #fff3e0; color: #E65100;
+    font-size: 0.68rem; font-weight: 700;
+    border-radius: 4px; padding: 2px 6px;
+    flex-shrink: 0; margin-top: 1px;
+  }
+  .pdf-section .pdf-title { font-size: 0.82rem; font-weight: 700; color: #2a1a08; }
+  .pdf-section .pdf-sub { font-size: 0.72rem; color: #888; margin-top: 1px; }
+  .pdf-auto {
+    background: #e8f5e9; color: #2E7D32;
+    font-size: 0.65rem; font-weight: 600;
+    border-radius: 4px; padding: 1px 5px;
+    display: inline-block; margin-left: 4px; vertical-align: middle;
+  }
+  .pdf-info {
+    display: flex; flex-direction: column; gap: 12px;
+    margin-left: 24px;
+  }
+  .pdf-info-item {
+    display: flex; align-items: flex-start; gap: 10px;
+    padding: 12px 14px; border-radius: 10px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--border);
+  }
+  .pdf-info-item p { font-size: 0.82rem; color: var(--soft); line-height: 1.5; }
+  .pdf-info-item p strong { color: var(--fg); }
+
+  /* ── POUR QUI ── */
+  #pour-qui { border-top: 1px solid var(--border); }
+  .audience-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 16px; margin-top: 16px;
+  }
+  .audience-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px; padding: 24px;
+  }
+  .audience-card .icon { font-size: 2rem; margin-bottom: 12px; }
+  .audience-card h3 { font-size: 1rem; font-weight: 800; margin-bottom: 8px; }
+  .audience-card p { font-size: 0.83rem; color: var(--soft); line-height: 1.7; }
+
+  /* ── CTA FINAL ── */
+  #cta-final {
+    border-top: 1px solid var(--border);
+    text-align: center;
+    background: radial-gradient(ellipse 70% 50% at 50% 100%, rgba(212,137,42,0.1) 0%, transparent 70%);
+  }
+  #cta-final h2 { margin-bottom: 16px; }
+  #cta-final p { color: var(--soft); margin-bottom: 32px; max-width: 460px; margin-left: auto; margin-right: auto; }
+
+  /* ── FOOTER ── */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 24px;
+    text-align: center;
+    font-size: 0.78rem; color: var(--soft);
+  }
+  footer a { color: var(--honey); text-decoration: none; }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 640px) {
+    .section-row { grid-template-columns: 1fr; }
+    .flow-arrow { display: none; }
+    .prob-card + .arrow-right { display: none; }
+    .hero-btns { flex-direction: column; }
+    .btn-primary, .btn-secondary { justify-content: center; }
+  }
+</style>
 </head>
 <body>
 
-<!-- ============================================================
-     ÉCRAN DE CHARGEMENT
-     ============================================================ -->
-<div id="loading-screen">
-  <div class="ls-content">
-    <div class="ls-bee-wrap">
-      <span class="ls-center">🍯</span>
-      <div class="ls-orbit">
-        <span class="ls-bee">🐝</span>
-      </div>
-    </div>
-    <div class="ls-title">Ruchers VL</div>
-    <div class="ls-msg" id="ls-msg">Chargement…</div>
-    <div class="ls-dots">
-      <span></span><span></span><span></span>
-    </div>
-  </div>
-</div>
-
-
-<!-- ============================================================
-     ÉCRAN DE CONNEXION
-     ============================================================ -->
-<div id="login-screen" style="display:none;">
-  <div class="login-card">
-    <div class="login-emoji">🐝</div>
-    <h1>Ruchers VL</h1>
-    <p class="login-subtitle">Votre carnet d'apiculteur numérique</p>
-
-    <!-- Formulaire connexion -->
-    <div id="login-form">
-      <input type="email" class="login-input" id="login-email"
-        placeholder="Email" autocomplete="email"
-        onkeypress="handleLoginKeypress(event)">
-      <input type="password" class="login-input" id="login-pass"
-        placeholder="Mot de passe" autocomplete="current-password"
-        onkeypress="handleLoginKeypress(event)">
-      <button class="login-btn" id="login-btn" onclick="doLogin()">Se connecter</button>
-      <div class="login-error" id="login-error"></div>
-      <button class="login-switch-btn" style="font-size:0.75rem;opacity:0.7;margin-top:2px;" onclick="showForgotPassword()">
-        Mot de passe oublié ?
-      </button>
-      <button class="login-switch-btn" onclick="toggleCreateAccount()">
-        Pas encore de compte ? Créer un compte →
-      </button>
-    </div>
-
-    <!-- Formulaire mot de passe oublié -->
-    <div id="forgot-form" style="display:none;">
-      <div class="login-section-title">Réinitialiser le mot de passe</div>
-      <p style="font-size:0.8rem;color:#aaa;margin-bottom:12px;text-align:center;">Un email de réinitialisation vous sera envoyé.</p>
-      <input type="email" class="login-input" id="forgot-email"
-        placeholder="Votre adresse email"
-        onkeypress="if(event.key==='Enter') doForgotPassword()">
-      <button class="login-btn" id="forgot-btn" onclick="doForgotPassword()">Envoyer le lien</button>
-      <div class="login-error" id="forgot-msg" style="text-align:center;"></div>
-      <button class="login-switch-btn" onclick="showLoginForm()">← Retour à la connexion</button>
-    </div>
-
-    <!-- Formulaire création de compte -->
-    <div id="create-form" style="display:none;">
-      <div class="login-section-title">Créer un compte</div>
-      <input type="email" class="login-input" id="create-email"
-        placeholder="Email" autocomplete="email"
-        onkeypress="handleCreateKeypress(event)">
-      <input type="password" class="login-input" id="create-pass"
-        placeholder="Mot de passe (min. 6 caractères)"
-        onkeypress="handleCreateKeypress(event)">
-      <input type="password" class="login-input" id="create-pass2"
-        placeholder="Confirmer le mot de passe"
-        onkeypress="handleCreateKeypress(event)">
-      <button class="login-btn" id="create-btn" onclick="doCreateAccount()">Créer le compte</button>
-      <div class="login-error" id="create-error"></div>
-      <button class="login-switch-btn" onclick="toggleCreateAccount()">
-        ← Retour à la connexion
-      </button>
-    </div>
-  </div>
-</div>
-
-
-<!-- ============================================================
-     CONTENEUR DE L'APP
-     ============================================================ -->
-<div id="app-container">
-
-<!-- TOPBAR -->
-<div class="topbar">
-  <div class="topbar-brand">
-    <span>🐝</span>
-    <div>
-      <h1 id="topbar-title">Ruchers VL</h1>
-      <p  id="topbar-sub">Chargement…</p>
-    </div>
-  </div>
-  <div class="topbar-actions">
-    <span id="sync-indicator" class="sync-indicator"></span>
-    <button class="topbar-btn" onclick="forceSyncFromFirestore()" title="Synchroniser">🔄</button>
-  </div>
-</div>
-
-
-<!-- ZONE DE SCROLL -->
-<div class="scroll-area" id="scroll-area">
-
-
-  <!-- DASHBOARD -->
-  <div id="tab-dashboard" class="section active">
-    <div id="install-banner-wrap"></div>
-    <div id="sync-status-bar"></div>
-    <div class="stats-row">
-      <div class="stat-card">
-        <span class="stat-icon">🐝</span>
-        <span class="stat-value" id="s-ruches">0</span>
-        <span class="stat-label">Ruches actives</span>
-      </div>
-      <div class="stat-card">
-        <span class="stat-icon">📋</span>
-        <span class="stat-value" id="s-visites">0</span>
-        <span class="stat-label">Visites</span>
-      </div>
-      <div class="stat-card">
-        <span class="stat-icon">💊</span>
-        <span class="stat-value" id="s-traits">0</span>
-        <span class="stat-label">Traitements</span>
-      </div>
-      <div class="stat-card">
-        <span class="stat-icon">📍</span>
-        <span class="stat-value" id="s-sites">0</span>
-        <span class="stat-label">Sites</span>
-      </div>
-    </div>
-    <div class="card">
-      <div class="card-title">📈 Visites — 6 derniers mois</div>
-      <div class="chart-container" style="height:140px;">
-        <canvas id="chart-visites" class="chart"></canvas>
-      </div>
-    </div>
-    <div class="card">
-      <div class="card-title">📊 Fréquence de visite par rucher</div>
-      <div id="visite-freq"></div>
-    </div>
-    <div class="card" id="card-rappels" style="display:none;">
-      <div class="card-title" style="display:flex;justify-content:space-between;align-items:center;">
-        <span>📌 Rappels</span>
-        <button class="btn-notif" id="btn-notif" onclick="requestNotifPermission()" style="display:none;">
-          🔔 Activer les notifications
-        </button>
-      </div>
-      <div id="rappels-list"></div>
-    </div>
-    <div class="card">
-      <div class="card-title">🔔 Recommandations</div>
-      <div id="recommandations"></div>
-    </div>
-    <div class="card">
-      <div class="card-title">🕐 Activité récente</div>
-      <div class="timeline" id="timeline"></div>
-    </div>
-    <div class="card">
-      <div class="card-title">Répartition par zone</div>
-      <div id="zone-bars"></div>
-    </div>
-  </div>
-
-
-  <!-- JOURNAL -->
-  <div id="tab-journal" class="section">
-    <div style="display:flex;gap:8px;margin-bottom:12px;">
-      <select class="form-select" style="font-size:0.82rem;padding:8px 10px;flex:1;"
-        id="flt-rucher" onchange="renderJournal()">
-        <option value="">Tous ruchers</option>
-      </select>
-      <select class="form-select" style="font-size:0.82rem;padding:8px 10px;flex:1;"
-        id="flt-force" onchange="renderJournal()">
-        <option value="">Tous états</option>
-        <option>Forte</option>
-        <option>Moyenne</option>
-        <option>Faible</option>
-      </select>
-    </div>
-    <div id="journal-list"></div>
-  </div>
-
-
-  <!-- SANITAIRE -->
-  <div id="tab-sanitaire" class="section">
-    <div class="info-banner">
-      ⚠️ <strong>La Réunion est indemne de Varroa.</strong>
-      Toute suspicion = signalement immédiat au GDSA.
-    </div>
-
-    <!-- Bannière rappel comptage (affichée dynamiquement) -->
-    <div id="comptage-reminder" style="display:none;background:#1a2a3a;border:1px solid #2a4a6a;border-radius:12px;padding:12px 14px;margin-bottom:12px;display:none;align-items:center;gap:10px;">
-      <span style="font-size:1.3rem;">🔬</span>
-      <div style="flex:1;font-size:0.82rem;line-height:1.5;">
-        <strong style="color:#64B5F6;" id="comptage-reminder-title">Période de comptage varroa</strong><br>
-        <span style="color:#aaa;" id="comptage-reminder-text">Pensez à effectuer un comptage ce mois-ci.</span>
-      </div>
-      <button onclick="openVarroaGuide()" style="flex-shrink:0;padding:5px 10px;border-radius:8px;border:none;background:#2a4a6a;color:#64B5F6;font-size:0.75rem;font-weight:600;cursor:pointer;">Guide ℹ️</button>
-    </div>
-
-    <!-- Bouton guide varroa -->
-    <div style="display:flex;justify-content:flex-end;margin-bottom:8px;">
-      <button onclick="openVarroaGuide()" style="padding:6px 14px;border-radius:10px;border:1px solid var(--border);background:var(--card);color:var(--soft);font-size:0.78rem;cursor:pointer;">ℹ️ Guide varroa & VP100</button>
-    </div>
-
-    <div id="sanitaire-list"></div>
-  </div>
-
-
-  <!-- RUCHERS -->
-  <div id="tab-ruchers" class="section">
-    <div class="info-banner">
-      📸 Appuyez sur <strong>+</strong> pour ajouter des photos. Elles sont synchronisées sur tous vos appareils.
-    </div>
-    <div id="ruchers-list"></div>
-  </div>
-
-
-  <!-- REGISTRE -->
-  <div id="tab-registre" class="section">
-    <div class="registre-header">
-      <h2>📖 Registre d'Élevage Apicole</h2>
-      <p id="reg-header-info">Chargement…<br>Conforme à l'arrêté du 11 août 1994</p>
-    </div>
-    <div style="display:flex;gap:10px;margin-bottom:0;">
-      <button class="btn-pdf" style="flex:1;" onclick="exportPDF()">📄 Exporter / Imprimer</button>
-      <button class="btn-pdf" style="flex:1;background:rgba(212,130,10,0.12);border:1px solid rgba(212,130,10,0.4);" onclick="partagerRegistre()">📤 Partager</button>
-    </div>
-    <div id="registre-content"></div>
-  </div>
-
-
-  <!-- CARTE -->
-  <div id="tab-carte" class="section"
-    style="padding:0; position:relative; height:calc(100vh - 120px);">
-    <div id="map" style="width:100%; height:100%;"></div>
-    <div class="map-legend" id="map-legend">
-      <div class="legend-item"><div class="legend-dot" style="background:#4CAF50"></div>Bas — OK</div>
-      <div class="legend-item"><div class="legend-dot" style="background:#FFB300"></div>Mi-pentes — OK</div>
-      <div class="legend-item"><div class="legend-dot" style="background:#1E88E5"></div>Hauts — OK</div>
-      <div class="legend-item"><div class="legend-dot" style="background:#EF5350"></div>Urgent &gt;30j</div>
-      <div class="legend-item"><div class="legend-dot" style="background:#FF9800"></div>Attention &gt;14j</div>
-    </div>
-  </div>
-
-
-  <!-- PLUS — Menu principal -->
-  <div id="tab-plus" class="section">
-    <button class="menu-item" onclick="showTab('params',null);loadParamsUI()">⚙️ Paramètres</button>
-    <button class="menu-item" onclick="showTab('calendrier',null);renderCalendrier()">🍯 Calendrier mellifère</button>
-    <button class="menu-item" onclick="showTab('registre',null);renderRegistre()">📖 Registre d'élevage</button>
-    <button class="menu-item" onclick="showTab('admin',null);initAdminConformite()">🛡 Admin &amp; Conformité</button>
-    <button class="menu-item" onclick="showTab('documents',null);populateDocRucherSelect();renderDocuments()">📎 Documents réglementaires</button>
-    <button class="menu-item" onclick="openTutoriel()">🎓 Guide de démarrage</button>
-    <button class="menu-item" onclick="openModal('modal-cgu')">📄 CGU &amp; Confidentialité</button>
-    <div id="logout-wrap" style="margin-top:20px;"></div>
-    <div style="margin-top:8px;">
-      <button class="menu-item" style="color:#EF5350;border-color:#5a2a2a;" onclick="confirmDeleteAccount()">🗑 Supprimer mon compte</button>
-    </div>
-  </div>
-
-  <!-- PARAMÈTRES -->
-  <div id="tab-params" class="section">
-    <button class="btn-back" onclick="showTab('plus',null)">← Retour</button>
-    <div class="card">
-      <div class="card-title">⚙️ Mes informations</div>
-      <div class="form-row"><label class="form-label">Nom / Raison sociale</label>
-        <input class="param-input" id="p-nom" placeholder="Ex : DUPONT Jean"></div>
-      <div class="form-row"><label class="form-label">NAPI</label>
-        <input class="param-input" id="p-napi" placeholder="Ex : A5100000"></div>
-      <div class="form-row"><label class="form-label">N° SIRET</label>
-        <input class="param-input" id="p-siret" placeholder="Ex : 12345678900000"></div>
-      <div class="form-row"><label class="form-label">Adresse</label>
-        <input class="param-input" id="p-adresse" placeholder="Votre adresse…"></div>
-      <div class="form-row"><label class="form-label">Email</label>
-        <input class="param-input" id="p-email" type="email" placeholder="votre@email.fr"></div>
-      <div class="form-row"><label class="form-label">Date déclaration</label>
-        <input class="param-input" id="p-datedecl" placeholder="JJ/MM/AAAA"></div>
-      <div class="form-row"><label class="form-label">Référence déclaration</label>
-        <input class="param-input" id="p-refdecl" placeholder="Ex : 2025-00000000"></div>
-      <div class="form-row"><label class="form-label">Colonies déclarées</label>
-        <input class="param-input" id="p-colonies" type="number" placeholder="Ex : 50"></div>
-      <button class="btn-param-save" onclick="saveParams()">✓ Enregistrer</button>
-    </div>
-  </div>
-
-  <!-- CALENDRIER MELLIFÈRE -->
-  <div id="tab-calendrier" class="section">
-    <button class="btn-back" onclick="showTab('plus',null)">← Retour</button>
-    <div class="card" style="overflow-x:auto;padding:12px 8px;">
-      <div class="card-title" style="padding:0 8px 10px;">🍯 Plantes mellifères — Sud &amp; Ouest</div>
-      <table class="cal-table">
-        <thead><tr>
-          <th class="col-p">Plante</th>
-          <th>J</th><th>F</th><th>M</th><th>A</th><th>M</th><th>J</th>
-          <th>J</th><th>A</th><th>S</th><th>O</th><th>N</th><th>D</th>
-        </tr></thead>
-        <tbody id="cal-body"></tbody>
-      </table>
-      <div style="margin-top:10px;font-size:0.7rem;color:var(--mid);padding:0 4px;">
-        <span class="cm">+</span> Miellée principale &nbsp;·&nbsp; <span class="ca">/</span> Appoint
-      </div>
-    </div>
-  </div>
-
-  <!-- TRANSHUMANCE -->
-  <div id="tab-transhumance" class="section">
-    <!-- Carte des mouvements -->
-    <div id="mouv-map-container" style="display:none;margin:0 0 16px;border-radius:14px;overflow:hidden;border:1px solid rgba(212,130,10,0.2);">
-      <div id="mouv-map" style="height:220px;width:100%;"></div>
-    </div>
-    <!-- Journal des mouvements (registre légal) -->
-    <div style="display:flex;justify-content:space-between;align-items:center;margin:0 0 12px;">
-      <div class="card-title" style="margin:0;">🚛 Journal des mouvements</div>
-      <button class="btn-save" style="padding:6px 16px;font-size:0.8rem;" onclick="openNewMouvement()">+ Ajouter</button>
-    </div>
-    <div style="font-size:.75rem;color:var(--soft);margin-bottom:12px;">
-      Conforme arrêté du 5 juin 2000 — apparaîtra dans la Section 5 du registre d'élevage.
-    </div>
-    <div id="mouvements-list"></div>
-  </div>
-
-  <!-- ADMIN & CONFORMITÉ -->
-  <div id="tab-admin" class="section">
-    <button class="btn-back" onclick="showTab('plus',null)">← Retour</button>
-    <div id="sub-admin">
-      <!-- Contenu injecté dynamiquement par admin-conformite.js -->
-    </div>
-  </div>
-
-  <!-- DOCUMENTS RÉGLEMENTAIRES -->
-  <div id="tab-documents" class="section">
-    <button class="btn-back" onclick="showTab('plus',null)">← Retour</button>
-    <div id="sub-documents"></div>
-  </div>
-
-
-</div><!-- /scroll-area -->
-
-<!-- ============================================================
-     MODAL : MOUVEMENT DE COLONIES
-     ============================================================ -->
-<div class="modal-overlay" id="modal-mouvement">
-  <div class="modal">
-    <div class="modal-handle"></div>
-    <div class="modal-title">🚛 Nouveau mouvement de colonies</div>
-    <div class="modal-body">
-      <div class="form-row-2">
-        <div>
-          <label class="form-label">Date *</label>
-          <input type="date" class="form-input" id="mouv-date">
-        </div>
-        <div>
-          <label class="form-label">Nb colonies *</label>
-          <input type="number" class="form-input" id="mouv-nb" min="1" placeholder="Ex : 5">
-        </div>
-      </div>
-      <div class="form-row">
-        <label class="form-label">Rucher d'origine *</label>
-        <select class="form-select" id="mouv-origine">
-          <option value="">— Sélectionner —</option>
-        </select>
-      </div>
-      <div class="form-row">
-        <label class="form-label">Lieu de destination <span style="color:var(--soft);font-weight:400;">(adresse ou GPS)</span></label>
-        <div style="display:flex;gap:8px;align-items:center;">
-          <input type="text" class="form-input" id="mouv-destination" placeholder="Ex : Plaine des Cafres, 97418" style="flex:1;">
-          <button type="button" onclick="grabGPSForDestination()" id="btn-gps-dest"
-            style="white-space:nowrap;padding:8px 10px;background:var(--accent);color:#fff;border:none;border-radius:10px;font-size:0.8rem;cursor:pointer;flex-shrink:0;">
-            📍 GPS
-          </button>
-        </div>
-        <div id="gps-dest-hint" style="font-size:0.72rem;color:var(--soft);margin-top:4px;display:none;">
-          Coordonnées détectées — la destination sera visible sur la carte.
-        </div>
-      </div>
-      <div class="form-row">
-        <label class="form-label">Motif du mouvement</label>
-        <select class="form-select" id="mouv-motif">
-          <option value="Transhumance">🚛 Transhumance</option>
-          <option value="Hivernage">❄️ Mise en hivernage</option>
-          <option value="Miellée">🍯 Suivi de miellée</option>
-          <option value="Traitement sanitaire">💊 Traitement sanitaire</option>
-          <option value="Pollinisation">🌸 Pollinisation</option>
-          <option value="Autre">📋 Autre</option>
-        </select>
-      </div>
-      <div class="form-row">
-        <label class="form-label">Observations</label>
-        <textarea class="form-input" id="mouv-obs" rows="2" placeholder="Remarques complémentaires…" style="resize:vertical;"></textarea>
-      </div>
-    </div>
-    <div class="modal-footer">
-      <button class="btn-cancel" onclick="closeModal('modal-mouvement');resetMouvementForm()">Annuler</button>
-      <button class="btn-save" onclick="saveMouvement()">✓ Enregistrer</button>
-    </div>
-  </div>
-</div>
-
-<!-- ============================================================
-     MODAL : NOUVEAU DOCUMENT
-     ============================================================ -->
-<div class="modal-overlay" id="modal-new-doc">
-  <div class="modal">
-    <div class="modal-handle"></div>
-    <div class="modal-title">📎 Ajouter un document</div>
-    <div class="modal-body">
-      <div class="form-row">
-        <label class="form-label">Nom du document *</label>
-        <input type="text" class="form-input" id="doc-label" placeholder="Ex : Ordonnance Apivar Mars 2026">
-      </div>
-      <div class="form-row-2">
-        <div>
-          <label class="form-label">Type *</label>
-          <select class="form-select" id="doc-type">
-            <option value="ordonnance">📋 Ordonnance</option>
-            <option value="analyse">🔬 Analyse</option>
-            <option value="declaration">📄 Déclaration</option>
-            <option value="controle">🛡 Contrôle vét.</option>
-            <option value="facture">🧾 Facture</option>
-            <option value="autre">📎 Autre</option>
-          </select>
-        </div>
-        <div>
-          <label class="form-label">Rucher concerné</label>
-          <select class="form-select" id="doc-rucher">
-            <option value="">— Tous —</option>
-          </select>
-        </div>
-      </div>
-      <div class="form-row">
-        <label class="form-label">Fichier * <span style="color:var(--soft);font-weight:400;">(PDF ou image, max 15 Mo)</span></label>
-        <label style="display:flex;align-items:center;gap:10px;padding:12px 14px;background:var(--honey-pale);border:2px dashed var(--honey);border-radius:12px;cursor:pointer;">
-          <span style="font-size:1.4rem;">📁</span>
-          <div>
-            <div style="font-weight:600;color:var(--honey);font-size:.85rem;">Choisir un fichier</div>
-            <div id="doc-file-label" style="font-size:.75rem;color:var(--soft);margin-top:2px;">Aucun fichier sélectionné</div>
-          </div>
-          <input type="file" id="doc-file" accept=".pdf,image/*" style="display:none;" onchange="handleDocFileSelect(this)">
-        </label>
-      </div>
-    </div>
-    <div class="modal-footer">
-      <button class="btn-cancel" onclick="closeModal('modal-new-doc');resetDocForm()">Annuler</button>
-      <button class="btn-save" id="doc-save-btn" onclick="saveNewDocument()">✓ Enregistrer</button>
-    </div>
-  </div>
-</div>
-
-<button class="fab hidden" id="fab" onclick="openFab()">＋</button>
-
-<nav class="bottom-nav">
-  <button class="nav-item active" onclick="showTab('dashboard',this)">
-    <span class="nav-icon">📊</span>Accueil
-  </button>
-  <button class="nav-item" onclick="showTab('journal',this)">
-    <span class="nav-icon">📋</span>Visites
-  </button>
-  <button class="nav-item" onclick="showTab('sanitaire',this)">
-    <span class="nav-icon">💊</span>Sanitaire
-  </button>
-  <button class="nav-item" onclick="showTab('ruchers',this)">
-    <span class="nav-icon">📍</span>Ruchers
-  </button>
-  <button class="nav-item" onclick="showTab('carte',this); initMap()">
-    <span class="nav-icon">🗺️</span>Carte
-  </button>
-  <button class="nav-item" onclick="showTab('transhumance',this);populateMouvRucherSelect();renderMouvements();setTimeout(()=>{if(mouvMapInstance)mouvMapInstance.invalidateSize();},300);">
-    <span class="nav-icon">🚛</span>Transhumance
-  </button>
-  <button class="nav-item" onclick="showTab('plus',this)">
-    <span class="nav-icon">☰</span>Plus
-  </button>
+<!-- ── NAVIGATION ── -->
+<nav>
+  <span class="nav-logo">🐝 Ruchers VL</span>
+  <a href="https://haotakush.github.io/ruchers-vl/" class="nav-cta">Accéder à l'app →</a>
 </nav>
 
+<!-- ── HERO ── -->
+<section id="hero">
+  <span class="hero-bee">🐝</span>
+  <div class="label">Sur téléphone & ordinateur · La Réunion</div>
+  <h1>
+    Votre rucher,<br>
+    <span class="highlight">toujours sous contrôle.</span>
+  </h1>
+  <p>
+    Ruchers VL est votre carnet de bord apicole numérique. Suivez l'état de vos colonies,
+    tracez vos interventions visite après visite — et votre registre d'élevage légal se génère tout seul.
+  </p>
+  <div class="hero-btns">
+    <a href="https://haotakush.github.io/ruchers-vl/" class="btn-primary">
+      Ouvrir l'application →
+    </a>
+    <a href="#comment-ca-marche" class="btn-secondary">
+      Voir comment ça marche ↓
+    </a>
+  </div>
+  <div class="hero-badges">
+    <span class="badge-pill">📱 Sur téléphone</span>
+    <span class="badge-pill">💻 Sur ordinateur</span>
+    <span class="badge-pill">📶 Fonctionne hors ligne</span>
+    <span class="badge-pill">📖 Registre légal automatique</span>
+    <span class="badge-pill">🆓 Gratuit</span>
+  </div>
+</section>
 
-<!-- ============================================================
-     MODAL : NOUVELLE VISITE
-     ============================================================ -->
-<div class="modal-overlay" id="modal-journal">
-  <div class="modal">
-    <div class="modal-handle"></div>
-    <div class="modal-title">📋 Nouvelle visite</div>
+<!-- ── LE PROBLÈME ── -->
+<section id="probleme">
+  <div class="label">Le problème</div>
+  <h2>Vous visitez vos ruchers. Mais vous souvenez-vous de tout ?</h2>
+  <p class="sub">L'état d'une colonie il y a trois semaines, la date du dernier traitement, pourquoi vous aviez noté de surveiller ce rucher... Avec un carnet papier, ces informations se perdent.</p>
+  <div class="prob-grid">
+    <div class="prob-card">
+      <div class="icon">📓</div>
+      <h3>Historique introuvable</h3>
+      <p>Le carnet papier se perd, se mouille, s'oublie. Impossible de retrouver rapidement l'historique d'un rucher ou l'évolution d'une colonie au fil des saisons.</p>
+    </div>
+    <div class="prob-card">
+      <div class="icon">🧠</div>
+      <h3>Tout dans la tête</h3>
+      <p>Quand vous gérez plusieurs ruchers, les informations se mélangent. Ce traitement, c'était R01 ou R02 ? Cette reine qu'on avait notée à surveiller, c'était en mars ou en avril ?</p>
+    </div>
+    <div class="prob-card">
+      <div class="icon">⚖️</div>
+      <h3>Registre légal obligatoire</h3>
+      <p>Le registre d'élevage couvre 5 sections précises. Sans outil dédié, le tenir à jour demande du temps que vous n'avez pas forcément entre deux visites.</p>
+    </div>
+  </div>
+</section>
 
-    <div class="modal-body">
+<!-- ── COMMENT ÇA MARCHE ── -->
+<section id="comment-ca-marche">
+  <div class="label">Comment ça marche</div>
+  <h2>Simple comme une visite de rucher.</h2>
+  <p class="sub">L'application s'adapte à votre rythme — pas l'inverse. Accessible sur votre téléphone au rucher, ou depuis votre ordinateur à la maison.</p>
+  <div class="workflow-steps">
+    <div class="workflow-step">
+      <div class="step-num">1</div>
+      <div class="step-content">
+        <h3>Vous visitez votre rucher</h3>
+        <p>Comme d'habitude. Vous inspectez vos colonies, faites vos interventions, notez mentalement ce que vous observez.</p>
+      </div>
+    </div>
+    <div class="workflow-step">
+      <div class="step-num">2</div>
+      <div class="step-content">
+        <h3>Fin de visite — vous saisissez votre compte-rendu</h3>
+        <p>En quelques secondes depuis votre téléphone : état général du rucher, interventions réalisées, observations. Pendant que c'est encore frais, avant de passer au rucher suivant.</p>
+      </div>
+    </div>
+    <div class="workflow-step">
+      <div class="step-num">3</div>
+      <div class="step-content">
+        <h3>Avant la prochaine visite — vous relisez</h3>
+        <p>Ouvrez le dernier compte-rendu du rucher avant d'intervenir. Vous savez exactement où vous en étiez : état des colonies, traitements en cours, ce qu'il y avait à surveiller.</p>
+      </div>
+    </div>
+    <div class="workflow-step">
+      <div class="step-num">4</div>
+      <div class="step-content">
+        <h3>Le registre légal se constitue tout seul</h3>
+        <p>Chaque visite, chaque traitement, chaque mouvement de colonies s'accumule automatiquement dans votre registre d'élevage. Quand vous en avez besoin, il est prêt en un clic.</p>
+      </div>
+    </div>
+  </div>
+</section>
 
-      <!-- Date + Rucher -->
-      <div class="form-row-2">
+<!-- ── SECTIONS DE L'APP ── -->
+<div class="section-full" id="sections-app" style="border-top: 1px solid var(--border); padding: 80px 0;">
+  <div class="inner">
+    <div class="label">Les sections de l'application</div>
+    <h2>Toutes vos données, connectées entre elles.</h2>
+    <p class="sub">Chaque section alimente les autres. Ce que vous saisissez une fois est réutilisé partout — notamment dans votre registre légal.</p>
+
+    <!-- Ligne 1 : Ruchers + Journal -->
+    <div class="section-row">
+      <div class="app-section-card card-ruchers">
+        <div class="card-icon">📍</div>
+        <div class="card-title">Ruchers & Colonies</div>
+        <div class="card-desc">
+          Créez vos ruchers avec leur localisation GPS, zone altitudinale et nombre de ruches. C'est la structure de base — tout s'organise autour du rucher.
+        </div>
+        <div class="card-tags">
+          <span class="tag">Nom & commune</span>
+          <span class="tag">GPS automatique</span>
+          <span class="tag">Zone (bas / mi-pentes / hauts)</span>
+          <span class="tag">Nb ruches & ruchettes</span>
+        </div>
+      </div>
+      <div class="flow-arrow">
+        <svg viewBox="0 0 20 40" fill="none">
+          <line x1="10" y1="0" x2="10" y2="32" stroke="#D4892A" stroke-width="1.5" stroke-dasharray="4 3"/>
+          <polygon points="5,28 15,28 10,38" fill="#D4892A"/>
+        </svg>
+        <span>référence</span>
+      </div>
+      <div class="app-section-card card-journal">
+        <div class="card-icon">📋</div>
+        <div class="card-title">Journal de visites</div>
+        <div class="card-desc">
+          Enregistrez chaque visite par tap. État général du rucher, interventions, observations libres. L'historique complet de chaque rucher en un coup d'œil.
+        </div>
+        <div class="card-tags">
+          <span class="tag">État général du rucher</span>
+          <span class="tag">Interventions</span>
+          <span class="tag">Marquage physique</span>
+          <span class="tag">Photos & audio</span>
+          <span class="tag">Rappels</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Flèche centrale vers le bas -->
+    <div style="display:flex; justify-content:center; padding: 8px 0;">
+      <div class="flow-arrow" style="flex-direction:row; gap:8px;">
+        <svg viewBox="0 0 20 40" fill="none" style="transform: rotate(180deg);">
+          <line x1="10" y1="0" x2="10" y2="32" stroke="#D4892A" stroke-width="1.5" stroke-dasharray="4 3"/>
+          <polygon points="5,28 15,28 10,38" fill="#D4892A"/>
+        </svg>
+        <span style="writing-mode:vertical-lr; transform:rotate(180deg); color:var(--honey); font-size:0.72rem; font-weight:600;">alimente</span>
+        <svg viewBox="0 0 20 40" fill="none">
+          <line x1="10" y1="0" x2="10" y2="32" stroke="#D4892A" stroke-width="1.5" stroke-dasharray="4 3"/>
+          <polygon points="5,28 15,28 10,38" fill="#D4892A"/>
+        </svg>
+      </div>
+    </div>
+
+    <!-- Ligne 2 : Sanitaire + Mouvements -->
+    <div class="section-row">
+      <div class="app-section-card card-sanitaire">
+        <div class="card-icon">💊</div>
+        <div class="card-title">Sanitaire & Varroa</div>
+        <div class="card-desc">
+          Tracez chaque traitement varroa : produit, date, durée, numéro de lot. Guide de comptage VP100 intégré avec protocole étape par étape.
+        </div>
+        <div class="card-tags">
+          <span class="tag">Produit & lot AMM</span>
+          <span class="tag">Date pose & retrait</span>
+          <span class="tag">Guide comptage VP100</span>
+          <span class="tag">Rappels périodes de comptage</span>
+        </div>
+      </div>
+      <div class="flow-arrow">
+        <svg viewBox="0 0 20 40" fill="none">
+          <line x1="10" y1="0" x2="10" y2="32" stroke="#D4892A" stroke-width="1.5" stroke-dasharray="4 3"/>
+          <polygon points="5,28 15,28 10,38" fill="#D4892A"/>
+        </svg>
+        <span>alimente</span>
+      </div>
+      <div class="app-section-card card-mouvements">
+        <div class="card-icon">🚛</div>
+        <div class="card-title">Mouvements de colonies</div>
+        <div class="card-desc">
+          Enregistrez chaque transhumance avec GPS d'origine et de destination. Génère un récapitulatif partageable directement depuis votre téléphone.
+        </div>
+        <div class="card-tags">
+          <span class="tag">Origine → Destination</span>
+          <span class="tag">GPS automatique</span>
+          <span class="tag">Nb colonies</span>
+          <span class="tag">Récap partageable</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Flèche vers le registre -->
+    <div style="display:flex; flex-direction:column; align-items:center; padding: 16px 0; gap: 6px;">
+      <svg viewBox="0 0 20 50" fill="none" style="width:20px; height:50px;">
+        <line x1="10" y1="0" x2="10" y2="40" stroke="#81C784" stroke-width="2" stroke-dasharray="5 3"/>
+        <polygon points="4,35 16,35 10,48" fill="#81C784"/>
+      </svg>
+      <span style="font-size:0.8rem; color:var(--green); font-weight:700;">tout s'accumule automatiquement dans →</span>
+    </div>
+
+    <!-- Registre — pleine largeur -->
+    <div class="registre-card">
+      <div style="display:flex; align-items:center; gap:14px; margin-bottom:16px;">
+        <span style="font-size:2.2rem;">📖</span>
         <div>
-          <label class="form-label">Date *</label>
-          <input type="date" class="form-input" id="j-date">
-        </div>
-        <div>
-          <label class="form-label">Rucher *</label>
-          <select class="form-select" id="j-rucher" onchange="onJournalRucherChange()">
-            <option value="">—</option>
-          </select>
+          <div style="font-size:1.1rem; font-weight:800; color:var(--green);">Registre d'élevage apicole</div>
+          <div style="font-size:0.8rem; color:var(--soft);">Conforme à l'arrêté ministériel du 11 août 1994 · Export PDF en 1 clic · Partageable depuis votre téléphone</div>
         </div>
       </div>
-
-      <!-- Nb ruches + Nb ruchettes (pré-remplis) -->
-      <div class="form-row">
-        <label class="form-label">Effectif</label>
-        <div class="effectif-row">
-          <div class="effectif-item">
-            <div class="effectif-label">🐝 Ruches</div>
-            <div class="cadre-stepper">
-              <button type="button" class="step-btn" onclick="stepCadre('j-nb-ruches',-1,200)">−</button>
-              <span class="step-val" id="j-nb-ruches">0</span>
-              <button type="button" class="step-btn" onclick="stepCadre('j-nb-ruches',1,200)">+</button>
-            </div>
-          </div>
-          <div class="effectif-item">
-            <div class="effectif-label">🪣 Ruchettes</div>
-            <div class="cadre-stepper">
-              <button type="button" class="step-btn" onclick="stepCadre('j-nb-ruchettes',-1,50)">−</button>
-              <span class="step-val" id="j-nb-ruchettes">0</span>
-              <button type="button" class="step-btn" onclick="stepCadre('j-nb-ruchettes',1,50)">+</button>
-            </div>
-          </div>
+      <div class="sections-list">
+        <div class="section-item">
+          <span class="snum">§1</span>
+          <p><strong>Identification</strong>Nom, NAPI, adresse, SIRET</p>
+        </div>
+        <div class="section-item">
+          <span class="snum">§2</span>
+          <p><strong>Inventaire ruchers</strong>Tous vos ruchers avec GPS et effectifs</p>
+        </div>
+        <div class="section-item">
+          <span class="snum">§3</span>
+          <p><strong>Comptes-rendus de visites</strong>Toutes vos visites chronologiques</p>
+        </div>
+        <div class="section-item">
+          <span class="snum">§4</span>
+          <p><strong>Registre sanitaire</strong>Tous les traitements et comptages</p>
+        </div>
+        <div class="section-item">
+          <span class="snum">§5</span>
+          <p><strong>Mouvements de colonies</strong>Toutes les transhumances tracées</p>
         </div>
       </div>
-
-      <!-- État général du rucher -->
-      <div class="form-row">
-        <label class="form-label">État général du rucher <span style="font-size:0.72rem;color:var(--soft);font-weight:400;">(appréciation globale)</span></label>
-        <div class="quick-btns" id="j-force-btns">
-          <button type="button" class="qbtn" onclick="selectQuick('j-force-btns','Forte',this)">💪 Forte</button>
-          <button type="button" class="qbtn" onclick="selectQuick('j-force-btns','Moyenne',this)">👌 Moyenne</button>
-          <button type="button" class="qbtn" onclick="selectQuick('j-force-btns','Faible',this)">👎 Faible</button>
-        </div>
-        <input type="hidden" id="j-force" value="">
-      </div>
-
-      <!-- Marquage physique -->
-      <div class="form-row">
-        <label class="form-label">Marquage</label>
-        <div class="marquage-grid" id="j-marquage-grid">
-          <div class="marquage-item" data-val="Pierre seule">
-            <span class="marquage-icon">🪨</span>
-            <div>
-              <div class="marquage-label">Pierre seule</div>
-              <input class="champ-libre-input" placeholder="Description…" onclick="event.stopPropagation()">
-            </div>
-          </div>
-          <div class="marquage-item" data-val="Bois seul">
-            <span class="marquage-icon">🪵</span>
-            <div>
-              <div class="marquage-label">Bois seul</div>
-              <input class="champ-libre-input" placeholder="Description…" onclick="event.stopPropagation()">
-            </div>
-          </div>
-          <div class="marquage-item" data-val="Pierre + Bois">
-            <span class="marquage-icon">🪨🪵</span>
-            <div>
-              <div class="marquage-label">Pierre + Bois</div>
-              <input class="champ-libre-input" placeholder="Description…" onclick="event.stopPropagation()">
-            </div>
-          </div>
-          <div class="marquage-item" data-val="Autre marquage">
-            <span class="marquage-icon">🏷️</span>
-            <div>
-              <div class="marquage-label">Autre</div>
-              <input class="champ-libre-input" placeholder="Décrire…" onclick="event.stopPropagation()">
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Interventions -->
-      <div class="form-row">
-        <label class="form-label">Interventions réalisées</label>
-        <div class="check-grid" id="j-interventions-grid">
-          <div class="check-item" data-val="Nourrissement">🍯 Nourrissement</div>
-          <div class="check-item" data-val="Pose hausse">⬆️ Pose hausse</div>
-          <div class="check-item" data-val="Récolte hausse">🪣 Récolte hausse</div>
-          <div class="check-item" data-val="Pose traitement">💊 Pose traitement</div>
-          <div class="check-item" data-val="Retrait traitement">✂️ Retrait traitement</div>
-          <div class="check-item" data-val="Division">🔪 Division</div>
-          <div class="check-item" data-val="Changement reine">👑 Chgt reine</div>
-          <div class="check-item" data-val="Visite contrôle">🔍 Visite contrôle</div>
-          <div class="check-item" data-val="Nettoyage rucher">🌿 Nettoyage rucher</div>
-        </div>
-      </div>
-
-      <!-- Observations -->
-      <div class="form-row">
-        <label class="form-label">Observations libres</label>
-        <textarea class="form-textarea" id="j-obs" placeholder="Notes, alertes, remarques…"></textarea>
-      </div>
-
-      <!-- Photos de la visite -->
-      <div class="form-row">
-        <label class="form-label">Photos</label>
-        <div class="photo-scroll" id="j-photos-preview">
-          <label class="photo-add" title="Ajouter des photos">
-            <span style="font-size:1.4rem;">＋</span>
-            <span>Photo</span>
-            <input type="file" accept="image/*" multiple style="display:none"
-              onchange="addVisitPhoto(this)">
-          </label>
-        </div>
-      </div>
-
-      <!-- Mémo audio -->
-      <div class="form-row">
-        <label class="form-label">Mémo vocal (max 1 min)</label>
-        <div class="audio-recorder">
-          <div style="display:flex;align-items:center;gap:10px;">
-            <button type="button" class="audio-record-btn" id="j-record-btn"
-              onclick="startRecording()">🎙 Enregistrer</button>
-            <span class="audio-timer" id="j-record-timer"></span>
-          </div>
-          <div id="j-audio-preview"></div>
-        </div>
-      </div>
-
-      <!-- Rappel J+ -->
-      <div class="form-row">
-        <label class="form-label">📌 Rappel (optionnel)</label>
-        <div class="rappel-form">
-          <input type="text" id="j-rappel-texte" class="form-input"
-            placeholder="Ex : Contrôle varroa, vérif reine…">
-          <div class="rappel-delai-row">
-            <span class="rappel-delai-label">Délai</span>
-            <button type="button" class="rappel-chip" onclick="setRappelJours(7)">J+7</button>
-            <button type="button" class="rappel-chip" onclick="setRappelJours(14)">J+14</button>
-            <button type="button" class="rappel-chip" onclick="setRappelJours(21)">J+21</button>
-            <button type="button" class="rappel-chip" onclick="setRappelJours(30)">J+30</button>
-            <input type="number" id="j-rappel-jours" class="form-input rappel-jours-input"
-              placeholder="J+" min="1" max="90">
-          </div>
-        </div>
-      </div>
-
-    </div>
-    <div class="modal-footer">
-      <button class="btn-cancel" onclick="closeModal('modal-journal');resetJournalForm()">Annuler</button>
-      <button class="btn-save" onclick="saveJournal()">✓ Enregistrer</button>
     </div>
   </div>
 </div>
 
+<!-- ── CONNEXIONS ── -->
+<section id="connexions">
+  <div class="label">Connexions entre sections</div>
+  <h2>Saisissez une fois, réutilisé partout.</h2>
+  <p class="sub">Chaque donnée que vous entrez dans une section enrichit automatiquement les autres. Voici comment elles se connectent.</p>
+  <div class="connexion-grid">
 
-<!-- ============================================================
-     MODAL : COMPTE RENDU
-     ============================================================ -->
-<div class="modal-overlay" id="modal-compte-rendu">
-  <div class="modal">
-    <div class="modal-handle"></div>
-    <div class="modal-title">📋 Compte rendu de visite</div>
-    <div class="modal-body" id="cr-content"></div>
-    <div class="modal-footer">
-      <button class="btn-cancel" onclick="closeModal('modal-compte-rendu')">Fermer</button>
+    <div class="connexion-card">
+      <div class="from-to">
+        <span class="chip chip-blue">📍 Ruchers</span>
+        <span style="color:var(--honey); font-size:0.9rem;">→</span>
+        <span class="chip chip-green">📋 Journal</span>
+      </div>
+      <p>Quand vous créez une visite, vous sélectionnez un rucher. Toutes ses infos (commune, GPS, effectifs) sont automatiquement associées à la visite.</p>
     </div>
+
+    <div class="connexion-card">
+      <div class="from-to">
+        <span class="chip chip-blue">📍 Ruchers</span>
+        <span style="color:var(--honey); font-size:0.9rem;">→</span>
+        <span class="chip chip-honey">🚛 Mouvements</span>
+      </div>
+      <p>Les coordonnées GPS des ruchers d'origine et de destination sont pré-remplies automatiquement dans le formulaire de mouvement.</p>
+    </div>
+
+    <div class="connexion-card">
+      <div class="from-to">
+        <span class="chip chip-green">📋 Journal</span>
+        <span style="color:var(--honey); font-size:0.9rem;">→</span>
+        <span class="chip chip-amber">📖 Registre §3</span>
+      </div>
+      <p>Chaque compte-rendu de visite alimente directement la Section 3 du registre d'élevage. Zéro ressaisie — la conformité légale est assurée en continu.</p>
+    </div>
+
+    <div class="connexion-card">
+      <div class="from-to">
+        <span class="chip chip-purple">💊 Sanitaire</span>
+        <span style="color:var(--honey); font-size:0.9rem;">→</span>
+        <span class="chip chip-amber">📖 Registre §4</span>
+      </div>
+      <p>Chaque traitement enregistré alimente la Section 4 (registre sanitaire) du registre légal. Le numéro de lot AMM, la durée et le motif sont tous tracés.</p>
+    </div>
+
+    <div class="connexion-card">
+      <div class="from-to">
+        <span class="chip chip-honey">🚛 Mouvements</span>
+        <span style="color:var(--honey); font-size:0.9rem;">→</span>
+        <span class="chip chip-amber">📖 Registre §5</span>
+      </div>
+      <p>Chaque mouvement de colonies alimente la Section 5 du registre d'élevage. Origine, destination, nombre de colonies, date — tout est tracé.</p>
+    </div>
+
+    <div class="connexion-card">
+      <div class="from-to">
+        <span class="chip chip-blue">📍 Ruchers</span>
+        <span style="color:var(--honey); font-size:0.9rem;">→</span>
+        <span class="chip chip-amber">📖 Registre §1&2</span>
+      </div>
+      <p>Vos paramètres (NAPI, nom, adresse) et l'inventaire de vos ruchers constituent les deux premières sections du registre — renseignées une seule fois.</p>
+    </div>
+
   </div>
-</div>
+</section>
 
+<!-- ── REGISTRE PDF ── -->
+<section id="registre-pdf">
+  <div class="label">Le registre d'élevage PDF</div>
+  <h2>Un document légal généré automatiquement.</h2>
+  <p class="sub">Toutes vos données accumulées en un PDF structuré, conforme, partageable depuis votre téléphone.</p>
 
-<!-- ============================================================
-     MODAL : TRAITEMENT SANITAIRE
-     ============================================================ -->
-<div class="modal-overlay" id="modal-sanitaire">
-  <div class="modal">
-    <div class="modal-handle"></div>
-    <div class="modal-title">💊 Nouveau traitement</div>
-    <div class="modal-body">
-      <div class="form-row-2">
-        <div>
-          <label class="form-label">Date *</label>
-          <input type="date" class="form-input" id="s-date">
-        </div>
-        <div>
-          <label class="form-label">Rucher *</label>
-          <select class="form-select" id="s-rucher"><option value="">—</option></select>
+  <div style="display:flex; flex-wrap:wrap; gap:32px; align-items:flex-start; margin-top:8px;">
+
+    <!-- Maquette PDF -->
+    <div class="pdf-preview">
+      <div class="pdf-header">
+        <div class="icon">📖</div>
+        <div class="info">
+          <div class="title">Registre d'élevage apicole</div>
+          <div class="sub">PAYET Jean-Louis · NAPI A5100247</div>
         </div>
       </div>
-      <div class="form-row">
-        <label class="form-label">Type de traitement</label>
-        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:6px;">
-          <button type="button" class="type-chip" data-val="Varroa" onclick="selectTypeChip(this)">🪲 Varroa</button>
-          <button type="button" class="type-chip" data-val="Loque" onclick="selectTypeChip(this)">🦠 Loque</button>
-          <button type="button" class="type-chip" data-val="Nosémose" onclick="selectTypeChip(this)">🔬 Nosémose</button>
-          <button type="button" class="type-chip" data-val="Autre" onclick="selectTypeChip(this)">✏️ Autre</button>
-        </div>
-        <input type="text" class="form-input" id="s-type" placeholder="Préciser si besoin…" style="margin-top:4px;">
-      </div>
-      <div class="form-row-2">
-        <div><label class="form-label">Produit</label>
-          <input type="text" class="form-input" id="s-produit" list="produits-varroa-list" placeholder="Choisir ou saisir…" autocomplete="off">
-          <datalist id="produits-varroa-list">
-            <option value="Apivar®">
-            <option value="Apistan®">
-            <option value="Apilife Var®">
-            <option value="Formic Pro®">
-            <option value="Varromed®">
-            <option value="Calistrip Biox®">
-            <option value="Oxybee®">
-          </datalist>
-        </div>
-        <div><label class="form-label">Dose</label>
-          <input type="text" class="form-input" id="s-dose"></div>
-      </div>
-      <div class="form-row-2">
-        <div><label class="form-label">Durée</label>
-          <input type="text" class="form-input" id="s-duree" placeholder="30 jours"></div>
-        <div><label class="form-label">GDSA</label>
-          <select class="form-select" id="s-gdsa">
-            <option>Non</option><option>Oui</option>
-          </select></div>
-      </div>
-      <div class="form-row">
-        <label class="form-label">Motif / Réf. ordonnance</label>
-        <input type="text" class="form-input" id="s-motif" placeholder="Ex : Traitement trimestriel · Ord. Dr Martin 15/03/2026">
-      </div>
-      <div class="form-row">
-        <label class="form-label">Document joint <span style="color:var(--soft);font-weight:400;">(ordonnance, analyse…)</span></label>
-        <div style="display:flex;align-items:center;gap:10px;">
-          <label style="display:inline-flex;align-items:center;gap:6px;padding:8px 14px;background:var(--honey-pale);border:1.5px dashed var(--honey);border-radius:10px;cursor:pointer;font-size:.85rem;color:var(--honey);font-weight:600;">
-            📎 Joindre
-            <input type="file" id="s-doc-file" accept=".pdf,image/*" style="display:none;" onchange="handleSanitaireDocSelect(this)">
-          </label>
-          <span id="s-doc-name" style="font-size:.8rem;color:var(--soft);">Aucun document joint</span>
-        </div>
-      </div>
-      <div class="form-row">
-        <label class="form-label">Observations</label>
-        <textarea class="form-textarea" id="s-obs"></textarea>
-      </div>
-    </div>
-    <div class="modal-footer">
-      <button class="btn-cancel" onclick="closeModal('modal-sanitaire');resetSanitaireForm()">Annuler</button>
-      <button class="btn-save" onclick="saveSanitaire()">✓ Enregistrer</button>
-    </div>
-  </div>
-</div>
-
-
-<!-- ============================================================
-     MODAL : NOUVEAU RUCHER
-     ============================================================ -->
-<div class="modal-overlay" id="modal-rucher">
-  <div class="modal">
-    <div class="modal-handle"></div>
-    <div class="modal-title">📍 Nouveau rucher</div>
-    <div class="modal-body">
-      <div class="form-row-2">
-        <div><label class="form-label">ID *</label>
-          <input type="text" class="form-input" id="nr-id" placeholder="R10, R11…"></div>
-        <div><label class="form-label">Nb ruches</label>
-          <input type="number" class="form-input" id="nr-nb" placeholder="0"></div>
-      </div>
-      <div class="form-row-2">
-        <div><label class="form-label">Nb ruchettes</label>
-          <input type="number" class="form-input" id="nr-nb-ruchettes" placeholder="0"></div>
-        <div><label class="form-label">Altitude (m)</label>
-          <input type="number" class="form-input" id="nr-alt" placeholder="ex: 400"></div>
-      </div>
-      <div class="form-row">
-        <label class="form-label">Lieu-dit *</label>
-        <input type="text" class="form-input" id="nr-lieu" placeholder="Nom du lieu">
-      </div>
-      <div class="form-row-2">
-        <div><label class="form-label">Code postal</label>
-          <input type="text" class="form-input" id="nr-cp" placeholder="974xx"></div>
-        <div><label class="form-label">Zone</label>
-          <select class="form-select" id="nr-zone">
-            <option value="Bas">Bas (0–400m)</option>
-            <option value="Mi-pentes">Mi-pentes (400–800m)</option>
-            <option value="Hauts">Hauts (800m+)</option>
-          </select></div>
-      </div>
-      <div class="form-row">
-        <label class="form-label">Position GPS</label>
-        <button type="button" id="btn-gps-nr" onclick="grabGPSForRucher('nr')"
-          style="width:100%;padding:10px 0;background:var(--accent);color:#fff;border:none;border-radius:10px;font-size:0.88rem;font-weight:600;cursor:pointer;letter-spacing:0.02em;">
-          📍 Ma position GPS actuelle
-        </button>
-        <div id="gps-hint-nr" style="font-size:0.72rem;color:var(--soft);margin-top:4px;display:none;"></div>
-      </div>
-      <div class="form-row-2" style="margin-top:4px;">
-        <div><label class="form-label" style="font-size:0.68rem;">Latitude (manuel)</label>
-          <div style="display:flex;gap:6px;align-items:center;">
-            <input type="text" inputmode="decimal" class="form-input" id="nr-lat" placeholder="-21.xxxx" style="flex:1;font-size:0.82rem;">
-            <button type="button" onclick="toggleSign('nr-lat')" style="flex-shrink:0;padding:0 10px;height:42px;border-radius:8px;border:1px solid var(--border);background:var(--card);color:var(--text);font-size:1.1rem;cursor:pointer;" title="Changer le signe">±</button>
-          </div>
-        </div>
-        <div><label class="form-label" style="font-size:0.68rem;">Longitude (manuel)</label>
-          <div style="display:flex;gap:6px;align-items:center;">
-            <input type="text" inputmode="decimal" class="form-input" id="nr-lng" placeholder="55.xxxx" style="flex:1;font-size:0.82rem;">
-            <button type="button" onclick="toggleSign('nr-lng')" style="flex-shrink:0;padding:0 10px;height:42px;border-radius:8px;border:1px solid var(--border);background:var(--card);color:var(--text);font-size:1.1rem;cursor:pointer;" title="Changer le signe">±</button>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="modal-footer">
-      <button class="btn-cancel" onclick="closeModal('modal-rucher')">Annuler</button>
-      <button class="btn-save" onclick="saveNewRucher()">✓ Ajouter</button>
-    </div>
-  </div>
-</div>
-
-
-<!-- ============================================================
-     MODAL : MODIFIER RUCHER
-     ============================================================ -->
-<div class="modal-overlay" id="modal-edit-rucher">
-  <div class="modal">
-    <div class="modal-handle"></div>
-    <div class="modal-title">✏️ Modifier le rucher</div>
-    <div class="modal-body">
-      <div class="form-row-2">
-        <div><label class="form-label">ID</label>
-          <input type="text" class="form-input" id="er-id" readonly
-            style="background:var(--border);cursor:not-allowed;"></div>
-        <div><label class="form-label">Nb ruches</label>
-          <input type="number" class="form-input" id="er-nb" placeholder="0"></div>
-      </div>
-      <div class="form-row-2">
-        <div><label class="form-label">Nb ruchettes</label>
-          <input type="number" class="form-input" id="er-nb-ruchettes" placeholder="0"></div>
-        <div><label class="form-label">Altitude (m)</label>
-          <input type="number" class="form-input" id="er-alt" placeholder="ex: 400"></div>
-      </div>
-      <div class="form-row">
-        <label class="form-label">Lieu-dit *</label>
-        <input type="text" class="form-input" id="er-lieu" placeholder="Nom du lieu">
-      </div>
-      <div class="form-row-2">
-        <div><label class="form-label">Code postal</label>
-          <input type="text" class="form-input" id="er-cp" placeholder="974xx"></div>
-        <div><label class="form-label">Zone</label>
-          <select class="form-select" id="er-zone">
-            <option value="Bas">Bas (0–400m)</option>
-            <option value="Mi-pentes">Mi-pentes (400–800m)</option>
-            <option value="Hauts">Hauts (800m+)</option>
-          </select></div>
-      </div>
-      <div class="form-row">
-        <label class="form-label">Position GPS</label>
-        <button type="button" id="btn-gps-er" onclick="grabGPSForRucher('er')"
-          style="width:100%;padding:10px 0;background:var(--accent);color:#fff;border:none;border-radius:10px;font-size:0.88rem;font-weight:600;cursor:pointer;letter-spacing:0.02em;">
-          📍 Ma position GPS actuelle
-        </button>
-        <div id="gps-hint-er" style="font-size:0.72rem;color:var(--soft);margin-top:4px;display:none;"></div>
-      </div>
-      <div class="form-row-2" style="margin-top:4px;">
-        <div><label class="form-label" style="font-size:0.68rem;">Latitude (manuel)</label>
-          <div style="display:flex;gap:6px;align-items:center;">
-            <input type="text" inputmode="decimal" class="form-input" id="er-lat" placeholder="-21.xxxx" style="flex:1;font-size:0.82rem;">
-            <button type="button" onclick="toggleSign('er-lat')" style="flex-shrink:0;padding:0 10px;height:42px;border-radius:8px;border:1px solid var(--border);background:var(--card);color:var(--text);font-size:1.1rem;cursor:pointer;" title="Changer le signe">±</button>
-          </div>
-        </div>
-        <div><label class="form-label" style="font-size:0.68rem;">Longitude (manuel)</label>
-          <div style="display:flex;gap:6px;align-items:center;">
-            <input type="text" inputmode="decimal" class="form-input" id="er-lng" placeholder="55.xxxx" style="flex:1;font-size:0.82rem;">
-            <button type="button" onclick="toggleSign('er-lng')" style="flex-shrink:0;padding:0 10px;height:42px;border-radius:8px;border:1px solid var(--border);background:var(--card);color:var(--text);font-size:1.1rem;cursor:pointer;" title="Changer le signe">±</button>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="modal-footer">
-      <button class="btn-cancel" onclick="closeModal('modal-edit-rucher')">Annuler</button>
-      <button class="btn-save" onclick="saveEditRucher()">✓ Enregistrer</button>
-    </div>
-  </div>
-</div>
-
-
-<!-- ============================================================
-     MODAL : CONFIRMATION SUPPRESSION
-     ============================================================ -->
-<div class="modal-overlay" id="modal-confirm">
-  <div class="modal modal-confirm-inner">
-    <div class="modal-handle"></div>
-    <div class="modal-title">⚠️ Confirmation</div>
-    <div class="modal-body">
-      <p id="confirm-message" style="font-size:0.9rem;color:var(--ink);text-align:center;padding:8px 0;"></p>
-    </div>
-    <div class="modal-footer">
-      <button class="btn-cancel" onclick="confirmNo()">Annuler</button>
-      <button class="btn-save" style="background:linear-gradient(135deg,#E53935,#C62828);" onclick="confirmYes()">🗑 Supprimer</button>
-    </div>
-  </div>
-</div>
-
-
-<!-- ============================================================
-     MODAL : NOUVEAUTÉS (affiché automatiquement à chaque version)
-     ============================================================ -->
-<div class="modal-overlay" id="modal-whats-new" style="display:none;align-items:center;padding:20px;">
-  <div class="modal" style="border-radius:20px;max-height:80vh;display:flex;flex-direction:column;">
-    <div class="modal-handle"></div>
-
-    <!-- En-tête -->
-    <div style="padding:20px 20px 0;flex-shrink:0;">
-      <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px;">
-        <span style="font-size:1.6rem;">🍯</span>
-        <div>
-          <div style="font-family:'Playfair Display',serif;font-size:1.15rem;font-weight:700;color:var(--ink);">
-            Nouveautés
-          </div>
-          <div id="wn-version" style="font-size:0.75rem;color:var(--honey);font-weight:600;font-family:'DM Mono',monospace;"></div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Contenu scrollable — ✏️ MODIFIER ICI À CHAQUE MAJ -->
-    <div class="modal-body" id="wn-content" style="overflow-y:auto;padding:16px 20px;flex:1;">
-
-      <!-- === V2.0 === -->
-      <div class="wn-section">
-        <div class="wn-badge" style="background:#D4892A;">V2.0</div>
-
-        <div class="wn-item">
-          <span class="wn-icon">🗺️</span>
+      <div class="pdf-body">
+        <div class="pdf-section">
+          <span class="pdf-num">§1</span>
           <div>
-            <div class="wn-title">Carte des transhumances</div>
-            <div class="wn-desc">Chaque mouvement de rucher s'affiche sur une mini-carte Leaflet. Les destinations GPS sont reliées par une flèche pointillée depuis l'origine.</div>
+            <div class="pdf-title">Identification apiculteur <span class="pdf-auto">AUTO</span></div>
+            <div class="pdf-sub">Nom, NAPI, SIRET, adresse complète</div>
           </div>
         </div>
-
-        <div class="wn-item">
-          <span class="wn-icon">📍</span>
+        <div class="pdf-section">
+          <span class="pdf-num">§2</span>
           <div>
-            <div class="wn-title">GPS en un tap dans les ruchers</div>
-            <div class="wn-desc">Bouton "Ma position GPS actuelle" dans les fiches rucher — capturez vos coordonnées exactes sur le terrain sans saisie manuelle.</div>
+            <div class="pdf-title">Inventaire des ruchers <span class="pdf-auto">AUTO</span></div>
+            <div class="pdf-sub">Lieu, GPS, zone, nb ruches & ruchettes</div>
           </div>
         </div>
-
-        <div class="wn-item">
-          <span class="wn-icon">🚛</span>
+        <div class="pdf-section">
+          <span class="pdf-num">§3</span>
           <div>
-            <div class="wn-title">GPS destination de mouvement</div>
-            <div class="wn-desc">Lors d'un mouvement de colonies, capturez les coordonnées GPS de votre destination directement depuis le formulaire.</div>
+            <div class="pdf-title">Comptes-rendus de visites <span class="pdf-auto">AUTO</span></div>
+            <div class="pdf-sub">Toutes vos visites avec observations</div>
           </div>
         </div>
-
-        <div class="wn-item">
-          <span class="wn-icon">⏳</span>
+        <div class="pdf-section">
+          <span class="pdf-num">§4</span>
           <div>
-            <div class="wn-title">Écran de chargement</div>
-            <div class="wn-desc">Un écran de démarrage avec l'abeille animée s'affiche pendant la synchronisation — plus d'attente silencieuse à l'ouverture de l'app.</div>
+            <div class="pdf-title">Registre sanitaire <span class="pdf-auto">AUTO</span></div>
+            <div class="pdf-sub">Traitements, lots AMM, durées</div>
           </div>
         </div>
-
-        <div class="wn-item">
-          <span class="wn-icon">🔄</span>
+        <div class="pdf-section">
+          <span class="pdf-num">§5</span>
           <div>
-            <div class="wn-title">Cache offline amélioré</div>
-            <div class="wn-desc">Tous les modules (mouvements, documents, conformité) sont désormais disponibles hors connexion grâce au Service Worker mis à jour.</div>
+            <div class="pdf-title">Mouvements de colonies <span class="pdf-auto">AUTO</span></div>
+            <div class="pdf-sub">Transhumances avec GPS et dates</div>
           </div>
         </div>
       </div>
-      <!-- === FIN V2.0 === -->
-
-      <!-- === V1.3 === -->
-      <div class="wn-section" style="margin-top:16px;opacity:0.65;">
-        <div class="wn-badge" style="background:#888;font-size:0.7rem;">V1.3</div>
-
-        <div class="wn-item">
-          <span class="wn-icon">📸</span>
-          <div>
-            <div class="wn-title">Photos dans les visites</div>
-            <div class="wn-desc">Ajoutez des photos directement lors d'une visite, sauvegardées dans le cloud.</div>
-          </div>
-        </div>
-
-        <div class="wn-item">
-          <span class="wn-icon">🎙</span>
-          <div>
-            <div class="wn-title">Mémo vocal</div>
-            <div class="wn-desc">Enregistrez une note vocale pendant vos observations. Réécoutez-la depuis le compte rendu.</div>
-          </div>
-        </div>
-
-        <div class="wn-item">
-          <span class="wn-icon">☁️</span>
-          <div>
-            <div class="wn-title">Synchronisation multi-appareils</div>
-            <div class="wn-desc">Vos données se synchronisent automatiquement entre tous vos appareils connectés.</div>
-          </div>
-        </div>
-      </div>
-      <!-- === FIN V1.3 === -->
-
     </div>
 
-    <!-- Pied -->
-    <div class="modal-footer" style="flex-shrink:0;">
-      <button class="btn-save" style="width:100%;" onclick="dismissWhatsNew()">C'est parti ! 🐝</button>
-    </div>
-  </div>
-</div>
-
-
-<!-- LIGHTBOX -->
-<div class="lightbox" id="lightbox" onclick="closeLightbox()">
-  <button class="lightbox-close">✕</button>
-  <img id="lb-img" src="" alt="Photo du rucher">
-</div>
-
-<!-- TOAST -->
-<div class="toast" id="toast"></div>
-
-<!-- BANNIÈRE MISE À JOUR PWA -->
-<div id="update-banner" style="
-  display:none;
-  position:fixed;
-  bottom:80px;
-  left:50%;
-  transform:translateX(-50%);
-  background:#1A1208;
-  color:#FFF8E7;
-  padding:12px 16px;
-  border-radius:16px;
-  box-shadow:0 4px 24px rgba(0,0,0,0.45);
-  z-index:9999;
-  align-items:center;
-  gap:12px;
-  font-family:'DM Sans',sans-serif;
-  font-size:0.85rem;
-  white-space:nowrap;
-  max-width:calc(100vw - 40px);
-  border:1px solid rgba(212,137,42,0.3);
-">
-  <span>🆕 Mise à jour disponible !</span>
-  <button id="update-btn" style="
-    background:#D4892A;
-    color:#fff;
-    border:none;
-    border-radius:10px;
-    padding:6px 14px;
-    font-weight:600;
-    cursor:pointer;
-    font-family:'DM Sans',sans-serif;
-    font-size:0.82rem;
-  ">Actualiser</button>
-  <button onclick="document.getElementById('update-banner').style.display='none'" style="
-    background:none;
-    border:none;
-    color:rgba(255,248,231,0.5);
-    cursor:pointer;
-    font-size:1rem;
-    padding:0 2px;
-  ">✕</button>
-</div>
-
-<!-- ============================================================
-     MODAL : RÉCAPITULATIF DÉCLARATION DE MOUVEMENT
-     ============================================================ -->
-<div class="modal-overlay" id="modal-recap">
-  <div class="modal">
-    <div class="modal-handle"></div>
-    <div class="modal-title">📋 Récapitulatif déclaration</div>
-    <div class="modal-body" style="padding-bottom:8px;">
-
-      <!-- Bandeau info -->
-      <div style="background:#1a2a3a;border:1px solid #2a4a6a;border-radius:10px;padding:10px 14px;
-                  font-size:0.75rem;color:#aaa;line-height:1.6;margin-bottom:16px;">
-        ℹ️ Récapitulatif à utiliser pour remplir le formulaire en ligne sur
-        <strong style="color:#64B5F6;">MesDémarches</strong> ou à envoyer par email à la DDPP.
+    <!-- Infos -->
+    <div class="pdf-info" style="flex:1; min-width:240px;">
+      <div class="pdf-info-item">
+        <span style="font-size:1.4rem;">⚖️</span>
+        <p><strong>Conformité légale</strong><br>Structure conforme à l'arrêté ministériel du 11 août 1994 relatif à la tenue du registre d'élevage apicole.</p>
       </div>
-
-      <!-- Apiculteur -->
-      <div style="font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;
-                  color:var(--honey);margin-bottom:8px;">👤 Apiculteur</div>
-      <div style="background:var(--card);border-radius:12px;padding:12px 14px;margin-bottom:14px;
-                  display:flex;flex-direction:column;gap:7px;">
-        <div style="display:flex;justify-content:space-between;font-size:0.82rem;">
-          <span style="color:var(--soft);">Nom</span>
-          <span id="recap-nom" style="font-weight:600;color:var(--ink);text-align:right;max-width:60%;">—</span>
-        </div>
-        <div style="display:flex;justify-content:space-between;font-size:0.82rem;">
-          <span style="color:var(--soft);">NAPI</span>
-          <span id="recap-napi" style="font-weight:600;color:var(--honey);font-family:'DM Mono',monospace;">—</span>
-        </div>
-        <div style="display:flex;justify-content:space-between;font-size:0.82rem;">
-          <span style="color:var(--soft);">Adresse</span>
-          <span id="recap-adresse" style="font-weight:600;color:var(--ink);text-align:right;max-width:60%;">—</span>
-        </div>
-        <div style="display:flex;justify-content:space-between;font-size:0.82rem;">
-          <span style="color:var(--soft);">Email</span>
-          <span id="recap-email" style="font-weight:600;color:var(--ink);">—</span>
-        </div>
+      <div class="pdf-info-item">
+        <span style="font-size:1.4rem;">📤</span>
+        <p><strong>Partage natif mobile</strong><br>Partagez directement depuis votre téléphone — par email, WhatsApp, AirDrop ou impression PDF.</p>
       </div>
-
-      <!-- Rucher d'origine -->
-      <div style="font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;
-                  color:var(--honey);margin-bottom:8px;">📍 Rucher d'origine</div>
-      <div style="background:var(--card);border-radius:12px;padding:12px 14px;margin-bottom:14px;
-                  display:flex;flex-direction:column;gap:7px;">
-        <div style="display:flex;justify-content:space-between;font-size:0.82rem;">
-          <span style="color:var(--soft);">Identifiant</span>
-          <span id="recap-rucher-id" style="font-weight:600;color:var(--ink);text-align:right;max-width:60%;">—</span>
-        </div>
-        <div style="display:flex;justify-content:space-between;font-size:0.82rem;">
-          <span style="color:var(--soft);">Adresse</span>
-          <span id="recap-rucher-adr" style="font-weight:600;color:var(--ink);text-align:right;max-width:60%;">—</span>
-        </div>
-        <div style="display:flex;justify-content:space-between;font-size:0.82rem;">
-          <span style="color:var(--soft);">GPS</span>
-          <span id="recap-gps" style="font-weight:600;color:var(--honey);font-family:'DM Mono',monospace;font-size:0.75rem;">—</span>
-        </div>
+      <div class="pdf-info-item">
+        <span style="font-size:1.4rem;">🔄</span>
+        <p><strong>Toujours à jour</strong><br>Le registre reflète vos données en temps réel. Chaque nouvelle visite, traitement ou mouvement y apparaît immédiatement.</p>
       </div>
-
-      <!-- Mouvement -->
-      <div style="font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;
-                  color:var(--honey);margin-bottom:8px;">🚛 Mouvement</div>
-      <div style="background:var(--card);border-radius:12px;padding:12px 14px;margin-bottom:14px;
-                  display:flex;flex-direction:column;gap:7px;">
-        <div style="display:flex;justify-content:space-between;font-size:0.82rem;">
-          <span style="color:var(--soft);">Date</span>
-          <span id="recap-date" style="font-weight:600;color:var(--ink);">—</span>
-        </div>
-        <div style="display:flex;justify-content:space-between;font-size:0.82rem;">
-          <span style="color:var(--soft);">Nb colonies</span>
-          <span id="recap-nb" style="font-weight:600;color:var(--ink);">—</span>
-        </div>
-        <div style="display:flex;justify-content:space-between;font-size:0.82rem;">
-          <span style="color:var(--soft);">Destination</span>
-          <span id="recap-dest" style="font-weight:600;color:var(--ink);text-align:right;max-width:60%;">—</span>
-        </div>
-        <div style="display:flex;justify-content:space-between;font-size:0.82rem;">
-          <span style="color:var(--soft);">Motif</span>
-          <span id="recap-motif" style="font-weight:600;color:var(--ink);">—</span>
-        </div>
-        <div id="recap-obs-row" style="display:none;justify-content:space-between;font-size:0.82rem;">
-          <span style="color:var(--soft);">Observations</span>
-          <span id="recap-obs" style="font-weight:600;color:var(--ink);text-align:right;max-width:60%;">—</span>
-        </div>
-      </div>
-
-    </div>
-    <div class="modal-footer" style="gap:10px;">
-      <button class="btn-cancel" onclick="closeModal('modal-recap')">Fermer</button>
-      <button class="btn-save" onclick="partagerRecap()"
-        style="display:flex;align-items:center;gap:6px;justify-content:center;">
-        <span>📤</span> Partager
-      </button>
-    </div>
-  </div>
-</div>
-
-</div><!-- /app-container -->
-
-
-<!-- SCRIPTS -->
-<script src="js/firebase-init.js"></script>
-<script src="js/data.js"></script>
-<script src="js/ui.js"></script>
-<script src="js/journal.js"></script>
-<script src="js/sanitaire.js"></script>
-<script src="js/ruchers.js"></script>
-<script src="js/dashboard.js"></script>
-<script src="js/carte.js"></script>
-<script src="js/registre.js"></script>
-<script src="js/params-sync.js"></script>
-<script src="js/documents.js"></script>
-<script src="js/mouvements.js"></script>
-<script src="js/firebase-db.js"></script>
-<script src="js/app.js"></script>
-<script src="js/firebase-auth.js"></script>
-<script src="js/admin-conformite.js"></script>
-
-<!-- ✏️ Changer WHATS_NEW_VERSION à chaque mise à jour -->
-<script>
-  const WHATS_NEW_VERSION = '2.0';
-
-  function showWhatsNew() {
-    const el = document.getElementById('modal-whats-new');
-    const vEl = document.getElementById('wn-version');
-    if (vEl) vEl.textContent = 'Version ' + WHATS_NEW_VERSION;
-    if (el) el.style.display = 'flex';
-  }
-
-  function dismissWhatsNew() {
-    const el = document.getElementById('modal-whats-new');
-    if (el) el.style.display = 'none';
-    localStorage.setItem('whatsNewSeen', WHATS_NEW_VERSION);
-  }
-
-  // Affiché après le login, pas avant — on expose la fonction pour app.js
-  window._checkWhatsNew = function () {
-    const seen = localStorage.getItem('whatsNewSeen');
-    if (seen !== WHATS_NEW_VERSION) showWhatsNew();
-  };
-</script>
-
-<!-- ============================================================
-     SERVICE WORKER — Cache PWA + Notification de mise à jour
-     ============================================================ -->
-<script>
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('./sw.js')
-        .then(reg => {
-          console.log('[App] Service Worker enregistré, scope :', reg.scope);
-
-          // Cas 1 : un nouveau SW vient juste d'être trouvé
-          reg.addEventListener('updatefound', () => {
-            const newWorker = reg.installing;
-            newWorker.addEventListener('statechange', () => {
-              // Le nouveau SW est installé et attend (un ancien SW contrôle encore la page)
-              if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                showUpdateBanner(newWorker);
-              }
-            });
-          });
-
-          // Cas 2 : un SW en attente existait déjà avant ce chargement de page
-          if (reg.waiting && navigator.serviceWorker.controller) {
-            showUpdateBanner(reg.waiting);
-          }
-
-          // Forcer la vérification d'une mise à jour à chaque ouverture de l'appli
-          reg.update();
-        })
-        .catch(err => console.warn('[App] Erreur enregistrement SW :', err));
-
-      // Quand le nouveau SW prend le contrôle, recharger la page pour appliquer la MAJ
-      navigator.serviceWorker.addEventListener('controllerchange', () => {
-        window.location.reload();
-      });
-    });
-  }
-
-  function showUpdateBanner(worker) {
-    const banner = document.getElementById('update-banner');
-    const btn    = document.getElementById('update-btn');
-    if (!banner || !btn) return;
-    banner.style.display = 'flex';
-    btn.onclick = () => {
-      banner.style.display = 'none';
-      worker.postMessage({ type: 'SKIP_WAITING' });
-    };
-  }
-</script>
-
-<!-- ============================================================
-     MODAL : GUIDE VARROA
-     ============================================================ -->
-<div class="modal-overlay" id="modal-varroa-guide" onclick="if(event.target===this)closeModal('modal-varroa-guide')">
-  <div class="modal" style="max-height:90vh;overflow-y:auto;">
-    <div class="modal-handle"></div>
-    <div class="modal-title">🪲 Guide Varroa — GDS Réunion</div>
-    <div class="modal-body" style="padding-bottom:24px;">
-
-      <!-- COMMENT COMPTER — nouveau -->
-      <div style="margin-bottom:20px;padding:14px;border-radius:12px;background:#1a1a2a;border:1px solid #2a2a4a;">
-        <div style="font-weight:700;font-size:0.9rem;margin-bottom:12px;color:#90CAF9;">🧪 Comment effectuer un comptage ?</div>
-
-        <!-- Méthode -->
-        <div style="font-size:0.75rem;font-weight:600;color:#64B5F6;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px;">Méthode : lavage au sucre glace</div>
-
-        <!-- Matériel -->
-        <div style="padding:10px;border-radius:8px;background:#12122a;margin-bottom:12px;">
-          <div style="font-size:0.76rem;font-weight:600;color:#aaa;margin-bottom:6px;">🛠 Matériel nécessaire</div>
-          <div style="display:flex;flex-wrap:wrap;gap:5px;">
-            <span style="background:#1e2a3a;border-radius:6px;padding:3px 8px;font-size:0.73rem;color:#90CAF9;">Bocal 500ml avec couvercle grillage maille 3mm</span>
-            <span style="background:#1e2a3a;border-radius:6px;padding:3px 8px;font-size:0.73rem;color:#90CAF9;">Sucre glace (~2 cuillères à soupe)</span>
-            <span style="background:#1e2a3a;border-radius:6px;padding:3px 8px;font-size:0.73rem;color:#90CAF9;">Assiette blanche ou bac blanc</span>
-            <span style="background:#1e2a3a;border-radius:6px;padding:3px 8px;font-size:0.73rem;color:#90CAF9;">Cuillère doseuse (environ 1/2 tasse)</span>
-            <span style="background:#1e2a3a;border-radius:6px;padding:3px 8px;font-size:0.73rem;color:#90CAF9;">Eau (pour rinçage)</span>
-          </div>
-        </div>
-
-        <!-- Étapes -->
-        <div style="display:flex;flex-direction:column;gap:7px;">
-
-          <div style="display:flex;gap:10px;align-items:flex-start;">
-            <div style="min-width:22px;height:22px;border-radius:50%;background:#1565C0;color:#fff;font-size:0.72rem;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;">1</div>
-            <div style="font-size:0.78rem;color:#ccc;line-height:1.5;"><strong style="color:#90CAF9;">Prélever 300 abeilles</strong> — Placer le bocal ouvert sur un cadre de couvain et laisser les abeilles tomber dedans, ou cuillèrer directement sur un cadre ouvert. <span style="color:#FFB300;">Éviter la reine !</span> 300 abeilles ≈ une demi-tasse, ≈ 30g.</div>
-          </div>
-
-          <div style="display:flex;gap:10px;align-items:flex-start;">
-            <div style="min-width:22px;height:22px;border-radius:50%;background:#1565C0;color:#fff;font-size:0.72rem;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;">2</div>
-            <div style="font-size:0.78rem;color:#ccc;line-height:1.5;"><strong style="color:#90CAF9;">Ajouter le sucre glace</strong> — Verser 2 bonnes cuillères à soupe de sucre glace dans le bocal. Fermer avec le couvercle grillagé.</div>
-          </div>
-
-          <div style="display:flex;gap:10px;align-items:flex-start;">
-            <div style="min-width:22px;height:22px;border-radius:50%;background:#1565C0;color:#fff;font-size:0.72rem;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;">3</div>
-            <div style="font-size:0.78rem;color:#ccc;line-height:1.5;"><strong style="color:#90CAF9;">Agiter 1 minute</strong> — Secouer le bocal doucement pendant 60 secondes pour bien enrober les abeilles. Le sucre décolle les varroas des abeilles.</div>
-          </div>
-
-          <div style="display:flex;gap:10px;align-items:flex-start;">
-            <div style="min-width:22px;height:22px;border-radius:50%;background:#1565C0;color:#fff;font-size:0.72rem;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;">4</div>
-            <div style="font-size:0.78rem;color:#ccc;line-height:1.5;"><strong style="color:#90CAF9;">Tamiser sur assiette blanche</strong> — Retourner le bocal grillagé au-dessus de l'assiette, secouer pour faire passer le sucre + varroas. Ajouter un peu d'eau pour dissoudre le sucre et faire apparaître les varroas rouges/bruns.</div>
-          </div>
-
-          <div style="display:flex;gap:10px;align-items:flex-start;">
-            <div style="min-width:22px;height:22px;border-radius:50%;background:#1565C0;color:#fff;font-size:0.72rem;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;">5</div>
-            <div style="font-size:0.78rem;color:#ccc;line-height:1.5;"><strong style="color:#90CAF9;">Compter les varroas</strong> — Dénombrer les petits points rouges/bruns ovales (~1,5mm) visibles dans le sucre. Calculer : <strong style="color:#FFD54F;">VP100 = nb varroas × 100 ÷ 300</strong></div>
-          </div>
-
-        </div>
-
-        <!-- Libérer les abeilles -->
-        <div style="margin-top:10px;padding:8px 10px;border-radius:8px;background:#1a2a1a;font-size:0.76rem;color:#81C784;">
-          🐝 <strong>Libérer les abeilles</strong> après comptage — ouvrir le bocal devant la ruche, les abeilles encore vivantes retrouveront la colonie.
-        </div>
-
-        <!-- Variante alcool -->
-        <div style="margin-top:10px;padding:8px 10px;border-radius:8px;background:#2a1a2a;font-size:0.76rem;color:#CE93D8;">
-          🧴 <strong>Variante alcool</strong> (plus précise, abeilles non récupérables) — remplacer le sucre par de l'alcool à 70°. Agiter 30 sec, tamiser. Même calcul VP100.
-        </div>
-      </div>
-
-      <!-- Comptages -->
-      <div style="margin-bottom:18px;">
-        <div style="font-weight:700;font-size:0.9rem;margin-bottom:10px;color:var(--accent);">🔬 Quand faire des comptages ?</div>
-        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;">
-          <span style="padding:4px 12px;border-radius:20px;background:#1a2a3a;color:#64B5F6;font-size:0.78rem;font-weight:600;">Décembre</span>
-          <span style="padding:4px 12px;border-radius:20px;background:#1a2a3a;color:#64B5F6;font-size:0.78rem;font-weight:600;">Mars</span>
-          <span style="padding:4px 12px;border-radius:20px;background:#1a2a3a;color:#64B5F6;font-size:0.78rem;font-weight:600;">Mai</span>
-          <span style="padding:4px 12px;border-radius:20px;background:#1a2a3a;color:#64B5F6;font-size:0.78rem;font-weight:600;">Juillet</span>
-        </div>
-        <div style="font-size:0.78rem;color:var(--soft);line-height:1.6;">En sortie de miellée pour choisir le traitement adapté · En fin de traitement pour vérifier son efficacité</div>
-      </div>
-
-      <!-- Seuils VP100 -->
-      <div style="margin-bottom:18px;">
-        <div style="font-weight:700;font-size:0.9rem;margin-bottom:10px;color:var(--accent);">📊 Interpréter les seuils VP100</div>
-        <div style="display:flex;flex-direction:column;gap:8px;">
-          <div style="display:flex;align-items:flex-start;gap:10px;padding:10px;border-radius:10px;background:#1a2d1a;">
-            <span style="font-size:1.1rem;">🟢</span>
-            <div style="font-size:0.82rem;line-height:1.5;"><strong style="color:#4CAF50;">VP100 ≤ 3</strong><br><span style="color:#aaa;">Renouveler le comptage dans 1 mois</span></div>
-          </div>
-          <div style="display:flex;align-items:flex-start;gap:10px;padding:10px;border-radius:10px;background:#2a2a1a;">
-            <span style="font-size:1.1rem;">🟡</span>
-            <div style="font-size:0.82rem;line-height:1.5;"><strong style="color:#FFB300;">3 &lt; VP100 ≤ 10</strong><br><span style="color:#aaa;">Respecter le calendrier de traitement prévu</span></div>
-          </div>
-          <div style="display:flex;align-items:flex-start;gap:10px;padding:10px;border-radius:10px;background:#2d1a1a;">
-            <span style="font-size:1.1rem;">🔴</span>
-            <div style="font-size:0.82rem;line-height:1.5;"><strong style="color:#EF5350;">VP100 &gt; 10</strong><br><span style="color:#aaa;">Appliquer dès maintenant le traitement prévu</span></div>
-          </div>
-          <div style="display:flex;align-items:flex-start;gap:10px;padding:10px;border-radius:10px;background:#3a1a1a;border:1px solid #5a2a2a;">
-            <span style="font-size:1.1rem;">🚨</span>
-            <div style="font-size:0.82rem;line-height:1.5;"><strong style="color:#FF5252;">VP100 &gt; 15</strong><br><span style="color:#aaa;">Retirer le couvain fermé + traitement flash + recompter</span></div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Produits -->
-      <div style="margin-bottom:18px;">
-        <div style="font-weight:700;font-size:0.9rem;margin-bottom:10px;color:var(--accent);">💊 Produits autorisés</div>
-        <div style="font-size:0.8rem;line-height:2;color:var(--soft);">
-          <div><span style="color:#FFB300;font-weight:600;">Conventionnel longue durée :</span> Apivar®, Apistan®</div>
-          <div><span style="color:#4CAF50;font-weight:600;">Naturel sans encagement :</span> Apilife Var®, Formic Pro®, Varromed®, Calistrip Biox®</div>
-          <div><span style="color:#64B5F6;font-weight:600;">Naturel avec encagement :</span> Oxybee®, Calistrip Biox®</div>
-        </div>
-      </div>
-
-      <!-- Protocoles -->
-      <div style="margin-bottom:10px;">
-        <div style="font-weight:700;font-size:0.9rem;margin-bottom:10px;color:var(--accent);">📋 Protocoles disponibles</div>
-        <div style="display:flex;flex-direction:column;gap:8px;">
-          <div style="padding:10px;border-radius:10px;background:var(--card);border:1px solid var(--border);">
-            <div style="font-weight:600;font-size:0.82rem;margin-bottom:4px;">Classique</div>
-            <div style="font-size:0.76rem;color:var(--soft);line-height:1.5;">Traitements longs · Protection estivale · Miellées intermédiaires d'hiver</div>
-          </div>
-          <div style="padding:10px;border-radius:10px;background:var(--card);border:1px solid var(--border);">
-            <div style="font-weight:600;font-size:0.82rem;margin-bottom:4px;">Inversé</div>
-            <div style="font-size:0.76rem;color:var(--soft);line-height:1.5;">Traitements longs · Protection hivernale · Bon redémarrage fin hiver</div>
-          </div>
-          <div style="padding:10px;border-radius:10px;background:var(--card);border:1px solid var(--border);">
-            <div style="font-weight:600;font-size:0.82rem;margin-bottom:4px;">Bio sans encagement</div>
-            <div style="font-size:0.76rem;color:var(--soft);line-height:1.5;">Traitements courts · Plus flexible · Moins technique</div>
-          </div>
-          <div style="padding:10px;border-radius:10px;background:var(--card);border:1px solid var(--border);">
-            <div style="font-weight:600;font-size:0.82rem;margin-bottom:4px;">Bio 1 à 3 encagements</div>
-            <div style="font-size:0.76rem;color:var(--soft);line-height:1.5;">Traitements courts · Couplable au remérage · Améliore le remplissage des hausses</div>
-          </div>
-          <div style="padding:10px;border-radius:10px;background:var(--card);border:1px solid var(--border);">
-            <div style="font-weight:600;font-size:0.82rem;margin-bottom:4px;">Forêt</div>
-            <div style="font-size:0.76rem;color:var(--soft);line-height:1.5;">Transhumance · Productivité augmentée</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Règles -->
-      <div style="padding:12px;border-radius:10px;background:#2a1a0a;border:1px solid #5a3a0a;font-size:0.78rem;color:#aaa;line-height:1.8;">
-        <div style="font-weight:700;color:#FFB300;margin-bottom:6px;">⚠️ Règles de base</div>
-        Ne pas traiter en présence de hausse · Ne pas extraire de miel du corps de ruche · Traiter toutes les ruches du rucher en même temps · Max 2 traitements longue durée par an · Alterner les molécules d'une miellée à l'autre
-      </div>
-
-    </div>
-    <div class="modal-footer">
-      <button class="btn-save" onclick="closeModal('modal-varroa-guide')">Fermer</button>
-    </div>
-  </div>
-</div>
-
-<!-- ============================================================
-     MODAL : TUTORIEL / GUIDE DE DÉMARRAGE
-     ============================================================ -->
-<div class="modal-overlay" id="modal-tutoriel">
-  <div class="modal" style="max-height:92vh;overflow:hidden;display:flex;flex-direction:column;padding:0;">
-
-    <!-- Slides container -->
-    <div id="tuto-slides" style="flex:1;overflow:hidden;position:relative;">
-
-      <!-- SLIDE 1 — Bienvenue -->
-      <div class="tuto-slide" data-slide="0" style="display:flex;">
-        <div style="text-align:center;padding:32px 24px 16px;">
-          <div style="font-size:3.5rem;margin-bottom:12px;">🐝</div>
-          <div style="font-size:1.3rem;font-weight:800;color:var(--honey);margin-bottom:8px;">Bienvenue sur Ruchers VL</div>
-          <div style="font-size:0.88rem;color:var(--soft);line-height:1.6;margin-bottom:20px;">Votre carnet de bord apicole numérique — remplissez votre compte-rendu <strong style="color:var(--fg);">en quelques secondes juste après chaque visite</strong>, pendant que tout est encore frais.</div>
-          <div style="background:#1a2a1a;border-radius:12px;padding:14px 16px;text-align:left;margin-bottom:16px;">
-            <div style="font-size:0.78rem;font-weight:700;color:#81C784;margin-bottom:8px;">✅ Ce que l'app fait pour vous</div>
-            <div style="font-size:0.8rem;color:#aaa;line-height:2;">
-              📖 Génère votre registre d'élevage légal automatiquement<br>
-              📊 Suit l'état de toutes vos colonies en un coup d'œil<br>
-              💊 Trace vos traitements sanitaires<br>
-              🚛 Gère vos mouvements de transhumance<br>
-              📶 Fonctionne <strong style="color:var(--fg);">hors ligne</strong> sur le terrain
-            </div>
-          </div>
-          <div style="background:#2a1a0a;border-radius:10px;padding:12px 14px;border:1px solid #5a3a0a;text-align:left;">
-            <div style="font-size:0.78rem;font-weight:700;color:#FFB300;margin-bottom:4px;">⚙️ Première étape importante</div>
-            <div style="font-size:0.78rem;color:#aaa;line-height:1.6;">Renseignez votre <strong style="color:var(--fg);">NAPI, nom et adresse</strong> dans Paramètres — ces infos apparaissent dans votre registre légal.</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- SLIDE 2 — Ruchers & colonies -->
-      <div class="tuto-slide" data-slide="1" style="display:none;">
-        <div style="padding:28px 24px 16px;">
-          <div style="text-align:center;font-size:2.8rem;margin-bottom:10px;">📍</div>
-          <div style="text-align:center;font-size:1.1rem;font-weight:800;color:var(--honey);margin-bottom:6px;">Ruchers & Colonies</div>
-          <div style="text-align:center;font-size:0.82rem;color:var(--soft);margin-bottom:18px;">La base de toutes vos données</div>
-
-          <div style="display:flex;flex-direction:column;gap:10px;">
-            <div style="background:var(--card);border-radius:10px;padding:12px 14px;border:1px solid var(--border);">
-              <div style="font-size:0.82rem;font-weight:700;color:var(--fg);margin-bottom:4px;">📍 Créer un rucher</div>
-              <div style="font-size:0.78rem;color:var(--soft);line-height:1.6;">Donnez-lui un nom, une zone (Bas / Mi-pentes / Hauts), et ajoutez sa position GPS. Chaque rucher regroupe toutes ses visites, traitements et mouvements.</div>
-            </div>
-            <div style="background:var(--card);border-radius:10px;padding:12px 14px;border:1px solid var(--border);">
-              <div style="font-size:0.82rem;font-weight:700;color:var(--fg);margin-bottom:4px;">🐝 Ruches & ruchettes</div>
-              <div style="font-size:0.78rem;color:var(--soft);line-height:1.6;">Indiquez le nombre de ruches et ruchettes par rucher. Ces chiffres alimentent automatiquement votre registre d'élevage et votre déclaration annuelle.</div>
-            </div>
-            <div style="background:#1a1a2a;border-radius:10px;padding:10px 14px;border:1px solid #2a2a4a;">
-              <div style="font-size:0.76rem;color:#90CAF9;line-height:1.6;">💡 <strong>Plus votre rucher est bien renseigné, plus votre registre légal sera complet.</strong> Le GPS permet aussi de valider vos mouvements de transhumance.</div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- SLIDE 3 — Journal de visites -->
-      <div class="tuto-slide" data-slide="2" style="display:none;">
-        <div style="padding:28px 24px 16px;">
-          <div style="text-align:center;font-size:2.8rem;margin-bottom:10px;">📋</div>
-          <div style="text-align:center;font-size:1.1rem;font-weight:800;color:var(--honey);margin-bottom:6px;">Journal de visites</div>
-          <div style="text-align:center;font-size:0.82rem;color:var(--soft);margin-bottom:18px;">Enregistrez une visite en moins de 5 minutes</div>
-
-          <div style="display:flex;flex-direction:column;gap:10px;">
-            <div style="background:var(--card);border-radius:10px;padding:12px 14px;border:1px solid var(--border);">
-              <div style="font-size:0.82rem;font-weight:700;color:var(--fg);margin-bottom:6px;">🏷 Saisie par tap à la fin de la visite</div>
-              <div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:6px;">
-                <span style="background:#1a2d1a;border-radius:6px;padding:3px 9px;font-size:0.73rem;color:#81C784;">💪 État du rucher</span>
-                <span style="background:#2a1a2a;border-radius:6px;padding:3px 9px;font-size:0.73rem;color:#CE93D8;">👑 État reine</span>
-                <span style="background:#2a2a1a;border-radius:6px;padding:3px 9px;font-size:0.73rem;color:#FFD54F;">🔧 Interventions</span>
-                <span style="background:#1e2a3a;border-radius:6px;padding:3px 9px;font-size:0.73rem;color:#90CAF9;">💬 Observations</span>
-              </div>
-              <div style="font-size:0.76rem;color:var(--soft);line-height:1.5;">Tout par tap, en quelques secondes, juste après avoir fermé la ruche.</div>
-            </div>
-            <div style="background:#1a1a2a;border-radius:10px;padding:12px 14px;border:1px solid #2a2a4a;">
-              <div style="font-size:0.82rem;font-weight:700;color:#90CAF9;margin-bottom:4px;">🔄 Le bon workflow terrain</div>
-              <div style="font-size:0.76rem;color:#aaa;line-height:1.8;">
-                1️⃣ Vous visitez le rucher<br>
-                2️⃣ <strong style="color:var(--fg);">Fin de visite</strong> → vous ouvrez l'app et saisissez le compte-rendu<br>
-                3️⃣ <strong style="color:var(--fg);">Avant la prochaine visite</strong> → vous relisez le dernier compte-rendu pour savoir où vous en étiez
-              </div>
-            </div>
-            <div style="background:#1a2d1a;border-radius:10px;padding:10px 14px;border:1px solid #2a4d2a;">
-              <div style="font-size:0.76rem;color:#81C784;line-height:1.6;">📖 Chaque visite alimente automatiquement votre registre d'élevage légal. <strong style="color:var(--fg);">Zéro ressaisie.</strong></div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- SLIDE 4 — Sanitaire & varroa -->
-      <div class="tuto-slide" data-slide="3" style="display:none;">
-        <div style="padding:28px 24px 16px;">
-          <div style="text-align:center;font-size:2.8rem;margin-bottom:10px;">💊</div>
-          <div style="text-align:center;font-size:1.1rem;font-weight:800;color:var(--honey);margin-bottom:6px;">Sanitaire & Varroa</div>
-          <div style="text-align:center;font-size:0.82rem;color:var(--soft);margin-bottom:18px;">Suivi légal de vos traitements</div>
-
-          <div style="display:flex;flex-direction:column;gap:10px;">
-            <div style="background:var(--card);border-radius:10px;padding:12px 14px;border:1px solid var(--border);">
-              <div style="font-size:0.82rem;font-weight:700;color:var(--fg);margin-bottom:4px;">💉 Enregistrer un traitement</div>
-              <div style="font-size:0.76rem;color:var(--soft);line-height:1.6;">Produit (Apivar®, Oxybee®…), date de pose, durée, motif. Le traitement apparaît dans la Section 4 de votre registre sanitaire — <strong style="color:var(--fg);">obligatoire légalement.</strong></div>
-            </div>
-            <div style="background:#2a1a0a;border-radius:10px;padding:12px 14px;border:1px solid #4a3a1a;">
-              <div style="font-size:0.82rem;font-weight:700;color:#FFB300;margin-bottom:4px;">🔬 Guide Varroa intégré</div>
-              <div style="font-size:0.76rem;color:#aaa;line-height:1.6;">Appuyez sur <em>"ℹ️ Guide varroa"</em> pour accéder au protocole de comptage étape par étape, aux seuils VP100 et aux produits autorisés — directement depuis le terrain.</div>
-            </div>
-            <div style="background:#1a1a2a;border-radius:10px;padding:10px 14px;border:1px solid #2a2a4a;">
-              <div style="font-size:0.76rem;color:#90CAF9;line-height:1.6;">📅 L'app vous rappelle automatiquement les périodes de comptage : Décembre, Mars, Mai, Juillet.</div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- SLIDE 5 — Transhumance -->
-      <div class="tuto-slide" data-slide="4" style="display:none;">
-        <div style="padding:28px 24px 16px;">
-          <div style="text-align:center;font-size:2.8rem;margin-bottom:10px;">🚛</div>
-          <div style="text-align:center;font-size:1.1rem;font-weight:800;color:var(--honey);margin-bottom:6px;">Mouvements de colonies</div>
-          <div style="text-align:center;font-size:0.82rem;color:var(--soft);margin-bottom;18px;">Transhumance tracée et conforme</div>
-
-          <div style="display:flex;flex-direction:column;gap:10px;margin-top:8px;">
-            <div style="background:var(--card);border-radius:10px;padding:12px 14px;border:1px solid var(--border);">
-              <div style="font-size:0.82rem;font-weight:700;color:var(--fg);margin-bottom:4px;">📍 GPS automatique</div>
-              <div style="font-size:0.76rem;color:var(--soft);line-height:1.6;">L'origine et la destination sont pré-remplies depuis vos ruchers. Les coordonnées GPS sont capturées automatiquement — utile pour justifier vos déplacements.</div>
-            </div>
-            <div style="background:var(--card);border-radius:10px;padding:12px 14px;border:1px solid var(--border);">
-              <div style="font-size:0.82rem;font-weight:700;color:var(--fg);margin-bottom:4px;">📋 Récapitulatif déclaration</div>
-              <div style="font-size:0.76rem;color:var(--soft);line-height:1.6;">Chaque mouvement génère un récapitulatif que vous pouvez <strong style="color:var(--fg);">partager directement</strong> depuis votre téléphone — par email, WhatsApp ou impression.</div>
-            </div>
-            <div style="background:#1a2d1a;border-radius:10px;padding:10px 14px;border:1px solid #2a4d2a;">
-              <div style="font-size:0.76rem;color:#81C784;line-height:1.6;">📖 Tous les mouvements apparaissent en Section 5 de votre registre d'élevage. <strong style="color:var(--fg);">Aucune ressaisie nécessaire.</strong></div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- SLIDE 6 — Registre & export -->
-      <div class="tuto-slide" data-slide="5" style="display:none;">
-        <div style="text-align:center;padding:28px 24px 16px;">
-          <div style="font-size:3rem;margin-bottom:10px;">📖</div>
-          <div style="font-size:1.1rem;font-weight:800;color:var(--honey);margin-bottom:6px;">Registre d'élevage en 1 clic</div>
-          <div style="font-size:0.82rem;color:var(--soft);margin-bottom:18px;">Toutes vos données → PDF légal conforme</div>
-
-          <div style="background:#1a2d1a;border-radius:12px;padding:14px 16px;text-align:left;margin-bottom:12px;">
-            <div style="font-size:0.78rem;font-weight:700;color:#81C784;margin-bottom:8px;">📄 5 sections générées automatiquement</div>
-            <div style="font-size:0.78rem;color:#aaa;line-height:2;">
-              1️⃣ Identification de l'apiculteur (NAPI, adresse)<br>
-              2️⃣ Inventaire de vos ruchers<br>
-              3️⃣ Comptes-rendus de visites<br>
-              4️⃣ Registre sanitaire (traitements)<br>
-              5️⃣ Mouvements de colonies
-            </div>
-          </div>
-          <div style="background:#2a1a0a;border-radius:10px;padding:10px 14px;border:1px solid #5a3a0a;text-align:left;margin-bottom:16px;">
-            <div style="font-size:0.76rem;color:#FFB300;line-height:1.6;">⚖️ Conforme à l'arrêté ministériel du 11 août 1994 · Exportable en PDF · Partageable directement depuis votre téléphone</div>
-          </div>
-
-          <div style="font-size:1.6rem;margin-bottom:8px;">🎉</div>
-          <div style="font-size:0.88rem;font-weight:700;color:var(--fg);margin-bottom:4px;">Vous êtes prêt !</div>
-          <div style="font-size:0.78rem;color:var(--soft);margin-bottom:20px;">Commencez par renseigner vos paramètres, puis créez votre premier rucher.</div>
-
-          <button onclick="closeTutoriel(true)" style="width:100%;padding:14px;border-radius:12px;background:var(--honey);color:#1A1208;font-weight:800;font-size:0.95rem;border:none;cursor:pointer;">
-            ⚙️ Configurer mon profil →
-          </button>
-        </div>
-      </div>
-
-    </div><!-- /tuto-slides -->
-
-    <!-- Navigation -->
-    <div style="padding:16px 20px 24px;background:var(--bg);border-top:1px solid var(--border);">
-      <!-- Dots -->
-      <div id="tuto-dots" style="display:flex;justify-content:center;gap:7px;margin-bottom:16px;">
-        <span class="tuto-dot tuto-dot-active"></span>
-        <span class="tuto-dot"></span>
-        <span class="tuto-dot"></span>
-        <span class="tuto-dot"></span>
-        <span class="tuto-dot"></span>
-        <span class="tuto-dot"></span>
-      </div>
-      <!-- Boutons -->
-      <div style="display:flex;gap:10px;align-items:center;">
-        <button id="tuto-btn-prev" onclick="tutoNav(-1)" style="padding:10px 18px;border-radius:10px;border:1px solid var(--border);background:var(--card);color:var(--soft);font-size:0.85rem;cursor:pointer;display:none;">← Préc.</button>
-        <button id="tuto-btn-skip" onclick="closeTutoriel(false)" style="padding:10px 14px;border-radius:10px;border:1px solid var(--border);background:transparent;color:var(--soft);font-size:0.8rem;cursor:pointer;margin-left:auto;">Passer</button>
-        <button id="tuto-btn-next" onclick="tutoNav(1)" style="padding:10px 22px;border-radius:10px;background:var(--honey);color:#1A1208;font-weight:700;font-size:0.85rem;border:none;cursor:pointer;">Suivant →</button>
+      <div class="pdf-info-item">
+        <span style="font-size:1.4rem;">📶</span>
+        <p><strong>Fonctionne hors ligne</strong><br>Vos données sont synchronisées automatiquement quand vous retrouvez le réseau. Aucune perte de donnée.</p>
       </div>
     </div>
 
   </div>
-</div>
+</section>
 
-<!-- CSS tutoriel -->
-<style>
-.tuto-dot {
-  width: 8px; height: 8px;
-  border-radius: 50%;
-  background: var(--border);
-  transition: all 0.3s;
-  cursor: pointer;
-}
-.tuto-dot-active {
-  background: var(--honey);
-  width: 22px;
-  border-radius: 4px;
-}
-.tuto-slide {
-  flex-direction: column;
-  overflow-y: auto;
-  max-height: calc(92vh - 120px);
-}
-</style>
+<!-- ── COMPARAISON ABEILLES ── -->
+<section id="comparaison" style="border-top: 1px solid var(--border);">
+  <div class="label">Dans la ruche comme dans l'app</div>
+  <h2>Les abeilles n'oublient rien.<br><span class="highlight">Vous non plus.</span></h2>
+  <p class="sub">Une colonie fonctionne parce que chaque information circule au bon endroit, au bon moment. Ruchers VL fonctionne sur le même principe.</p>
 
-<!-- ============================================================
-     MODAL : CGU & POLITIQUE DE CONFIDENTIALITÉ
-     ============================================================ -->
-<div class="modal-overlay" id="modal-cgu" onclick="if(event.target===this)closeModal('modal-cgu')">
-  <div class="modal" style="max-height:90vh;overflow-y:auto;">
-    <div class="modal-handle"></div>
-    <div class="modal-title">📄 CGU &amp; Confidentialité</div>
-    <div class="modal-body" style="font-size:0.82rem;line-height:1.7;color:var(--soft);padding-bottom:24px;">
+  <div style="display:flex; flex-direction:column; gap:12px; margin-top:8px;">
 
-      <div style="font-weight:700;color:var(--text);margin-bottom:6px;">1. Éditeur</div>
-      <p>Ruchers VL est une application développée et exploitée par un apiculteur indépendant à La Réunion. Contact : <strong>eric.valencourt@gmail.com</strong></p>
-
-      <div style="font-weight:700;color:var(--text);margin:14px 0 6px;">2. Objet</div>
-      <p>Ruchers VL est un carnet numérique destiné aux apiculteurs. Il permet de gérer les visites, les traitements sanitaires, les ruchers et de générer un registre d'élevage conforme à la réglementation française (arrêté du 5 juin 2000).</p>
-
-      <div style="font-weight:700;color:var(--text);margin:14px 0 6px;">3. Données collectées</div>
-      <p>L'application collecte uniquement les données que vous saisissez : informations sur vos ruchers, visites, traitements, photos et enregistrements audio. Ces données sont stockées sur Firebase (Google) et accessibles uniquement depuis votre compte.</p>
-
-      <div style="font-weight:700;color:var(--text);margin:14px 0 6px;">4. Utilisation des données</div>
-      <p>Vos données sont utilisées exclusivement pour le fonctionnement de l'application. Elles ne sont ni vendues, ni partagées, ni utilisées à des fins commerciales ou publicitaires.</p>
-
-      <div style="font-weight:700;color:var(--text);margin:14px 0 6px;">5. Hébergement</div>
-      <p>Les données sont hébergées sur les serveurs Firebase de Google (Google Cloud, région Europe). Google respecte le RGPD en tant que sous-traitant.</p>
-
-      <div style="font-weight:700;color:var(--text);margin:14px 0 6px;">6. Vos droits (RGPD)</div>
-      <p>Conformément au RGPD, vous disposez d'un droit d'accès, de rectification, de portabilité et de suppression de vos données. Pour exercer ces droits, contactez : <strong>eric.valencourt@gmail.com</strong><br>
-      Vous pouvez également supprimer votre compte directement depuis l'application (onglet Plus → Supprimer mon compte), ce qui efface définitivement toutes vos données.</p>
-
-      <div style="font-weight:700;color:var(--text);margin:14px 0 6px;">7. Sécurité</div>
-      <p>L'accès à l'application est protégé par authentification email/mot de passe. Chaque utilisateur n'a accès qu'à ses propres données.</p>
-
-      <div style="font-weight:700;color:var(--text);margin:14px 0 6px;">8. Modifications</div>
-      <p>Ces CGU peuvent être mises à jour. En continuant à utiliser l'application, vous acceptez les nouvelles conditions.</p>
-
-      <div style="margin-top:18px;padding:10px;background:var(--card);border-radius:8px;font-size:0.75rem;color:var(--soft);">
-        Dernière mise à jour : avril 2026 · Ruchers VL
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+      <div style="background:rgba(212,137,42,0.06); border:1px solid rgba(212,137,42,0.2); border-radius:14px; padding:18px;">
+        <div style="font-size:1.4rem; margin-bottom:8px;">🐝</div>
+        <div style="font-size:0.82rem; font-weight:700; color:var(--honey-light); margin-bottom:4px;">La butineuse rentre toujours à la bonne ruche</div>
+        <div style="font-size:0.78rem; color:var(--soft); line-height:1.6;">Elle sait exactement où elle va et d'où elle vient.</div>
+      </div>
+      <div style="background:rgba(129,199,132,0.06); border:1px solid rgba(129,199,132,0.2); border-radius:14px; padding:18px;">
+        <div style="font-size:1.4rem; margin-bottom:8px;">📍</div>
+        <div style="font-size:0.82rem; font-weight:700; color:var(--green); margin-bottom:4px;">Chaque visite est liée à son rucher</div>
+        <div style="font-size:0.78rem; color:var(--soft); line-height:1.6;">Historique complet de chaque rucher, accessible en un instant.</div>
       </div>
     </div>
-    <div class="modal-footer">
-      <button class="btn-save" onclick="closeModal('modal-cgu')">Fermer</button>
+
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+      <div style="background:rgba(212,137,42,0.06); border:1px solid rgba(212,137,42,0.2); border-radius:14px; padding:18px;">
+        <div style="font-size:1.4rem; margin-bottom:8px;">👑</div>
+        <div style="font-size:0.82rem; font-weight:700; color:var(--honey-light); margin-bottom:4px;">La colonie sait toujours où en est sa reine</div>
+        <div style="font-size:0.78rem; color:var(--soft); line-height:1.6;">L'état de la colonie guide toutes les décisions de la ruche.</div>
+      </div>
+      <div style="background:rgba(144,202,249,0.06); border:1px solid rgba(144,202,249,0.2); border-radius:14px; padding:18px;">
+        <div style="font-size:1.4rem; margin-bottom:8px;">📋</div>
+        <div style="font-size:0.82rem; font-weight:700; color:var(--blue); margin-bottom:4px;">Vous savez toujours où en est votre rucher</div>
+        <div style="font-size:0.78rem; color:var(--soft); line-height:1.6;">Avant chaque visite, relisez le dernier compte-rendu — rien ne vous échappe.</div>
+      </div>
+    </div>
+
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+      <div style="background:rgba(212,137,42,0.06); border:1px solid rgba(212,137,42,0.2); border-radius:14px; padding:18px;">
+        <div style="font-size:1.4rem; margin-bottom:8px;">🔬</div>
+        <div style="font-size:0.82rem; font-weight:700; color:var(--honey-light); margin-bottom:4px;">Les gardiennes surveillent sans relâche</div>
+        <div style="font-size:0.78rem; color:var(--soft); line-height:1.6;">Elles détectent le moindre problème sanitaire avant qu'il ne s'aggrave.</div>
+      </div>
+      <div style="background:rgba(206,147,216,0.06); border:1px solid rgba(206,147,216,0.2); border-radius:14px; padding:18px;">
+        <div style="font-size:1.4rem; margin-bottom:8px;">💊</div>
+        <div style="font-size:0.82rem; font-weight:700; color:var(--purple); margin-bottom:4px;">Vos traitements sont tracés, vos rappels automatiques</div>
+        <div style="font-size:0.78rem; color:var(--soft); line-height:1.6;">Guide varroa intégré, périodes de comptage, historique sanitaire complet.</div>
+      </div>
+    </div>
+
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+      <div style="background:rgba(212,137,42,0.06); border:1px solid rgba(212,137,42,0.2); border-radius:14px; padding:18px;">
+        <div style="font-size:1.4rem; margin-bottom:8px;">🚀</div>
+        <div style="font-size:0.82rem; font-weight:700; color:var(--honey-light); margin-bottom:4px;">L'essaim part toujours au bon moment</div>
+        <div style="font-size:0.78rem; color:var(--soft); line-height:1.6;">La transhumance, c'est naturel — chaque colonie va là où les fleurs l'attendent.</div>
+      </div>
+      <div style="background:rgba(255,183,77,0.06); border:1px solid rgba(255,183,77,0.2); border-radius:14px; padding:18px;">
+        <div style="font-size:1.4rem; margin-bottom:8px;">🚛</div>
+        <div style="font-size:0.82rem; font-weight:700; color:#FFB74D; margin-bottom:4px;">Vos transhumances sont tracées avec GPS</div>
+        <div style="font-size:0.78rem; color:var(--soft); line-height:1.6;">Chaque mouvement de colonies est enregistré, partageable et intégré dans votre registre.</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ── POUR QUI ── -->
+<section id="pour-qui">
+  <div class="label">Pour qui</div>
+  <h2>Que vous ayez 5 ruches ou 200.</h2>
+  <p class="sub">L'application s'adapte à votre pratique, que vous soyez apiculteur de loisir ou professionnel.</p>
+  <div class="audience-grid" style="grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));">
+    <div class="audience-card">
+      <div class="icon">🍯</div>
+      <h3>Pour le suivi de vos ruchers</h3>
+      <p>Gardez un œil sur l'évolution de chaque colonie saison après saison. L'historique de vos visites vous permet de repérer les ruchers à problèmes, suivre les reines, anticiper les interventions.</p>
+    </div>
+    <div class="audience-card">
+      <div class="icon">💊</div>
+      <h3>Pour votre suivi sanitaire</h3>
+      <p>Ne perdez plus la trace de vos traitements varroa. Produit, date, durée, numéro de lot — tout est tracé. Le guide de comptage VP100 est intégré directement dans l'application.</p>
+    </div>
+    <div class="audience-card">
+      <div class="icon">📖</div>
+      <h3>Pour votre registre légal</h3>
+      <p>Votre registre d'élevage conforme à la réglementation se génère automatiquement à partir de vos données. Exportez-le en PDF et partagez-le depuis votre téléphone en un clic.</p>
     </div>
   </div>
-</div>
+</section>
+
+<!-- ── CTA FINAL ── -->
+<section id="cta-final">
+  <div class="label">Commencer maintenant</div>
+  <h2>Votre premier rucher enregistré en 2 minutes.</h2>
+  <p>Créez votre compte depuis votre téléphone ou votre ordinateur. Ajoutez votre premier rucher, faites votre première visite — et votre registre commence à se constituer.</p>
+  <div class="hero-btns" style="justify-content:center;">
+    <a href="https://haotakush.github.io/ruchers-vl/" class="btn-primary">
+      Ouvrir l'application →
+    </a>
+  </div>
+  <div style="margin-top:24px; font-size:0.8rem; color:var(--soft);">
+    Gratuit · Sur téléphone & ordinateur · Fonctionne hors ligne · Données sécurisées
+  </div>
+</section>
+
+<!-- ── FOOTER ── -->
+<footer>
+  <p>🐝 Ruchers VL — Carnet de bord apicole numérique pour La Réunion</p>
+  <p style="margin-top:8px;">
+    <a href="https://haotakush.github.io/ruchers-vl/">Application</a>
+    &nbsp;·&nbsp;
+    <a href="mailto:eric.valencourt@gmail.com">Contact</a>
+  </p>
+</footer>
 
 </body>
 </html>
