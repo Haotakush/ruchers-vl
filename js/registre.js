@@ -275,3 +275,171 @@ tr:nth-child(even) td{background:#FEF3DC;}
   w.document.close();
   toast('📄 Registre ouvert — cliquez "Imprimer / PDF"');
 }
+
+/* ============================================================
+   HELPER — Chargement dynamique de scripts
+   ============================================================ */
+function _loadScript(src) {
+  return new Promise((resolve, reject) => {
+    if (document.querySelector(`script[src="${src}"]`)) { resolve(); return; }
+    const s = document.createElement('script');
+    s.src = src; s.onload = resolve; s.onerror = reject;
+    document.head.appendChild(s);
+  });
+}
+
+/* ============================================================
+   PARTAGER LE REGISTRE — jsPDF + Web Share API
+   ============================================================ */
+async function partagerRegistre() {
+  const toastEl = toast('⏳ Génération du PDF…');
+
+  // Chargement lazy de jsPDF + autoTable
+  try {
+    await _loadScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js');
+    await _loadScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js');
+  } catch (e) {
+    toast('❌ Impossible de charger jsPDF — vérifiez votre connexion');
+    return;
+  }
+
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+
+  // Palette couleurs
+  const C_DARK  = [26, 18, 8];
+  const C_HONEY = [212, 137, 42];
+  const C_LIGHT = [250, 246, 238];
+  const C_TEXT  = [44, 31, 14];
+
+  const nom    = PARAMS.nom    || '—';
+  const dateStr = new Date().toLocaleDateString('fr-FR');
+
+  // ── HEADER ──────────────────────────────────────────────
+  doc.setFillColor(...C_DARK);
+  doc.rect(0, 0, 210, 38, 'F');
+  doc.setTextColor(245, 166, 35);
+  doc.setFontSize(15); doc.setFont('helvetica', 'bold');
+  doc.text("Registre d'Elevage Apicole", 14, 14);
+  doc.setFontSize(8); doc.setFont('helvetica', 'normal');
+  doc.setTextColor(168, 145, 106);
+  doc.text(`${nom}  ·  NAPI ${PARAMS.napi||'—'}  ·  SIRET ${PARAMS.siret||'—'}`, 14, 21);
+  doc.text(PARAMS.adresse || '—', 14, 26);
+  doc.text(`Declaration : ${PARAMS.dateDecl||'—'}  ·  Ref. ${PARAMS.refDecl||'—'}  ·  ${PARAMS.colonies||'—'} colonies`, 14, 31);
+  doc.setTextColor(120, 100, 70);
+  doc.text(`Genere le ${dateStr} par Ruchers VL  ·  Conforme arrete 11/08/1994`, 14, 36);
+
+  let y = 46;
+
+  // Fonction helper section title
+  const sectionTitle = (titre) => {
+    if (y > 255) { doc.addPage(); y = 15; }
+    doc.setTextColor(...C_HONEY);
+    doc.setFontSize(10); doc.setFont('helvetica', 'bold');
+    doc.text(titre, 14, y);
+    y += 5;
+  };
+
+  // Fonction helper autoTable
+  const addTable = (head, body) => {
+    doc.autoTable({
+      startY: y,
+      head: head.length ? [head] : [],
+      body: body.length ? body : [Array(head.length || 2).fill('—')],
+      styles: { fontSize: 8, cellPadding: 2.5, textColor: C_TEXT },
+      headStyles: { fillColor: C_DARK, textColor: [245, 166, 35], fontStyle: 'bold' },
+      alternateRowStyles: { fillColor: C_LIGHT },
+      theme: 'striped',
+      margin: { left: 14, right: 14 },
+    });
+    y = doc.lastAutoTable.finalY + 10;
+  };
+
+  // ── SECTION 1 — Identification ───────────────────────────
+  sectionTitle('1. Identification de l\'apiculteur');
+  addTable([], [
+    ['Nom / Raison sociale', nom],
+    ['N° NAPI',              PARAMS.napi    || '—'],
+    ['N° SIRET',             PARAMS.siret   || '—'],
+    ['Adresse',              PARAMS.adresse || '—'],
+    ['Email',                PARAMS.email   || '—'],
+    ['Date declaration',     PARAMS.dateDecl || '—'],
+    ['Ref. declaration',     PARAMS.refDecl  || '—'],
+    ['Colonies declarees',   PARAMS.colonies ? String(PARAMS.colonies) : '—'],
+  ]);
+
+  // ── SECTION 2 — Ruchers ──────────────────────────────────
+  sectionTitle('2. Inventaire des ruchers');
+  addTable(
+    ['ID', 'Lieu-dit', 'CP', 'Zone', 'Ruches', 'Ruchettes', 'GPS'],
+    RUCHERS.length ? RUCHERS.map(r => [
+      r.id || '—', r.lieu || '—', r.cp || '—', r.zone || '—',
+      String(r.nb || 0), String(r.nbRuchettes || 0),
+      (r.lat && r.lng) ? `${Number(r.lat).toFixed(5)}, ${Number(r.lng).toFixed(5)}` : '—',
+    ]) : [['Aucun rucher enregistre', '', '', '', '', '', '']]
+  );
+
+  // ── SECTION 3 — Visites ──────────────────────────────────
+  if (y > 220) { doc.addPage(); y = 15; }
+  sectionTitle('3. Comptes-rendus des visites');
+  addTable(
+    ['Date', 'Rucher', 'Force', 'Meteo', 'Ruches', 'Interventions'],
+    journalData.length ? journalData.map(v => [
+      v.date || '—', v.rucher || '—', v.force || '—',
+      v.meteo || '—', String(v.nbRuches || 0),
+      v.intervention || '—',
+    ]) : [['Aucune visite', '', '', '', '', '']]
+  );
+
+  // ── SECTION 4 — Sanitaire ────────────────────────────────
+  if (y > 220) { doc.addPage(); y = 15; }
+  sectionTitle('4. Registre sanitaire');
+  addTable(
+    ['Date', 'Rucher', 'Type', 'Produit', 'Dose', 'Duree', 'Motif / Ref.'],
+    sanitaireData.length ? sanitaireData.map(s => [
+      s.date || '—', s.rucher || '—', s.type || '—',
+      s.produit || '—', s.dose || '—', s.duree || '—',
+      s.motif || '—',
+    ]) : [['Aucun traitement', '', '', '', '', '', '']]
+  );
+
+  // ── SECTION 5 — Mouvements ───────────────────────────────
+  if (y > 220) { doc.addPage(); y = 15; }
+  sectionTitle('5. Mouvements de colonies');
+  addTable(
+    ['Date', 'Rucher origine', 'Destination', 'Colonies', 'Motif'],
+    mouvementsData.length ? mouvementsData.map(m => [
+      m.date || '—', m.origine || '—', m.destination || '—',
+      String(m.nbColonies || 0), m.motif || '—',
+    ]) : [['Aucun mouvement', '', '', '', '']]
+  );
+
+  // ── FOOTER sur chaque page ────────────────────────────────
+  const total = doc.internal.getNumberOfPages();
+  for (let i = 1; i <= total; i++) {
+    doc.setPage(i);
+    doc.setFontSize(7); doc.setTextColor(150, 130, 100);
+    doc.text(
+      `Ruchers VL  ·  Registre conforme arrete 11/08/1994  ·  Page ${i}/${total}`,
+      105, 292, { align: 'center' }
+    );
+  }
+
+  // ── EXPORT + PARTAGE ─────────────────────────────────────
+  const filename = `Registre-${nom.replace(/\s+/g,'-')}-${dateStr.replace(/\//g,'-')}.pdf`;
+  const blob = doc.output('blob');
+  const file = new File([blob], filename, { type: 'application/pdf' });
+
+  if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+    try {
+      await navigator.share({ title: `Registre d'elevage — ${nom}`, files: [file] });
+      return;
+    } catch (e) {
+      if (e.name === 'AbortError') return;
+    }
+  }
+
+  // Fallback : téléchargement direct
+  doc.save(filename);
+  toast('📥 PDF téléchargé');
+}
