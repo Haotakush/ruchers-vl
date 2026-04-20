@@ -383,6 +383,7 @@
     <button class="menu-item" onclick="showTab('registre',null);renderRegistre()">📖 Registre d'élevage</button>
     <button class="menu-item" onclick="showTab('admin',null);initAdminConformite()">🛡 Admin &amp; Conformité</button>
     <button class="menu-item" onclick="showTab('documents',null);populateDocRucherSelect();renderDocuments()">📎 Documents réglementaires</button>
+    <button class="menu-item" onclick="openTutoriel()">🎓 Guide de démarrage</button>
     <button class="menu-item" onclick="openModal('modal-cgu')">📄 CGU &amp; Confidentialité</button>
     <div id="logout-wrap" style="margin-top:20px;"></div>
     <div style="margin-top:8px;">
@@ -1533,6 +1534,212 @@
     </div>
   </div>
 </div>
+
+<!-- ============================================================
+     MODAL : TUTORIEL / GUIDE DE DÉMARRAGE
+     ============================================================ -->
+<div class="modal-overlay" id="modal-tutoriel">
+  <div class="modal" style="max-height:92vh;overflow:hidden;display:flex;flex-direction:column;padding:0;">
+
+    <!-- Slides container -->
+    <div id="tuto-slides" style="flex:1;overflow:hidden;position:relative;">
+
+      <!-- SLIDE 1 — Bienvenue -->
+      <div class="tuto-slide" data-slide="0" style="display:flex;">
+        <div style="text-align:center;padding:32px 24px 16px;">
+          <div style="font-size:3.5rem;margin-bottom:12px;">🐝</div>
+          <div style="font-size:1.3rem;font-weight:800;color:var(--honey);margin-bottom:8px;">Bienvenue sur Ruchers VL</div>
+          <div style="font-size:0.88rem;color:var(--soft);line-height:1.6;margin-bottom:20px;">Votre carnet de bord apicole numérique — conçu pour être rempli <strong style="color:var(--fg);">en moins de 5 minutes sur le terrain</strong>, même avec des gants.</div>
+          <div style="background:#1a2a1a;border-radius:12px;padding:14px 16px;text-align:left;margin-bottom:16px;">
+            <div style="font-size:0.78rem;font-weight:700;color:#81C784;margin-bottom:8px;">✅ Ce que l'app fait pour vous</div>
+            <div style="font-size:0.8rem;color:#aaa;line-height:2;">
+              📖 Génère votre registre d'élevage légal automatiquement<br>
+              📊 Suit l'état de toutes vos colonies en un coup d'œil<br>
+              💊 Trace vos traitements sanitaires<br>
+              🚛 Gère vos mouvements de transhumance<br>
+              📶 Fonctionne <strong style="color:var(--fg);">hors ligne</strong> sur le terrain
+            </div>
+          </div>
+          <div style="background:#2a1a0a;border-radius:10px;padding:12px 14px;border:1px solid #5a3a0a;text-align:left;">
+            <div style="font-size:0.78rem;font-weight:700;color:#FFB300;margin-bottom:4px;">⚙️ Première étape importante</div>
+            <div style="font-size:0.78rem;color:#aaa;line-height:1.6;">Renseignez votre <strong style="color:var(--fg);">NAPI, nom et adresse</strong> dans Paramètres — ces infos apparaissent dans votre registre légal.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SLIDE 2 — Ruchers & colonies -->
+      <div class="tuto-slide" data-slide="1" style="display:none;">
+        <div style="padding:28px 24px 16px;">
+          <div style="text-align:center;font-size:2.8rem;margin-bottom:10px;">📍</div>
+          <div style="text-align:center;font-size:1.1rem;font-weight:800;color:var(--honey);margin-bottom:6px;">Ruchers & Colonies</div>
+          <div style="text-align:center;font-size:0.82rem;color:var(--soft);margin-bottom:18px;">La base de toutes vos données</div>
+
+          <div style="display:flex;flex-direction:column;gap:10px;">
+            <div style="background:var(--card);border-radius:10px;padding:12px 14px;border:1px solid var(--border);">
+              <div style="font-size:0.82rem;font-weight:700;color:var(--fg);margin-bottom:4px;">📍 Créer un rucher</div>
+              <div style="font-size:0.78rem;color:var(--soft);line-height:1.6;">Donnez-lui un nom, une zone (Bas / Mi-pentes / Hauts), et ajoutez sa position GPS. Chaque rucher regroupe toutes ses visites, traitements et mouvements.</div>
+            </div>
+            <div style="background:var(--card);border-radius:10px;padding:12px 14px;border:1px solid var(--border);">
+              <div style="font-size:0.82rem;font-weight:700;color:var(--fg);margin-bottom:4px;">🐝 Ruches & ruchettes</div>
+              <div style="font-size:0.78rem;color:var(--soft);line-height:1.6;">Indiquez le nombre de ruches et ruchettes par rucher. Ces chiffres alimentent automatiquement votre registre d'élevage et votre déclaration annuelle.</div>
+            </div>
+            <div style="background:#1a1a2a;border-radius:10px;padding:10px 14px;border:1px solid #2a2a4a;">
+              <div style="font-size:0.76rem;color:#90CAF9;line-height:1.6;">💡 <strong>Plus votre rucher est bien renseigné, plus votre registre légal sera complet.</strong> Le GPS permet aussi de valider vos mouvements de transhumance.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SLIDE 3 — Journal de visites -->
+      <div class="tuto-slide" data-slide="2" style="display:none;">
+        <div style="padding:28px 24px 16px;">
+          <div style="text-align:center;font-size:2.8rem;margin-bottom:10px;">📋</div>
+          <div style="text-align:center;font-size:1.1rem;font-weight:800;color:var(--honey);margin-bottom:6px;">Journal de visites</div>
+          <div style="text-align:center;font-size:0.82rem;color:var(--soft);margin-bottom:18px;">Enregistrez une visite en moins de 5 minutes</div>
+
+          <div style="display:flex;flex-direction:column;gap:10px;">
+            <div style="background:var(--card);border-radius:10px;padding:12px 14px;border:1px solid var(--border);">
+              <div style="font-size:0.82rem;font-weight:700;color:var(--fg);margin-bottom:6px;">🏷 Marquage rapide par rucher</div>
+              <div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:6px;">
+                <span style="background:#1a2d1a;border-radius:6px;padding:3px 9px;font-size:0.73rem;color:#81C784;">💪 Force de la colonie</span>
+                <span style="background:#1a2a3a;border-radius:6px;padding:3px 9px;font-size:0.73rem;color:#90CAF9;">🌤 Météo</span>
+                <span style="background:#2a1a2a;border-radius:6px;padding:3px 9px;font-size:0.73rem;color:#CE93D8;">👑 État reine</span>
+                <span style="background:#2a2a1a;border-radius:6px;padding:3px 9px;font-size:0.73rem;color:#FFD54F;">🔧 Interventions</span>
+              </div>
+              <div style="font-size:0.76rem;color:var(--soft);line-height:1.5;">Tout par tap — pas de saisie texte longue, utilisable avec des gants.</div>
+            </div>
+            <div style="background:#1a2d1a;border-radius:10px;padding:12px 14px;border:1px solid #2a4d2a;">
+              <div style="font-size:0.82rem;font-weight:700;color:#81C784;margin-bottom:4px;">📖 Lien direct avec le registre légal</div>
+              <div style="font-size:0.76rem;color:#aaa;line-height:1.6;">Chaque visite enregistrée apparaît <strong style="color:var(--fg);">automatiquement</strong> dans la Section 3 de votre registre d'élevage conforme à l'arrêté du 11 août 1994. Zéro ressaisie.</div>
+            </div>
+            <div style="background:var(--card);border-radius:10px;padding:10px 14px;border:1px solid var(--border);">
+              <div style="font-size:0.76rem;color:var(--soft);line-height:1.6;">📎 Joignez des photos ou documents à chaque visite — stockés dans votre espace personnel sécurisé.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SLIDE 4 — Sanitaire & varroa -->
+      <div class="tuto-slide" data-slide="3" style="display:none;">
+        <div style="padding:28px 24px 16px;">
+          <div style="text-align:center;font-size:2.8rem;margin-bottom:10px;">💊</div>
+          <div style="text-align:center;font-size:1.1rem;font-weight:800;color:var(--honey);margin-bottom:6px;">Sanitaire & Varroa</div>
+          <div style="text-align:center;font-size:0.82rem;color:var(--soft);margin-bottom:18px;">Suivi légal de vos traitements</div>
+
+          <div style="display:flex;flex-direction:column;gap:10px;">
+            <div style="background:var(--card);border-radius:10px;padding:12px 14px;border:1px solid var(--border);">
+              <div style="font-size:0.82rem;font-weight:700;color:var(--fg);margin-bottom:4px;">💉 Enregistrer un traitement</div>
+              <div style="font-size:0.76rem;color:var(--soft);line-height:1.6;">Produit (Apivar®, Oxybee®…), date de pose, durée, motif. Le traitement apparaît dans la Section 4 de votre registre sanitaire — <strong style="color:var(--fg);">obligatoire légalement.</strong></div>
+            </div>
+            <div style="background:#2a1a0a;border-radius:10px;padding:12px 14px;border:1px solid #4a3a1a;">
+              <div style="font-size:0.82rem;font-weight:700;color:#FFB300;margin-bottom:4px;">🔬 Guide Varroa intégré</div>
+              <div style="font-size:0.76rem;color:#aaa;line-height:1.6;">Appuyez sur <em>"ℹ️ Guide varroa"</em> pour accéder au protocole de comptage étape par étape, aux seuils VP100 et aux produits autorisés — directement depuis le terrain.</div>
+            </div>
+            <div style="background:#1a1a2a;border-radius:10px;padding:10px 14px;border:1px solid #2a2a4a;">
+              <div style="font-size:0.76rem;color:#90CAF9;line-height:1.6;">📅 L'app vous rappelle automatiquement les périodes de comptage : Décembre, Mars, Mai, Juillet.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SLIDE 5 — Transhumance -->
+      <div class="tuto-slide" data-slide="4" style="display:none;">
+        <div style="padding:28px 24px 16px;">
+          <div style="text-align:center;font-size:2.8rem;margin-bottom:10px;">🚛</div>
+          <div style="text-align:center;font-size:1.1rem;font-weight:800;color:var(--honey);margin-bottom:6px;">Mouvements de colonies</div>
+          <div style="text-align:center;font-size:0.82rem;color:var(--soft);margin-bottom;18px;">Transhumance tracée et conforme</div>
+
+          <div style="display:flex;flex-direction:column;gap:10px;margin-top:8px;">
+            <div style="background:var(--card);border-radius:10px;padding:12px 14px;border:1px solid var(--border);">
+              <div style="font-size:0.82rem;font-weight:700;color:var(--fg);margin-bottom:4px;">📍 GPS automatique</div>
+              <div style="font-size:0.76rem;color:var(--soft);line-height:1.6;">L'origine et la destination sont pré-remplies depuis vos ruchers. Les coordonnées GPS sont capturées automatiquement — utile pour justifier vos déplacements.</div>
+            </div>
+            <div style="background:var(--card);border-radius:10px;padding:12px 14px;border:1px solid var(--border);">
+              <div style="font-size:0.82rem;font-weight:700;color:var(--fg);margin-bottom:4px;">📋 Récapitulatif déclaration</div>
+              <div style="font-size:0.76rem;color:var(--soft);line-height:1.6;">Chaque mouvement génère un récapitulatif que vous pouvez <strong style="color:var(--fg);">partager directement</strong> depuis votre téléphone — par email, WhatsApp ou impression.</div>
+            </div>
+            <div style="background:#1a2d1a;border-radius:10px;padding:10px 14px;border:1px solid #2a4d2a;">
+              <div style="font-size:0.76rem;color:#81C784;line-height:1.6;">📖 Tous les mouvements apparaissent en Section 5 de votre registre d'élevage. <strong style="color:var(--fg);">Aucune ressaisie nécessaire.</strong></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SLIDE 6 — Registre & export -->
+      <div class="tuto-slide" data-slide="5" style="display:none;">
+        <div style="text-align:center;padding:28px 24px 16px;">
+          <div style="font-size:3rem;margin-bottom:10px;">📖</div>
+          <div style="font-size:1.1rem;font-weight:800;color:var(--honey);margin-bottom:6px;">Registre d'élevage en 1 clic</div>
+          <div style="font-size:0.82rem;color:var(--soft);margin-bottom:18px;">Toutes vos données → PDF légal conforme</div>
+
+          <div style="background:#1a2d1a;border-radius:12px;padding:14px 16px;text-align:left;margin-bottom:12px;">
+            <div style="font-size:0.78rem;font-weight:700;color:#81C784;margin-bottom:8px;">📄 5 sections générées automatiquement</div>
+            <div style="font-size:0.78rem;color:#aaa;line-height:2;">
+              1️⃣ Identification de l'apiculteur (NAPI, adresse)<br>
+              2️⃣ Inventaire de vos ruchers<br>
+              3️⃣ Comptes-rendus de visites<br>
+              4️⃣ Registre sanitaire (traitements)<br>
+              5️⃣ Mouvements de colonies
+            </div>
+          </div>
+          <div style="background:#2a1a0a;border-radius:10px;padding:10px 14px;border:1px solid #5a3a0a;text-align:left;margin-bottom:16px;">
+            <div style="font-size:0.76rem;color:#FFB300;line-height:1.6;">⚖️ Conforme à l'arrêté ministériel du 11 août 1994 · Exportable en PDF · Partageable directement depuis votre téléphone</div>
+          </div>
+
+          <div style="font-size:1.6rem;margin-bottom:8px;">🎉</div>
+          <div style="font-size:0.88rem;font-weight:700;color:var(--fg);margin-bottom:4px;">Vous êtes prêt !</div>
+          <div style="font-size:0.78rem;color:var(--soft);margin-bottom:20px;">Commencez par renseigner vos paramètres, puis créez votre premier rucher.</div>
+
+          <button onclick="closeTutoriel(true)" style="width:100%;padding:14px;border-radius:12px;background:var(--honey);color:#1A1208;font-weight:800;font-size:0.95rem;border:none;cursor:pointer;">
+            ⚙️ Configurer mon profil →
+          </button>
+        </div>
+      </div>
+
+    </div><!-- /tuto-slides -->
+
+    <!-- Navigation -->
+    <div style="padding:16px 20px 24px;background:var(--bg);border-top:1px solid var(--border);">
+      <!-- Dots -->
+      <div id="tuto-dots" style="display:flex;justify-content:center;gap:7px;margin-bottom:16px;">
+        <span class="tuto-dot tuto-dot-active"></span>
+        <span class="tuto-dot"></span>
+        <span class="tuto-dot"></span>
+        <span class="tuto-dot"></span>
+        <span class="tuto-dot"></span>
+        <span class="tuto-dot"></span>
+      </div>
+      <!-- Boutons -->
+      <div style="display:flex;gap:10px;align-items:center;">
+        <button id="tuto-btn-prev" onclick="tutoNav(-1)" style="padding:10px 18px;border-radius:10px;border:1px solid var(--border);background:var(--card);color:var(--soft);font-size:0.85rem;cursor:pointer;display:none;">← Préc.</button>
+        <button id="tuto-btn-skip" onclick="closeTutoriel(false)" style="padding:10px 14px;border-radius:10px;border:1px solid var(--border);background:transparent;color:var(--soft);font-size:0.8rem;cursor:pointer;margin-left:auto;">Passer</button>
+        <button id="tuto-btn-next" onclick="tutoNav(1)" style="padding:10px 22px;border-radius:10px;background:var(--honey);color:#1A1208;font-weight:700;font-size:0.85rem;border:none;cursor:pointer;">Suivant →</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- CSS tutoriel -->
+<style>
+.tuto-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--border);
+  transition: all 0.3s;
+  cursor: pointer;
+}
+.tuto-dot-active {
+  background: var(--honey);
+  width: 22px;
+  border-radius: 4px;
+}
+.tuto-slide {
+  flex-direction: column;
+  overflow-y: auto;
+  max-height: calc(92vh - 120px);
+}
+</style>
 
 <!-- ============================================================
      MODAL : CGU & POLITIQUE DE CONFIDENTIALITÉ
