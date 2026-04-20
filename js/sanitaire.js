@@ -4,8 +4,25 @@
    ============================================================ */
 
 let editingSanitaireIdx = null;
+let _isSavingSanitaire  = false;
 
 async function saveSanitaire() {
+  if (_isSavingSanitaire) return; // empêche le double-tap
+  _isSavingSanitaire = true;
+
+  // Désactiver le bouton visuellement
+  const saveBtn = document.querySelector('#modal-sanitaire .btn-save');
+  if (saveBtn) { saveBtn.disabled = true; saveBtn.textContent = '⏳ Enregistrement…'; }
+
+  try {
+    await _doSaveSanitaire();
+  } finally {
+    _isSavingSanitaire = false;
+    if (saveBtn) { saveBtn.disabled = false; saveBtn.textContent = '✓ Enregistrer'; }
+  }
+}
+
+async function _doSaveSanitaire() {
   const date   = document.getElementById('s-date').value;
   const rucher = document.getElementById('s-rucher').value;
   if (!date || !rucher) { toast('⚠️ Date et rucher obligatoires'); return; }
