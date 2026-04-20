@@ -336,6 +336,54 @@
   .audience-card h3 { font-size: 1rem; font-weight: 800; margin-bottom: 8px; }
   .audience-card p { font-size: 0.83rem; color: var(--soft); line-height: 1.7; }
 
+  /* ── TÉMOIGNAGE ── */
+  #temoignage {
+    border-top: 1px solid var(--border);
+    text-align: center;
+  }
+  #temoignage h2 { margin-bottom: 40px; }
+  .temoignage-card {
+    max-width: 600px;
+    margin: 0 auto;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 40px 36px 32px;
+    position: relative;
+    text-align: left;
+  }
+  .temoignage-quote {
+    font-size: 5rem;
+    line-height: 0.6;
+    color: var(--honey);
+    font-family: Georgia, serif;
+    margin-bottom: 16px;
+    opacity: 0.7;
+  }
+  .temoignage-texte {
+    font-size: 1.05rem;
+    line-height: 1.75;
+    color: var(--text);
+    font-style: italic;
+    margin-bottom: 28px;
+  }
+  .temoignage-auteur {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .temoignage-avatar {
+    width: 44px; height: 44px;
+    background: rgba(212,137,42,0.15);
+    border: 1px solid var(--border);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.3rem;
+    flex-shrink: 0;
+  }
+  .temoignage-auteur strong { display: block; font-size: 0.95rem; color: var(--text); }
+  .temoignage-auteur span { font-size: 0.8rem; color: var(--soft); }
+
   /* ── CTA FINAL ── */
   #cta-final {
     border-top: 1px solid var(--border);
@@ -459,6 +507,181 @@
         <p>Chaque visite, chaque traitement, chaque mouvement de colonies s'accumule automatiquement dans votre registre d'élevage. Quand vous en avez besoin, il est prêt en un clic.</p>
       </div>
     </div>
+  </div>
+</section>
+
+<!-- ── MAQUETTES APP ── -->
+<section id="apercu" style="border-top: 1px solid var(--border);">
+  <div class="label">L'application en images</div>
+  <h2>Exactement ce dont vous avez besoin, rien de superflu.</h2>
+  <p class="sub">Trois ruchers, dix visites, quatre traitements, deux transhumances — votre registre est prêt.</p>
+
+  <div style="display:flex; gap:20px; flex-wrap:wrap; justify-content:center; margin-top:8px; overflow-x:auto;">
+
+    <!-- TÉLÉPHONE 1 — Dashboard -->
+    <div style="flex-shrink:0;">
+      <div style="font-size:0.75rem; color:var(--soft); text-align:center; margin-bottom:10px;">Tableau de bord</div>
+      <div style="width:220px; background:#1A1208; border-radius:32px; border:6px solid #333; overflow:hidden; box-shadow:0 20px 60px rgba(0,0,0,0.6);">
+        <!-- Status bar -->
+        <div style="background:#1A1208; padding:8px 16px 4px; display:flex; justify-content:space-between; align-items:center;">
+          <span style="font-size:0.65rem; color:#888;">9:41</span>
+          <span style="font-size:0.65rem; color:#888;">●●●</span>
+        </div>
+        <!-- Topbar -->
+        <div style="background:#231A0D; padding:10px 14px; display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #3a2a18;">
+          <span style="font-size:0.8rem; font-weight:700; color:#D4892A;">🐝 Ruchers VL</span>
+          <span style="font-size:0.7rem; color:#888;">🔄</span>
+        </div>
+        <!-- Content -->
+        <div style="padding:12px; background:#1A1208;">
+          <!-- Stats row -->
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:6px; margin-bottom:10px;">
+            <div style="background:#231A0D; border-radius:10px; padding:10px; text-align:center; border:1px solid #3a2a18;">
+              <div style="font-size:1.3rem; font-weight:800; color:#D4892A;">19</div>
+              <div style="font-size:0.6rem; color:#888;">Colonies</div>
+            </div>
+            <div style="background:#231A0D; border-radius:10px; padding:10px; text-align:center; border:1px solid #3a2a18;">
+              <div style="font-size:1.3rem; font-weight:800; color:#81C784;">3</div>
+              <div style="font-size:0.6rem; color:#888;">Ruchers</div>
+            </div>
+          </div>
+          <!-- Rucher cards -->
+          <div style="font-size:0.62rem; color:#888; margin-bottom:6px; font-weight:600; text-transform:uppercase; letter-spacing:0.05em;">Dernières visites</div>
+          <div style="background:#231A0D; border-radius:8px; padding:8px 10px; margin-bottom:5px; border:1px solid #3a2a18;">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <span style="font-size:0.72rem; font-weight:600; color:#FFF8E7;">R001 — Bras des Lianes</span>
+              <span style="font-size:0.6rem; color:#888;">il y a 2j</span>
+            </div>
+            <div style="font-size:0.62rem; color:#81C784; margin-top:3px;">💪 Forte · 8 ruches</span></div>
+          </div>
+          <div style="background:#231A0D; border-radius:8px; padding:8px 10px; margin-bottom:5px; border:1px solid #3a2a18;">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <span style="font-size:0.72rem; font-weight:600; color:#FFF8E7;">R002 — Grand Fond</span>
+              <span style="font-size:0.6rem; color:#888;">il y a 5j</span>
+            </div>
+            <div style="font-size:0.62rem; color:#FFB300; margin-top:3px;">👌 Moyenne · 6 ruches</span></div>
+          </div>
+          <div style="background:#231A0D; border-radius:8px; padding:8px 10px; border:1px solid #3a2a18;">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <span style="font-size:0.72rem; font-weight:600; color:#FFF8E7;">R003 — Plaine Palmistes</span>
+              <span style="font-size:0.6rem; color:#888;">il y a 8j</span>
+            </div>
+            <div style="font-size:0.62rem; color:#81C784; margin-top:3px;">💪 Forte · 5 ruches</span></div>
+          </div>
+        </div>
+        <!-- Bottom nav -->
+        <div style="background:#231A0D; border-top:1px solid #3a2a18; padding:8px 0; display:flex; justify-content:space-around;">
+          <div style="text-align:center;"><div style="font-size:0.9rem;">🏠</div><div style="font-size:0.5rem; color:#D4892A;">Accueil</div></div>
+          <div style="text-align:center;"><div style="font-size:0.9rem;">📋</div><div style="font-size:0.5rem; color:#888;">Visites</div></div>
+          <div style="text-align:center;"><div style="font-size:0.9rem;">💊</div><div style="font-size:0.5rem; color:#888;">Sanitaire</div></div>
+          <div style="text-align:center;"><div style="font-size:0.9rem;">🗺️</div><div style="font-size:0.5rem; color:#888;">Carte</div></div>
+          <div style="text-align:center;"><div style="font-size:0.9rem;">➕</div><div style="font-size:0.5rem; color:#888;">Plus</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TÉLÉPHONE 2 — Compte-rendu de visite -->
+    <div style="flex-shrink:0;">
+      <div style="font-size:0.75rem; color:var(--soft); text-align:center; margin-bottom:10px;">Compte-rendu de visite</div>
+      <div style="width:220px; background:#1A1208; border-radius:32px; border:6px solid #333; overflow:hidden; box-shadow:0 20px 60px rgba(0,0,0,0.6);">
+        <div style="background:#1A1208; padding:8px 16px 4px; display:flex; justify-content:space-between;">
+          <span style="font-size:0.65rem; color:#888;">9:41</span>
+          <span style="font-size:0.65rem; color:#888;">●●●</span>
+        </div>
+        <div style="background:#231A0D; padding:10px 14px; border-bottom:1px solid #3a2a18;">
+          <span style="font-size:0.78rem; font-weight:700; color:#FFF8E7;">📋 Nouvelle visite</span>
+        </div>
+        <div style="padding:12px; background:#1A1208;">
+          <!-- Date & rucher -->
+          <div style="background:#231A0D; border-radius:8px; padding:8px 10px; margin-bottom:8px; border:1px solid #3a2a18;">
+            <div style="font-size:0.58rem; color:#888; margin-bottom:3px;">RUCHER</div>
+            <div style="font-size:0.72rem; color:#FFF8E7; font-weight:600;">R001 — Bras des Lianes</div>
+          </div>
+          <div style="background:#231A0D; border-radius:8px; padding:8px 10px; margin-bottom:8px; border:1px solid #3a2a18;">
+            <div style="font-size:0.58rem; color:#888; margin-bottom:3px;">DATE</div>
+            <div style="font-size:0.72rem; color:#FFF8E7;">08 décembre 2024</div>
+          </div>
+          <!-- État général -->
+          <div style="font-size:0.58rem; color:#888; margin-bottom:5px; font-weight:600; text-transform:uppercase; letter-spacing:0.05em;">État général du rucher</div>
+          <div style="display:flex; gap:5px; margin-bottom:8px;">
+            <div style="background:#1a2d1a; border:1px solid #81C784; border-radius:8px; padding:5px 8px; font-size:0.65rem; color:#81C784; font-weight:600;">💪 Forte</div>
+            <div style="background:#231A0D; border:1px solid #3a2a18; border-radius:8px; padding:5px 8px; font-size:0.65rem; color:#888;">👌 Moyenne</div>
+            <div style="background:#231A0D; border:1px solid #3a2a18; border-radius:8px; padding:5px 8px; font-size:0.65rem; color:#888;">👎 Faible</div>
+          </div>
+          <!-- Interventions -->
+          <div style="font-size:0.58rem; color:#888; margin-bottom:5px; font-weight:600; text-transform:uppercase; letter-spacing:0.05em;">Interventions</div>
+          <div style="display:flex; flex-wrap:wrap; gap:4px; margin-bottom:8px;">
+            <div style="background:#1a2a3a; border-radius:6px; padding:3px 7px; font-size:0.6rem; color:#90CAF9;">✓ Contrôle couvain</div>
+            <div style="background:#1a2a3a; border-radius:6px; padding:3px 7px; font-size:0.6rem; color:#90CAF9;">✓ Ajout hausse</div>
+            <div style="background:#231A0D; border-radius:6px; padding:3px 7px; font-size:0.6rem; color:#888;">Nourrissement</div>
+          </div>
+          <!-- Obs -->
+          <div style="background:#231A0D; border-radius:8px; padding:8px 10px; border:1px solid #3a2a18;">
+            <div style="font-size:0.58rem; color:#888; margin-bottom:3px;">OBSERVATIONS</div>
+            <div style="font-size:0.65rem; color:#b89060; line-height:1.5;">Colonie très dynamique. Couvain plein sur 8 cadres. Ajout hausse n°2.</div>
+          </div>
+        </div>
+        <div style="padding:10px 12px; background:#1A1208;">
+          <div style="background:#D4892A; border-radius:8px; padding:8px; text-align:center; font-size:0.72rem; font-weight:700; color:#1A1208;">✓ Enregistrer</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TÉLÉPHONE 3 — Registre PDF -->
+    <div style="flex-shrink:0;">
+      <div style="font-size:0.75rem; color:var(--soft); text-align:center; margin-bottom:10px;">Registre d'élevage PDF</div>
+      <div style="width:220px; background:#1A1208; border-radius:32px; border:6px solid #333; overflow:hidden; box-shadow:0 20px 60px rgba(0,0,0,0.6);">
+        <div style="background:#1A1208; padding:8px 16px 4px; display:flex; justify-content:space-between;">
+          <span style="font-size:0.65rem; color:#888;">9:41</span>
+          <span style="font-size:0.65rem; color:#888;">●●●</span>
+        </div>
+        <div style="background:#231A0D; padding:10px 14px; border-bottom:1px solid #3a2a18;">
+          <span style="font-size:0.78rem; font-weight:700; color:#FFF8E7;">📖 Registre d'élevage</span>
+        </div>
+        <div style="padding:12px; background:#1A1208;">
+          <!-- Header registre -->
+          <div style="background:#231A0D; border-radius:8px; padding:10px; margin-bottom:8px; border:1px solid rgba(129,199,132,0.3);">
+            <div style="font-size:0.65rem; font-weight:700; color:#81C784; margin-bottom:4px;">PAYET Jean-Louis</div>
+            <div style="font-size:0.6rem; color:#888;">NAPI A5100247</div>
+            <div style="font-size:0.6rem; color:#888;">Saint-André, La Réunion</div>
+          </div>
+          <!-- Sections -->
+          <div style="display:flex; flex-direction:column; gap:4px; margin-bottom:10px;">
+            <div style="display:flex; align-items:center; gap:6px; padding:5px 8px; background:#231A0D; border-radius:6px; border:1px solid #3a2a18;">
+              <span style="background:rgba(255,183,77,0.2); color:#FFB74D; font-size:0.55rem; font-weight:700; padding:1px 5px; border-radius:3px;">§1</span>
+              <span style="font-size:0.65rem; color:#FFF8E7;">Identification</span>
+              <span style="margin-left:auto; font-size:0.6rem; color:#81C784;">✓</span>
+            </div>
+            <div style="display:flex; align-items:center; gap:6px; padding:5px 8px; background:#231A0D; border-radius:6px; border:1px solid #3a2a18;">
+              <span style="background:rgba(255,183,77,0.2); color:#FFB74D; font-size:0.55rem; font-weight:700; padding:1px 5px; border-radius:3px;">§2</span>
+              <span style="font-size:0.65rem; color:#FFF8E7;">3 ruchers · 19 colonies</span>
+              <span style="margin-left:auto; font-size:0.6rem; color:#81C784;">✓</span>
+            </div>
+            <div style="display:flex; align-items:center; gap:6px; padding:5px 8px; background:#231A0D; border-radius:6px; border:1px solid #3a2a18;">
+              <span style="background:rgba(255,183,77,0.2); color:#FFB74D; font-size:0.55rem; font-weight:700; padding:1px 5px; border-radius:3px;">§3</span>
+              <span style="font-size:0.65rem; color:#FFF8E7;">10 visites enregistrées</span>
+              <span style="margin-left:auto; font-size:0.6rem; color:#81C784;">✓</span>
+            </div>
+            <div style="display:flex; align-items:center; gap:6px; padding:5px 8px; background:#231A0D; border-radius:6px; border:1px solid #3a2a18;">
+              <span style="background:rgba(255,183,77,0.2); color:#FFB74D; font-size:0.55rem; font-weight:700; padding:1px 5px; border-radius:3px;">§4</span>
+              <span style="font-size:0.65rem; color:#FFF8E7;">4 traitements varroa</span>
+              <span style="margin-left:auto; font-size:0.6rem; color:#81C784;">✓</span>
+            </div>
+            <div style="display:flex; align-items:center; gap:6px; padding:5px 8px; background:#231A0D; border-radius:6px; border:1px solid #3a2a18;">
+              <span style="background:rgba(255,183,77,0.2); color:#FFB74D; font-size:0.55rem; font-weight:700; padding:1px 5px; border-radius:3px;">§5</span>
+              <span style="font-size:0.65rem; color:#FFF8E7;">2 transhumances</span>
+              <span style="margin-left:auto; font-size:0.6rem; color:#81C784;">✓</span>
+            </div>
+          </div>
+          <!-- Boutons -->
+          <div style="display:flex; gap:6px;">
+            <div style="flex:1; background:#231A0D; border:1px solid #3a2a18; border-radius:8px; padding:7px; text-align:center; font-size:0.62rem; color:#888;">📄 Exporter</div>
+            <div style="flex:1; background:#D4892A; border-radius:8px; padding:7px; text-align:center; font-size:0.62rem; font-weight:700; color:#1A1208;">📤 Partager</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
   </div>
 </section>
 
@@ -829,6 +1052,23 @@
       <div class="icon">📖</div>
       <h3>Pour votre registre légal</h3>
       <p>Votre registre d'élevage conforme à la réglementation se génère automatiquement à partir de vos données. Exportez-le en PDF et partagez-le depuis votre téléphone en un clic.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ── TÉMOIGNAGE ── -->
+<section id="temoignage">
+  <div class="label">Ils l'utilisent déjà</div>
+  <h2>Ce qu'en disent les apiculteurs réunionnais</h2>
+  <div class="temoignage-card">
+    <div class="temoignage-quote">"</div>
+    <p class="temoignage-texte">L'application me facilite vraiment mes interventions sur le terrain. Et je suis rassuré pour mon registre apicole — tout est là, en ordre, prêt à exporter.</p>
+    <div class="temoignage-auteur">
+      <div class="temoignage-avatar">🐝</div>
+      <div>
+        <strong>Ludovic V.</strong>
+        <span>Apiculteur · Saint-Louis, La Réunion</span>
+      </div>
     </div>
   </div>
 </section>
