@@ -622,7 +622,7 @@ function openAddMouvement() {
         <button onclick="document.getElementById('mouvement-overlay').remove()"
           style="flex:1;padding:13px;background:#2a2a2a;border:none;border-radius:12px;
                  color:var(--soft);font-weight:600;cursor:pointer;">Annuler</button>
-        <button onclick="saveMouvement()"
+        <button onclick="saveAdminMouvement()"
           style="flex:2;padding:13px;background:var(--honey);border:none;border-radius:12px;
                  color:#fff;font-weight:600;cursor:pointer;">✓ Enregistrer</button>
       </div>
@@ -639,7 +639,7 @@ function selectMouvDDPP(val) {
   if (btnNon) btnNon.classList.toggle('active', val === false);
 }
 
-async function saveMouvement() {
+async function saveAdminMouvement() {
   const date           = document.getElementById('mouv-date')?.value;
   const rucher         = document.getElementById('mouv-rucher')?.value;
   const deptDestination = (document.getElementById('mouv-dept')?.value || '').trim();
