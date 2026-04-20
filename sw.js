@@ -7,7 +7,7 @@
        pour invalider l'ancien cache et déclencher la mise à jour.
    ============================================================ */
 
-const CACHE_VERSION = 'ruchers-vl-v1.3.14';
+const CACHE_VERSION = 'ruchers-vl-v1.3.15';
 
 const STATIC_ASSETS = [
   './',
