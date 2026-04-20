@@ -127,7 +127,7 @@ function _renderAdminDashboard() {
         </button>
       </div>
 
-      ${_renderScoreRing(score)}
+      ${_renderScoreRing(score, d)}
       ${_renderMetricCards(d, lastSanitaire)}
       ${_renderAlertes(d)}
       ${_renderMouvements()}
@@ -142,13 +142,49 @@ function _renderAdminDashboard() {
    COMPOSANTS DE RENDU
    ============================================================ */
 
-/* --- Anneau SVG --- */
-function _renderScoreRing(score) {
+/* --- Anneau SVG + Checklist --- */
+function _renderScoreRing(score, d) {
   const C     = 251.3;
   const dash  = Math.round(score / 100 * C);
   const color = score >= 80 ? '#4A7C59' : score >= 50 ? '#C4813A' : '#C0392B';
   const label = score >= 80 ? 'Conforme' : score >= 50 ? 'Partiel' : 'Non conforme';
   const napi  = _conformiteData?.napi ? `NAPI : ${_conformiteData.napi}` : '';
+
+  const items = [
+    { done: d?.declaration, pts: 40, label: 'Déclaration annuelle effectuée',        action: 'Déclarer sur MesDémarches avant le 31 déc.' },
+    { done: d?.ddpp,        pts: 30, label: 'Aucune transhumance non déclarée DDPP', action: `${d?.undeclaredCount || 0} mouvement(s) à déclarer à la DDPP` },
+    { done: d?.registre,    pts: 20, label: 'Registre à jour (traitement < 30 j)',   action: 'Saisir un traitement ou comptage varroa récent' },
+    { done: d?.cheptel,     pts: 10, label: 'Cheptel conforme à la déclaration',     action: `Écart : ${d?.coloniesActuelles || 0} colonies actuelles vs ${d?.coloniesDeclarees || 0} déclarées` },
+  ];
+
+  const checklistHTML = score < 100 ? `
+    <div style="margin-top:14px;text-align:left;border-top:1px solid var(--border);padding-top:12px;">
+      <div style="font-size:0.72rem;font-weight:700;color:var(--soft);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px;">
+        Ce qu'il manque
+      </div>
+      ${items.map(it => {
+        if (it.done) return '';
+        return `
+          <div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:10px;">
+            <div style="width:22px;height:22px;border-radius:50%;background:rgba(192,57,43,0.15);
+                 border:1.5px solid #C0392B;display:flex;align-items:center;justify-content:center;
+                 flex-shrink:0;font-size:0.7rem;color:#EF5350;margin-top:1px;">✕</div>
+            <div style="flex:1;min-width:0;">
+              <div style="font-size:0.8rem;font-weight:600;color:var(--ink);">
+                ${it.label}
+                <span style="background:rgba(192,57,43,0.15);color:#EF5350;
+                      border-radius:4px;padding:1px 5px;font-size:0.65rem;font-weight:700;margin-left:4px;">
+                  −${it.pts} pts
+                </span>
+              </div>
+              <div style="font-size:0.72rem;color:var(--soft);margin-top:2px;">${it.action}</div>
+            </div>
+          </div>`;
+      }).join('')}
+    </div>` : `
+    <div style="margin-top:12px;font-size:0.78rem;color:#81C784;">
+      🎉 Tout est en règle — registre et déclarations conformes.
+    </div>`;
 
   return `
     <div class="card" style="text-align:center;padding:20px 16px 16px;margin-bottom:16px;">
@@ -161,6 +197,7 @@ function _renderScoreRing(score) {
       <div style="font-size:2.2rem;font-weight:800;color:${color};">${score}<span style="font-size:1rem;font-weight:400;"> %</span></div>
       <div style="font-size:0.82rem;color:var(--soft);margin-top:2px;">${label}</div>
       ${napi ? `<div style="font-size:0.72rem;color:var(--soft);margin-top:6px;">${napi}</div>` : ''}
+      ${checklistHTML}
     </div>`;
 }
 
