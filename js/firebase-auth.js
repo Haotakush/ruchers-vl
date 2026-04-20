@@ -6,14 +6,53 @@
 let currentUser = null;
 let showingCreate = false;
 
+/* ---- Loading Screen ---- */
+const _LS_MESSAGES = [
+  'Chargement de vos ruchers…',
+  'Synchronisation des données…',
+  'Préparation du tableau de bord…',
+  'Presque prêt…',
+];
+let _lsInterval = null;
+
+function showLoadingScreen(firstMsg) {
+  const el = document.getElementById('loading-screen');
+  if (!el) return;
+  el.classList.remove('ls-fade-out');
+  el.style.display = 'flex';
+  _setLsMsg(firstMsg || _LS_MESSAGES[0]);
+  let i = 1;
+  if (_lsInterval) clearInterval(_lsInterval);
+  _lsInterval = setInterval(() => {
+    _setLsMsg(_LS_MESSAGES[i % _LS_MESSAGES.length]);
+    i++;
+  }, 1800);
+}
+
+function _setLsMsg(msg) {
+  const el = document.getElementById('ls-msg');
+  if (!el) return;
+  el.style.opacity = '0';
+  setTimeout(() => { el.textContent = msg; el.style.opacity = '1'; }, 200);
+}
+
+function hideLoadingScreen() {
+  if (_lsInterval) { clearInterval(_lsInterval); _lsInterval = null; }
+  const el = document.getElementById('loading-screen');
+  if (!el) return;
+  el.classList.add('ls-fade-out');
+  setTimeout(() => { el.style.display = 'none'; }, 450);
+}
+
 function showLoginScreen() {
+  hideLoadingScreen();
   document.getElementById('login-screen').style.display = 'flex';
   document.getElementById('app-container').style.display = 'none';
 }
 
 function hideLoginScreen() {
   document.getElementById('login-screen').style.display = 'none';
-  document.getElementById('app-container').style.display = 'flex';
+  document.getElementById('app-container').style.display = 'none';
 }
 
 /* ---- Toggle formulaire connexion / création ---- */
@@ -34,6 +73,7 @@ async function doLogin() {
   errEl.textContent = '';
   if (!email || !pass) { errEl.textContent = 'Email et mot de passe requis.'; return; }
   btn.disabled = true; btn.textContent = 'Connexion...';
+  showLoadingScreen('Connexion en cours…');
   try {
     await auth.signInWithEmailAndPassword(email, pass);
   } catch (err) {
@@ -45,6 +85,7 @@ async function doLogin() {
       'auth/invalid-credential': 'Identifiants invalides.',
     };
     errEl.textContent = messages[err.code] || `Erreur : ${err.message}`;
+    hideLoadingScreen();
   } finally {
     btn.disabled = false; btn.textContent = 'Se connecter';
   }
@@ -158,15 +199,20 @@ auth.onAuthStateChanged(async (user) => {
   if (user) {
     currentUser = user;
     console.log('👤 Connecté:', user.email);
-    hideLoginScreen();
+    // Cacher l'écran de login, montrer le loading pendant les données
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('app-container').style.display = 'none';
+    showLoadingScreen('Chargement de vos ruchers…');
     await loadAllDataFromFirestore();
     initApp();
+    // Données prêtes → afficher l'app et cacher le loading
+    document.getElementById('app-container').style.display = 'flex';
+    hideLoadingScreen();
     if (typeof window._checkWhatsNew === 'function') window._checkWhatsNew();
     if (typeof checkRappelsNotifications === 'function') checkRappelsNotifications();
   } else {
     currentUser = null;
     console.log('👤 Déconnecté');
-    // Arrêter les listeners et réinitialiser le flag pour la prochaine connexion
     if (typeof stopRealtimeListeners === 'function') stopRealtimeListeners();
     if (typeof resetAppState === 'function') resetAppState();
     showLoginScreen();

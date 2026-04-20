@@ -18,13 +18,140 @@
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-storage-compat.js"></script>
   <link rel="stylesheet" href="css/style.css">
+  <style>
+    /* =====================================================
+       LOADING SCREEN — Écran de chargement
+       ===================================================== */
+    #loading-screen {
+      position: fixed;
+      inset: 0;
+      background: #1A1208;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 99999;
+      opacity: 1;
+      transition: opacity 0.45s ease;
+    }
+    #loading-screen.ls-fade-out {
+      opacity: 0;
+      pointer-events: none;
+    }
+    .ls-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      padding: 0 24px;
+    }
+    /* Conteneur de l'orbite */
+    .ls-bee-wrap {
+      position: relative;
+      width: 96px;
+      height: 96px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 6px;
+    }
+    /* Pot de miel au centre qui pulse */
+    .ls-center {
+      font-size: 2.2rem;
+      animation: ls-center-pulse 2s ease-in-out infinite;
+      line-height: 1;
+    }
+    /* Bras qui tourne */
+    .ls-orbit {
+      position: absolute;
+      inset: 0;
+      animation: ls-spin 2.2s linear infinite;
+    }
+    /* L'abeille, en haut du bras, qui contre-tourne pour rester droite */
+    .ls-bee {
+      position: absolute;
+      top: 2px;
+      left: 50%;
+      font-size: 1.6rem;
+      line-height: 1;
+      transform: translateX(-50%);
+      animation: ls-counter 2.2s linear infinite;
+      filter: drop-shadow(0 2px 6px rgba(212,137,42,0.5));
+    }
+    @keyframes ls-spin {
+      to { transform: rotate(360deg); }
+    }
+    @keyframes ls-counter {
+      to { transform: translateX(-50%) rotate(-360deg); }
+    }
+    @keyframes ls-center-pulse {
+      0%, 100% { transform: scale(1);    opacity: 0.85; }
+      50%       { transform: scale(1.12); opacity: 1;    }
+    }
+    /* Titre */
+    .ls-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.9rem;
+      font-weight: 700;
+      color: #FFF8E7;
+      letter-spacing: 0.02em;
+      margin-top: 4px;
+    }
+    /* Message animé */
+    .ls-msg {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.85rem;
+      color: #D4892A;
+      min-height: 22px;
+      transition: opacity 0.3s ease;
+      text-align: center;
+    }
+    /* Dots de chargement */
+    .ls-dots {
+      display: flex;
+      gap: 7px;
+      margin-top: 6px;
+    }
+    .ls-dots span {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #D4892A;
+      animation: ls-dot 1.4s ease-in-out infinite;
+    }
+    .ls-dots span:nth-child(2) { animation-delay: 0.22s; }
+    .ls-dots span:nth-child(3) { animation-delay: 0.44s; }
+    @keyframes ls-dot {
+      0%, 80%, 100% { transform: scale(0.7); opacity: 0.3; }
+      40%            { transform: scale(1.2); opacity: 1;   }
+    }
+  </style>
 </head>
 <body>
 
 <!-- ============================================================
+     ÉCRAN DE CHARGEMENT
+     ============================================================ -->
+<div id="loading-screen">
+  <div class="ls-content">
+    <div class="ls-bee-wrap">
+      <span class="ls-center">🍯</span>
+      <div class="ls-orbit">
+        <span class="ls-bee">🐝</span>
+      </div>
+    </div>
+    <div class="ls-title">Ruchers VL</div>
+    <div class="ls-msg" id="ls-msg">Chargement…</div>
+    <div class="ls-dots">
+      <span></span><span></span><span></span>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================
      ÉCRAN DE CONNEXION
      ============================================================ -->
-<div id="login-screen">
+<div id="login-screen" style="display:none;">
   <div class="login-card">
     <div class="login-emoji">🐝</div>
     <h1>Ruchers VL</h1>
@@ -921,31 +1048,69 @@
     <!-- Contenu scrollable — ✏️ MODIFIER ICI À CHAQUE MAJ -->
     <div class="modal-body" id="wn-content" style="overflow-y:auto;padding:16px 20px;flex:1;">
 
-      <!-- === V1.3 === -->
+      <!-- === V2.0 === -->
       <div class="wn-section">
-        <div class="wn-badge">V1.3</div>
+        <div class="wn-badge" style="background:#D4892A;">V2.0</div>
+
+        <div class="wn-item">
+          <span class="wn-icon">🗺️</span>
+          <div>
+            <div class="wn-title">Carte des transhumances</div>
+            <div class="wn-desc">Chaque mouvement de rucher s'affiche sur une mini-carte Leaflet. Les destinations GPS sont reliées par une flèche pointillée depuis l'origine.</div>
+          </div>
+        </div>
+
+        <div class="wn-item">
+          <span class="wn-icon">📍</span>
+          <div>
+            <div class="wn-title">GPS en un tap dans les ruchers</div>
+            <div class="wn-desc">Bouton "Ma position GPS actuelle" dans les fiches rucher — capturez vos coordonnées exactes sur le terrain sans saisie manuelle.</div>
+          </div>
+        </div>
+
+        <div class="wn-item">
+          <span class="wn-icon">🚛</span>
+          <div>
+            <div class="wn-title">GPS destination de mouvement</div>
+            <div class="wn-desc">Lors d'un mouvement de colonies, capturez les coordonnées GPS de votre destination directement depuis le formulaire.</div>
+          </div>
+        </div>
+
+        <div class="wn-item">
+          <span class="wn-icon">⏳</span>
+          <div>
+            <div class="wn-title">Écran de chargement</div>
+            <div class="wn-desc">Un écran de démarrage avec l'abeille animée s'affiche pendant la synchronisation — plus d'attente silencieuse à l'ouverture de l'app.</div>
+          </div>
+        </div>
+
+        <div class="wn-item">
+          <span class="wn-icon">🔄</span>
+          <div>
+            <div class="wn-title">Cache offline amélioré</div>
+            <div class="wn-desc">Tous les modules (mouvements, documents, conformité) sont désormais disponibles hors connexion grâce au Service Worker mis à jour.</div>
+          </div>
+        </div>
+      </div>
+      <!-- === FIN V2.0 === -->
+
+      <!-- === V1.3 === -->
+      <div class="wn-section" style="margin-top:16px;opacity:0.65;">
+        <div class="wn-badge" style="background:#888;font-size:0.7rem;">V1.3</div>
 
         <div class="wn-item">
           <span class="wn-icon">📸</span>
           <div>
             <div class="wn-title">Photos dans les visites</div>
-            <div class="wn-desc">Ajoutez des photos directement lors d'une visite. Elles apparaissent dans le compte rendu et sont sauvegardées dans le cloud.</div>
+            <div class="wn-desc">Ajoutez des photos directement lors d'une visite, sauvegardées dans le cloud.</div>
           </div>
         </div>
 
         <div class="wn-item">
           <span class="wn-icon">🎙</span>
           <div>
-            <div class="wn-title">Mémo vocal (max 1 min)</div>
+            <div class="wn-title">Mémo vocal</div>
             <div class="wn-desc">Enregistrez une note vocale pendant vos observations. Réécoutez-la depuis le compte rendu.</div>
-          </div>
-        </div>
-
-        <div class="wn-item">
-          <span class="wn-icon">🪨</span>
-          <div>
-            <div class="wn-title">Marquage visible dans le compte rendu</div>
-            <div class="wn-desc">Les pierres et marquages enregistrés lors d'une visite s'affichent désormais dans le compte rendu et sur les cards.</div>
           </div>
         </div>
 
@@ -953,15 +1118,7 @@
           <span class="wn-icon">☁️</span>
           <div>
             <div class="wn-title">Synchronisation multi-appareils</div>
-            <div class="wn-desc">Vos données (ruchers, visites, sanitaire) se synchronisent automatiquement entre tous vos appareils connectés.</div>
-          </div>
-        </div>
-
-        <div class="wn-item">
-          <span class="wn-icon">🔐</span>
-          <div>
-            <div class="wn-title">Comptes utilisateurs</div>
-            <div class="wn-desc">Connexion sécurisée par email. Chaque apiculteur a ses propres données.</div>
+            <div class="wn-desc">Vos données se synchronisent automatiquement entre tous vos appareils connectés.</div>
           </div>
         </div>
       </div>
@@ -1052,7 +1209,7 @@
 
 <!-- ✏️ Changer WHATS_NEW_VERSION à chaque mise à jour -->
 <script>
-  const WHATS_NEW_VERSION = '1.3';
+  const WHATS_NEW_VERSION = '2.0';
 
   function showWhatsNew() {
     const el = document.getElementById('modal-whats-new');
