@@ -401,7 +401,7 @@ body {
 .btn-icon.btn-delete:active { color: var(--danger); }
 .btn-icon.btn-edit:active   { color: var(--honey); }
 
-/* Ancien btn-delete — gardé pour compatibilité */
+/* Bouton supprimer sur les cards */
 .btn-delete {
   position: absolute;
   top: 12px;
@@ -411,11 +411,40 @@ body {
   font-size: 1rem;
   color: var(--border);
   cursor: pointer;
-  padding: 2px;
+  padding: 2px 4px;
   touch-action: manipulation;
+  z-index: 2;
 }
 
 .btn-delete:active { color: var(--danger); }
+
+/* Empêche le badge rucher de chevaucher le bouton supprimer */
+.entry-top {
+  padding-right: 32px;
+}
+
+/* Bouton retour — utilisé dans les sous-pages du menu Plus */
+.btn-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 7px 14px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--mid);
+  cursor: pointer;
+  margin-bottom: 18px;
+  touch-action: manipulation;
+  transition: background 0.15s, color 0.15s;
+}
+
+.btn-back:active {
+  background: var(--cream);
+  color: var(--ink);
+}
 
 
 /* ============================================================

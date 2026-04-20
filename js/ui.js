@@ -37,8 +37,6 @@ function showTab(name, el) {
   if (name !== 'carte') document.getElementById('scroll-area').scrollTop = 0;
   const fab = document.getElementById('fab');
   fab.classList.toggle('hidden', !['journal', 'sanitaire', 'ruchers'].includes(name));
-  if (name !== 'plus') document.querySelectorAll('[id^=sub-]').forEach(s => s.style.display = 'none');
-  if (name === 'plus') loadParamsUI();
   if (name === 'sanitaire' && typeof checkComptageReminder === 'function') checkComptageReminder();
 }
 

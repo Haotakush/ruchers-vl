@@ -508,7 +508,7 @@ function openConformiteForm() {
 
       <div class="form-row" style="margin-bottom:14px;">
         <label class="form-label">N° NAPI</label>
-        <input id="conf-napi" class="form-input" value="${napi}" placeholder="A5134145"
+        <input id="conf-napi" class="form-input" value="${napi}" placeholder="Ex : A5100000"
           style="text-transform:uppercase;">
       </div>
 

@@ -246,89 +246,93 @@
   </div>
 
 
-  <!-- PLUS -->
+  <!-- PLUS — Menu principal -->
   <div id="tab-plus" class="section">
-    <button class="menu-item" onclick="showSubSection('sub-params')">⚙️ Paramètres</button>
-    <button class="menu-item" onclick="showSubSection('sub-calendrier')">🍯 Calendrier mellifère</button>
+    <button class="menu-item" onclick="showTab('params',null);loadParamsUI()">⚙️ Paramètres</button>
+    <button class="menu-item" onclick="showTab('calendrier',null);renderCalendrier()">🍯 Calendrier mellifère</button>
     <button class="menu-item" onclick="showTab('registre',null);renderRegistre()">📖 Registre d'élevage</button>
-    <button class="menu-item" onclick="showSubSection('sub-admin');initAdminConformite()">🛡 Admin &amp; Conformité</button>
-    <button class="menu-item" onclick="showSubSection('sub-documents');populateDocRucherSelect();renderDocuments()">📎 Documents réglementaires</button>
+    <button class="menu-item" onclick="showTab('admin',null);initAdminConformite()">🛡 Admin &amp; Conformité</button>
+    <button class="menu-item" onclick="showTab('documents',null);populateDocRucherSelect();renderDocuments()">📎 Documents réglementaires</button>
     <button class="menu-item" onclick="openModal('modal-cgu')">📄 CGU &amp; Confidentialité</button>
     <div id="logout-wrap" style="margin-top:20px;"></div>
     <div style="margin-top:8px;">
       <button class="menu-item" style="color:#EF5350;border-color:#5a2a2a;" onclick="confirmDeleteAccount()">🗑 Supprimer mon compte</button>
     </div>
+  </div>
 
-    <!-- Paramètres -->
-    <div id="sub-params" style="display:none;">
-      <div class="card">
-        <div class="card-title">⚙️ Mes informations</div>
-        <div class="form-row"><label class="form-label">Nom / Raison sociale</label>
-          <input class="param-input" id="p-nom" placeholder="VALENCOURT LUDOVIC"></div>
-        <div class="form-row"><label class="form-label">NAPI</label>
-          <input class="param-input" id="p-napi" placeholder="A5134145"></div>
-        <div class="form-row"><label class="form-label">N° SIRET</label>
-          <input class="param-input" id="p-siret" placeholder="94897101500011"></div>
-        <div class="form-row"><label class="form-label">Adresse</label>
-          <input class="param-input" id="p-adresse" placeholder="17 Chemin des Alamandas…"></div>
-        <div class="form-row"><label class="form-label">Email</label>
-          <input class="param-input" id="p-email" type="email" placeholder="votre@email.fr"></div>
-        <div class="form-row"><label class="form-label">Date déclaration</label>
-          <input class="param-input" id="p-datedecl" placeholder="07/12/2025"></div>
-        <div class="form-row"><label class="form-label">Référence déclaration</label>
-          <input class="param-input" id="p-refdecl" placeholder="2025-00140066"></div>
-        <div class="form-row"><label class="form-label">Colonies déclarées</label>
-          <input class="param-input" id="p-colonies" type="number" placeholder="180"></div>
-        <button class="btn-param-save" onclick="saveParams()">✓ Enregistrer</button>
+  <!-- PARAMÈTRES -->
+  <div id="tab-params" class="section">
+    <button class="btn-back" onclick="showTab('plus',null)">← Retour</button>
+    <div class="card">
+      <div class="card-title">⚙️ Mes informations</div>
+      <div class="form-row"><label class="form-label">Nom / Raison sociale</label>
+        <input class="param-input" id="p-nom" placeholder="Ex : DUPONT Jean"></div>
+      <div class="form-row"><label class="form-label">NAPI</label>
+        <input class="param-input" id="p-napi" placeholder="Ex : A5100000"></div>
+      <div class="form-row"><label class="form-label">N° SIRET</label>
+        <input class="param-input" id="p-siret" placeholder="Ex : 12345678900000"></div>
+      <div class="form-row"><label class="form-label">Adresse</label>
+        <input class="param-input" id="p-adresse" placeholder="Votre adresse…"></div>
+      <div class="form-row"><label class="form-label">Email</label>
+        <input class="param-input" id="p-email" type="email" placeholder="votre@email.fr"></div>
+      <div class="form-row"><label class="form-label">Date déclaration</label>
+        <input class="param-input" id="p-datedecl" placeholder="JJ/MM/AAAA"></div>
+      <div class="form-row"><label class="form-label">Référence déclaration</label>
+        <input class="param-input" id="p-refdecl" placeholder="Ex : 2025-00000000"></div>
+      <div class="form-row"><label class="form-label">Colonies déclarées</label>
+        <input class="param-input" id="p-colonies" type="number" placeholder="Ex : 50"></div>
+      <button class="btn-param-save" onclick="saveParams()">✓ Enregistrer</button>
+    </div>
+  </div>
+
+  <!-- CALENDRIER MELLIFÈRE -->
+  <div id="tab-calendrier" class="section">
+    <button class="btn-back" onclick="showTab('plus',null)">← Retour</button>
+    <div class="card" style="overflow-x:auto;padding:12px 8px;">
+      <div class="card-title" style="padding:0 8px 10px;">🍯 Plantes mellifères — Sud &amp; Ouest</div>
+      <table class="cal-table">
+        <thead><tr>
+          <th class="col-p">Plante</th>
+          <th>J</th><th>F</th><th>M</th><th>A</th><th>M</th><th>J</th>
+          <th>J</th><th>A</th><th>S</th><th>O</th><th>N</th><th>D</th>
+        </tr></thead>
+        <tbody id="cal-body"></tbody>
+      </table>
+      <div style="margin-top:10px;font-size:0.7rem;color:var(--mid);padding:0 4px;">
+        <span class="cm">+</span> Miellée principale &nbsp;·&nbsp; <span class="ca">/</span> Appoint
       </div>
     </div>
+  </div>
 
-    <!-- Calendrier -->
-    <div id="sub-calendrier" style="display:none;">
-      <div class="card" style="overflow-x:auto;padding:12px 8px;">
-        <div class="card-title" style="padding:0 8px 10px;">Plantes mellifères — Sud &amp; Ouest</div>
-        <table class="cal-table">
-          <thead><tr>
-            <th class="col-p">Plante</th>
-            <th>J</th><th>F</th><th>M</th><th>A</th><th>M</th><th>J</th>
-            <th>J</th><th>A</th><th>S</th><th>O</th><th>N</th><th>D</th>
-          </tr></thead>
-          <tbody id="cal-body"></tbody>
-        </table>
-        <div style="margin-top:10px;font-size:0.7rem;color:var(--mid);padding:0 4px;">
-          <span class="cm">+</span> Miellée principale &nbsp;·&nbsp; <span class="ca">/</span> Appoint
-        </div>
-      </div>
+  <!-- TRANSHUMANCE -->
+  <div id="tab-transhumance" class="section">
+    <!-- Carte des mouvements -->
+    <div id="mouv-map-container" style="display:none;margin:0 0 16px;border-radius:14px;overflow:hidden;border:1px solid rgba(212,130,10,0.2);">
+      <div id="mouv-map" style="height:220px;width:100%;"></div>
     </div>
-
-    <!-- Transhumance -->
-    <div id="sub-transhumance" style="display:none;">
-
-      <!-- Carte des mouvements -->
-      <div id="mouv-map-container" style="display:none;margin:16px 0;border-radius:14px;overflow:hidden;border:1px solid rgba(212,130,10,0.2);">
-        <div id="mouv-map" style="height:220px;width:100%;"></div>
-      </div>
-
-      <!-- Journal des mouvements (registre légal) -->
-      <div style="display:flex;justify-content:space-between;align-items:center;margin:20px 0 12px;">
-        <div class="card-title" style="margin:0;">🚛 Journal des mouvements</div>
-        <button class="btn-save" style="padding:6px 16px;font-size:0.8rem;" onclick="openNewMouvement()">+ Ajouter</button>
-      </div>
-      <div style="font-size:.75rem;color:var(--soft);margin-bottom:12px;">
-        Conforme arrêté du 5 juin 2000 — apparaîtra dans la Section 5 du registre d'élevage.
-      </div>
-      <div id="mouvements-list"></div>
-
+    <!-- Journal des mouvements (registre légal) -->
+    <div style="display:flex;justify-content:space-between;align-items:center;margin:0 0 12px;">
+      <div class="card-title" style="margin:0;">🚛 Journal des mouvements</div>
+      <button class="btn-save" style="padding:6px 16px;font-size:0.8rem;" onclick="openNewMouvement()">+ Ajouter</button>
     </div>
+    <div style="font-size:.75rem;color:var(--soft);margin-bottom:12px;">
+      Conforme arrêté du 5 juin 2000 — apparaîtra dans la Section 5 du registre d'élevage.
+    </div>
+    <div id="mouvements-list"></div>
+  </div>
 
-    <!-- Admin & Conformité -->
-    <div id="sub-admin" style="display:none;">
+  <!-- ADMIN & CONFORMITÉ -->
+  <div id="tab-admin" class="section">
+    <button class="btn-back" onclick="showTab('plus',null)">← Retour</button>
+    <div id="sub-admin">
       <!-- Contenu injecté dynamiquement par admin-conformite.js -->
     </div>
+  </div>
 
-    <!-- Documents réglementaires -->
-    <div id="sub-documents" style="display:none;"></div>
-
+  <!-- DOCUMENTS RÉGLEMENTAIRES -->
+  <div id="tab-documents" class="section">
+    <button class="btn-back" onclick="showTab('plus',null)">← Retour</button>
+    <div id="sub-documents"></div>
   </div>
 
 
@@ -462,7 +466,7 @@
   <button class="nav-item" onclick="showTab('carte',this); initMap()">
     <span class="nav-icon">🗺️</span>Carte
   </button>
-  <button class="nav-item" onclick="showTab('plus',this);showSubSection('sub-transhumance');populateMouvRucherSelect();renderMouvements();setTimeout(()=>{if(mouvMapInstance)mouvMapInstance.invalidateSize();},300);">
+  <button class="nav-item" onclick="showTab('transhumance',this);populateMouvRucherSelect();renderMouvements();setTimeout(()=>{if(mouvMapInstance)mouvMapInstance.invalidateSize();},300);">
     <span class="nav-icon">🚛</span>Transhumance
   </button>
   <button class="nav-item" onclick="showTab('plus',this)">
@@ -1224,7 +1228,7 @@
     <div class="modal-body" style="font-size:0.82rem;line-height:1.7;color:var(--soft);padding-bottom:24px;">
 
       <div style="font-weight:700;color:var(--text);margin-bottom:6px;">1. Éditeur</div>
-      <p>Ruchers VL est une application développée et exploitée par Valencourt Ludovic, apiculteur à La Réunion. Contact : <strong>eric.valencourt@gmail.com</strong></p>
+      <p>Ruchers VL est une application développée et exploitée par un apiculteur indépendant à La Réunion. Contact : <strong>eric.valencourt@gmail.com</strong></p>
 
       <div style="font-weight:700;color:var(--text);margin:14px 0 6px;">2. Objet</div>
       <p>Ruchers VL est un carnet numérique destiné aux apiculteurs. Il permet de gérer les visites, les traitements sanitaires, les ruchers et de générer un registre d'élevage conforme à la réglementation française (arrêté du 5 juin 2000).</p>
