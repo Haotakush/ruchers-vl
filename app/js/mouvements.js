@@ -201,10 +201,58 @@ function grabGPSForDestination() {
    ============================================================ */
 
 function populateMouvRucherSelect() {
-  const sel = document.getElementById('mouv-origine');
-  if (!sel) return;
-  sel.innerHTML = '<option value="">— Sélectionner un rucher —</option>'
-    + RUCHERS.map(r => `<option value="${r.id}">${r.id} — ${r.lieu}</option>`).join('');
+  const selOrig = document.getElementById('mouv-origine');
+  if (selOrig) {
+    selOrig.innerHTML = '<option value="">— Sélectionner un rucher —</option>'
+      + RUCHERS.map(r => `<option value="${r.id}">${r.id} — ${r.lieu} (${r.nb || 0} col.)</option>`).join('');
+  }
+  const selDest = document.getElementById('mouv-dest-rucher');
+  if (selDest) {
+    selDest.innerHTML = '<option value="">— Destination externe —</option>'
+      + RUCHERS.map(r => `<option value="${r.id}">${r.id} — ${r.lieu} (${r.nb || 0} col.)</option>`).join('');
+  }
+}
+
+/** Aperçu live des effectifs avant/après le déplacement */
+function onMouvCheptelPreview() {
+  const previewEl = document.getElementById('mouv-cheptel-preview');
+  if (!previewEl) return;
+
+  const origId  = document.getElementById('mouv-origine')?.value;
+  const destId  = document.getElementById('mouv-dest-rucher')?.value;
+  const nb      = parseInt(document.getElementById('mouv-nb')?.value) || 0;
+
+  if (!origId || !destId || !nb || origId === destId) {
+    previewEl.style.display = 'none';
+    return;
+  }
+
+  const orig = RUCHERS.find(r => r.id === origId);
+  const dest = RUCHERS.find(r => r.id === destId);
+  if (!orig || !dest) { previewEl.style.display = 'none'; return; }
+
+  const origAvant = orig.nb || 0;
+  const destAvant = dest.nb || 0;
+  const origApres = Math.max(0, origAvant - nb);
+  const destApres = destAvant + nb;
+
+  previewEl.style.display = 'block';
+  previewEl.innerHTML = `
+    <div style="font-size:0.78rem;font-weight:700;color:#D4820A;margin-bottom:6px;">
+      📊 Mise à jour automatique des effectifs
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+      <div style="font-size:0.75rem;color:var(--ink);">
+        <div style="color:var(--soft);margin-bottom:2px;">${orig.id} — ${orig.lieu}</div>
+        <span style="text-decoration:line-through;color:var(--soft);">${origAvant} col.</span>
+        <span style="font-weight:700;color:#EF5350;margin-left:4px;">→ ${origApres} col.</span>
+      </div>
+      <div style="font-size:0.75rem;color:var(--ink);">
+        <div style="color:var(--soft);margin-bottom:2px;">${dest.id} — ${dest.lieu}</div>
+        <span style="text-decoration:line-through;color:var(--soft);">${destAvant} col.</span>
+        <span style="font-weight:700;color:#4A7C59;margin-left:4px;">→ ${destApres} col.</span>
+      </div>
+    </div>`;
 }
 
 /* ============================================================
@@ -232,13 +280,24 @@ async function _doSaveMouvement() {
   if (!date)    { toast('⚠️ Date obligatoire');              return; }
   if (!origine) { toast('⚠️ Sélectionne un rucher d\'origine'); return; }
 
+  const destRucherId = document.getElementById('mouv-dest-rucher')?.value || '';
+  const nbColonies   = parseInt(document.getElementById('mouv-nb').value) || 0;
+
+  // Destination : préférer le rucher interne, sinon le champ texte libre
+  const destRucher = destRucherId ? RUCHERS.find(r => r.id === destRucherId) : null;
+  const destTexte  = document.getElementById('mouv-destination').value || '—';
+  const destinationLabel = destRucher
+    ? `${destRucher.id} — ${destRucher.lieu}${destTexte && destTexte !== '—' ? ' (' + destTexte + ')' : ''}`
+    : destTexte;
+
   const entry = {
     date,
     origine,
-    destination: document.getElementById('mouv-destination').value || '—',
-    nbColonies:  parseInt(document.getElementById('mouv-nb').value) || 0,
-    motif:       document.getElementById('mouv-motif').value       || '—',
-    obs:         document.getElementById('mouv-obs').value         || '',
+    destination:    destinationLabel,
+    destRucherId:   destRucherId || null,
+    nbColonies,
+    motif:          document.getElementById('mouv-motif').value || '—',
+    obs:            document.getElementById('mouv-obs').value   || '',
   };
 
   if (editingMouvIdx !== null) {
@@ -253,6 +312,26 @@ async function _doSaveMouvement() {
     if (docRef) entry._docId = docRef.id;
     mouvementsData.unshift(entry);
     toast('✅ Mouvement enregistré !');
+  }
+
+  // ---- Mise à jour automatique des effectifs ----
+  if (nbColonies > 0) {
+    const origIdx = RUCHERS.findIndex(r => r.id === origine);
+    if (origIdx !== -1) {
+      RUCHERS[origIdx].nb = Math.max(0, (RUCHERS[origIdx].nb || 0) - nbColonies);
+      await saveRucherToFirestore(RUCHERS[origIdx]);
+    }
+    if (destRucherId) {
+      const destIdx = RUCHERS.findIndex(r => r.id === destRucherId);
+      if (destIdx !== -1) {
+        RUCHERS[destIdx].nb = (RUCHERS[destIdx].nb || 0) + nbColonies;
+        await saveRucherToFirestore(RUCHERS[destIdx]);
+      }
+    }
+    saveRuchers();
+    renderRuchers();
+    renderAllSelects();
+    updateDashboard();
   }
 
   localStorage.setItem('mouvements', JSON.stringify(mouvementsData));
@@ -280,6 +359,12 @@ function resetMouvementForm() {
     const d = new Date();
     dateEl.value = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
   }
+
+  // Reset destination rucher + preview
+  const destRucherSel = document.getElementById('mouv-dest-rucher');
+  if (destRucherSel) destRucherSel.value = '';
+  const preview = document.getElementById('mouv-cheptel-preview');
+  if (preview) preview.style.display = 'none';
 
   // Reset bouton GPS et hint
   const btn  = document.getElementById('btn-gps-dest');
@@ -309,6 +394,11 @@ function openEditMouvement(idx) {
   document.getElementById('mouv-nb').value          = m.nbColonies || '';
   document.getElementById('mouv-motif').value       = m.motif !== '—' ? m.motif : '';
   document.getElementById('mouv-obs').value         = m.obs || '';
+
+  // Pré-sélectionner le rucher de destination s'il était enregistré
+  const destRucherSel = document.getElementById('mouv-dest-rucher');
+  if (destRucherSel) destRucherSel.value = m.destRucherId || '';
+  onMouvCheptelPreview();
 
   // Hint GPS si coordonnées détectées dans destination
   const hint = document.getElementById('gps-dest-hint');

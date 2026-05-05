@@ -672,7 +672,6 @@ function openEditJournal(idx) {
 
   document.getElementById('j-date').value   = v.date;
   document.getElementById('j-rucher').value = v.rucher;
-  document.getElementById('j-meteo').value  = v.meteo || '';
   document.getElementById('j-force').value  = v.force || '';
   document.getElementById('j-nb-ruches').textContent    = v.nbRuches    || 0;
   document.getElementById('j-nb-ruchettes').textContent = v.nbRuchettes || 0;
