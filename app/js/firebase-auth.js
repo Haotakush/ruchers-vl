@@ -204,7 +204,11 @@ auth.onAuthStateChanged(async (user) => {
     document.getElementById('app-container').style.display = 'none';
     showLoadingScreen('Chargement de vos ruchers…');
     await loadAllDataFromFirestore();
-    initApp();
+    try {
+      initApp();
+    } catch(err) {
+      console.error('❌ Erreur initApp:', err);
+    }
     // Données prêtes → afficher l'app et cacher le loading
     document.getElementById('app-container').style.display = 'flex';
     hideLoadingScreen();
