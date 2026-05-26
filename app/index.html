@@ -8,6 +8,7 @@
   <meta name="apple-mobile-web-app-title" content="Ruchers VL">
   <meta name="theme-color" content="#1A1208">
   <title>Ruchers VL</title>
+  <link rel="manifest" href="manifest.json">
 
   <!-- Icône iOS "Ajouter à l'écran d'accueil" -->
   <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%231A1208'/><text y='.9em' font-size='72' x='12'>🐝</text></svg>">
@@ -27,8 +28,106 @@
   <!-- CSS de l'application -->
   <link rel="stylesheet" href="css/style.css">
 
-  <!-- CSS Login Screen -->
+  <!-- CSS Loading Screen + Login Screen -->
   <style>
+    /* =====================================================
+       LOADING SCREEN
+       ===================================================== */
+    #loading-screen {
+      position: fixed;
+      inset: 0;
+      background: #1A1208;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 99999;
+      opacity: 1;
+      transition: opacity 0.45s ease;
+    }
+    #loading-screen.ls-fade-out {
+      opacity: 0;
+      pointer-events: none;
+    }
+    .ls-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      padding: 0 24px;
+    }
+    .ls-bee-wrap {
+      position: relative;
+      width: 96px;
+      height: 96px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 6px;
+    }
+    .ls-center {
+      font-size: 2.2rem;
+      animation: ls-center-pulse 2s ease-in-out infinite;
+      line-height: 1;
+    }
+    .ls-orbit {
+      position: absolute;
+      inset: 0;
+      animation: ls-spin 2.2s linear infinite;
+    }
+    .ls-bee {
+      position: absolute;
+      top: 2px;
+      left: 50%;
+      font-size: 1.6rem;
+      line-height: 1;
+      transform: translateX(-50%);
+      animation: ls-counter 2.2s linear infinite;
+      filter: drop-shadow(0 2px 6px rgba(212,137,42,0.5));
+    }
+    @keyframes ls-spin    { to { transform: rotate(360deg); } }
+    @keyframes ls-counter { to { transform: translateX(-50%) rotate(-360deg); } }
+    @keyframes ls-center-pulse {
+      0%, 100% { transform: scale(1);     opacity: 0.85; }
+      50%       { transform: scale(1.12); opacity: 1;    }
+    }
+    .ls-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.9rem;
+      font-weight: 700;
+      color: #FFF8E7;
+      letter-spacing: 0.02em;
+      margin-top: 4px;
+    }
+    .ls-msg {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.85rem;
+      color: #D4892A;
+      min-height: 22px;
+      transition: opacity 0.3s ease;
+      text-align: center;
+    }
+    .ls-dots {
+      display: flex;
+      gap: 7px;
+      margin-top: 6px;
+    }
+    .ls-dots span {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #D4892A;
+      animation: ls-dot 1.4s ease-in-out infinite;
+    }
+    .ls-dots span:nth-child(2) { animation-delay: 0.22s; }
+    .ls-dots span:nth-child(3) { animation-delay: 0.44s; }
+    @keyframes ls-dot {
+      0%, 80%, 100% { transform: scale(0.7); opacity: 0.4; }
+      40%            { transform: scale(1);   opacity: 1;   }
+    }
+
+    /* =====================================================
+       LOGIN SCREEN
+       ===================================================== */
     #login-screen {
       display: flex;
       align-items: center;
@@ -134,21 +233,79 @@
 <body>
 
 <!-- ============================================================
+     LOADING SCREEN
+     ============================================================ -->
+<div id="loading-screen">
+  <div class="ls-content">
+    <div class="ls-bee-wrap">
+      <span class="ls-center">🍯</span>
+      <div class="ls-orbit">
+        <span class="ls-bee">🐝</span>
+      </div>
+    </div>
+    <div class="ls-title">Ruchers VL</div>
+    <div class="ls-msg" id="ls-msg">Chargement…</div>
+    <div class="ls-dots">
+      <span></span><span></span><span></span>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
      ÉCRAN DE CONNEXION
      ============================================================ -->
-<div id="login-screen">
+<div id="login-screen" style="display:none;">
   <div class="login-card">
     <div class="login-emoji">🐝</div>
     <h1>Ruchers VL</h1>
-    <p>Connectez-vous pour accéder à vos données</p>
-    <input type="email" class="login-input" id="login-email"
-      placeholder="Email" autocomplete="email"
-      onkeypress="handleLoginKeypress(event)">
-    <input type="password" class="login-input" id="login-pass"
-      placeholder="Mot de passe" autocomplete="current-password"
-      onkeypress="handleLoginKeypress(event)">
-    <button class="login-btn" id="login-btn" onclick="doLogin()">Se connecter</button>
-    <div class="login-error" id="login-error"></div>
+    <p class="login-subtitle">Votre carnet d'apiculteur numérique</p>
+
+    <!-- Formulaire connexion -->
+    <div id="login-form">
+      <input type="email" class="login-input" id="login-email"
+        placeholder="Email" autocomplete="email"
+        onkeypress="handleLoginKeypress(event)">
+      <input type="password" class="login-input" id="login-pass"
+        placeholder="Mot de passe" autocomplete="current-password"
+        onkeypress="handleLoginKeypress(event)">
+      <button class="login-btn" id="login-btn" onclick="doLogin()">Se connecter</button>
+      <div class="login-error" id="login-error"></div>
+      <button class="login-switch-btn" style="font-size:0.75rem;opacity:0.7;margin-top:2px;" onclick="showForgotPassword()">
+        Mot de passe oublié ?
+      </button>
+      <button class="login-switch-btn" onclick="toggleCreateAccount()">
+        Pas encore de compte ? Créer un compte →
+      </button>
+    </div>
+
+    <!-- Formulaire mot de passe oublié -->
+    <div id="forgot-form" style="display:none;">
+      <div class="login-section-title">Réinitialiser le mot de passe</div>
+      <p style="font-size:0.8rem;color:#aaa;margin-bottom:12px;text-align:center;">Un email de réinitialisation vous sera envoyé.</p>
+      <input type="email" class="login-input" id="forgot-email"
+        placeholder="Votre adresse email"
+        onkeypress="if(event.key==='Enter') doForgotPassword()">
+      <button class="login-btn" id="forgot-btn" onclick="doForgotPassword()">Envoyer le lien</button>
+      <div class="login-error" id="forgot-msg" style="text-align:center;"></div>
+      <button class="login-switch-btn" onclick="showLoginForm()">← Retour à la connexion</button>
+    </div>
+
+    <!-- Formulaire création de compte -->
+    <div id="create-form" style="display:none;">
+      <div class="login-section-title">Créer un compte</div>
+      <input type="email" class="login-input" id="create-email"
+        placeholder="Email" autocomplete="email"
+        onkeypress="handleCreateKeypress(event)">
+      <input type="password" class="login-input" id="create-pass"
+        placeholder="Mot de passe (min. 6 caractères)"
+        onkeypress="handleCreateKeypress(event)">
+      <input type="password" class="login-input" id="create-pass2"
+        placeholder="Confirmer le mot de passe"
+        onkeypress="handleCreateKeypress(event)">
+      <button class="login-btn" id="create-btn" onclick="doCreateAccount()">Créer le compte</button>
+      <div class="login-error" id="create-error"></div>
+      <button class="login-switch-btn" onclick="toggleCreateAccount()">← Retour à la connexion</button>
+    </div>
   </div>
 </div>
 
