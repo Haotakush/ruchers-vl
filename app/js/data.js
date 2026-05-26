@@ -1,27 +1,47 @@
 /* ============================================================
    data.js — Données de l'application
-   v1.3 — Données vierges, nouveau modèle rucher (nbRuchettes)
+
+   Ce fichier gère :
+   - Les données par défaut (ruchers, calendrier, paramètres)
+   - Les fonctions de persistance (Firestore + localStorage fallback)
+   - Les fonctions utilitaires liées aux données
+
+   ⚠️  Pour ajouter un nouveau rucher par défaut : modifier RUCHERS_DEFAULT
+   ⚠️  Pour modifier les infos de l'apiculteur : modifier PARAMS_DEFAULT
    ============================================================ */
 
-/* Données par défaut — VIERGES pour la V1.3 */
-const RUCHERS_DEFAULT = [];
+
+/* ------------------------------------------------------------
+   RUCHERS PAR DÉFAUT
+   ------------------------------------------------------------ */
+const RUCHERS_DEFAULT = [
+  { id:'R01', cp:'97421', lieu:'Gol les Hauts',       zone:'Bas',       alt:350,  nb:24,   lat:-21.3520, lng:55.3980 },
+  { id:'R02', cp:'97421', lieu:'Canot / Tapage',       zone:'Bas',       alt:400,  nb:24,   lat:-21.3620, lng:55.3850 },
+  { id:'R03', cp:'97450', lieu:'Le Gol',               zone:'Bas',       alt:200,  nb:37,   lat:-21.3450, lng:55.4020 },
+  { id:'R04', cp:'97427', lieu:"L'Étang-Salé — Arda", zone:'Bas',       alt:7,    nb:30,   lat:-21.2640, lng:55.3340 },
+  { id:'R05', cp:'97430', lieu:'Dassy',                zone:'Mi-pentes', alt:550,  nb:35,   lat:-21.2800, lng:55.5200 },
+  { id:'R06', cp:'97410', lieu:'Bassin Martin',        zone:'Mi-pentes', alt:550,  nb:24,   lat:-21.3200, lng:55.4760 },
+  { id:'R07', cp:'97413', lieu:'Cilaos — Bras sec',    zone:'Hauts',     alt:1000, nb:null, lat:-21.1360, lng:55.4730 },
+  { id:'R08', cp:'97432', lieu:"Bois d'Olive",         zone:'Bas',       alt:200,  nb:16,   lat:-21.3380, lng:55.4650 },
+  { id:'R09', cp:'97470', lieu:'Chemin ceinture',      zone:'Mi-pentes', alt:450,  nb:null, lat:-21.0200, lng:55.6350 },
+];
 
 const PARAMS_DEFAULT = {
-  nom:      '',
-  napi:     '',
-  siret:    '',
-  adresse:  '',
-  email:    '',
-  dateDecl: '',
-  refDecl:  '',
-  colonies: '',
+  nom:      'VALENCOURT LUDOVIC',
+  napi:     'A5134145',
+  siret:    '94897101500011',
+  adresse:  '17 Chemin des Alamandas — 97421 Saint-Louis',
+  email:    'valencourt.pro [at] gmail.com',
+  dateDecl: '07/12/2025',
+  refDecl:  '2025-00140066',
+  colonies: '180',
 };
 
 const CAL = [
   { zone:'⬇ BAS (0–400m)' },
   { p:'Letchi',              m:[0,0,0,0,0,0,'+','+','+',0,0,0] },
   { p:'Liane corail',        m:[0,0,0,0,'/','/','/','/','/',0,0,0] },
-  { p:"Cocotier / Palmiers", m:['/','/','/','/','/','/','/','/','/','/','/','/'] },
+  { p:'Cocotier / Palmiers', m:['/','/','/','/','/','/','/','/','/','/','/','/'] },
   { p:"Tamarin d'Inde",      m:['+',0,0,0,0,0,0,0,0,'+','+','+'] },
   { p:'Liane papillon',      m:['/','/','/',0,0,0,0,0,0,0,'/','/'] },
   { p:'Baie rose',           m:[0,'+','+','+','+',0,0,0,0,0,0,0] },
@@ -42,17 +62,15 @@ const CAL = [
 const MONTHS = ['Jan','Fév','Mar','Avr','Mai','Jun','Jul','Aoû','Sep','Oct','Nov','Déc'];
 
 let PARAMS        = { ...PARAMS_DEFAULT };
-let RUCHERS       = [];
+let RUCHERS       = [...RUCHERS_DEFAULT];
 let journalData   = [];
 let sanitaireData = [];
-let documentsData  = [];  // bibliothèque de documents réglementaires
-let mouvementsData = [];  // mouvements de colonies (transhumances)
-let rucherPhotos  = {};  // rucherId -> [dataUrl]
-let visitPhotos   = {};  // visitId  -> [dataUrl]
-let visitAudio    = {};  // visitId  -> { data: dataUrl, duration: seconds }
+let rucherPhotos  = {};
 let transData     = {};
+let customPlantes = JSON.parse(localStorage.getItem('customPlantes') || '[]');
 let currentTab    = 'dashboard';
-let lastSyncTime  = null;
+let ruchesMethod  = 'numerique';
+let editingPlanteIdx = null; // index en cours d'édition
 
 function saveRuchers() {
   localStorage.setItem('ruchers', JSON.stringify(RUCHERS));
@@ -92,12 +110,4 @@ function buildLastVisitMap() {
     }
   });
   return lastVisitMap;
-}
-
-/** Obtenir le nombre de ruchettes de la dernière visite d'un rucher */
-function getLastNbRuchettes(rucherId) {
-  const visits = journalData.filter(v => v.rucher === rucherId && v.nbRuchettes !== undefined);
-  if (!visits.length) return null;
-  // journalData est trié par date desc, donc la première est la plus récente
-  return visits[0].nbRuchettes;
 }
