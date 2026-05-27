@@ -322,26 +322,24 @@ function openPlanteSheet(pi) {
   _editingPlante = { pi, isRef: plant.isRef, data: { ...plant } };
 
   const sheet = document.getElementById('plante-sheet');
-  document.getElementById('ps-title').textContent = plant.isRef ? plant.p : '✏️ ' + plant.p;
-  document.getElementById('ps-nom').value = plant.p;
-  document.getElementById('ps-nom').disabled = plant.isRef;
-  document.getElementById('ps-zone').value = plant.zone || 'Bas';
-  document.getElementById('ps-zone').disabled = plant.isRef;
-  document.getElementById('ps-save-btn').style.display = plant.isRef ? 'none' : 'block';
+  document.getElementById('ps-title').textContent = plant.isRef ? '✏️ ' + plant.p : '✏️ ' + plant.p;
+  document.getElementById('ps-nom').value    = plant.p;
+  document.getElementById('ps-nom').disabled = false;
+  document.getElementById('ps-zone').value    = plant.zone || 'Bas';
+  document.getElementById('ps-zone').disabled = false;
+  document.getElementById('ps-save-btn').style.display = 'block';
 
-  // Boutons mois
+  // Boutons mois — toujours éditables
   const mois = document.querySelectorAll('.ps-mois-btn');
   mois.forEach((btn, mi) => {
     let active = false;
     if (plant.isRef) {
       active = plant.refM[mi] === '+' || plant.refM[mi] === '/';
-      btn.disabled = true;
-      btn.style.opacity = '.6';
     } else {
       active = plant.m && plant.m[mi] ? true : false;
-      btn.disabled = false;
-      btn.style.opacity = '1';
     }
+    btn.disabled = false;
+    btn.style.opacity = '1';
     btn.classList.toggle('ps-mois-on', active);
   });
 
@@ -383,9 +381,23 @@ function savePlanteSheet() {
   const m = Array.from(document.querySelectorAll('.ps-mois-btn')).map(b => b.classList.contains('ps-mois-on') ? 1 : 0);
 
   if (_editingPlante) {
-    // Modification
-    const cp = customPlantes.find(c => c.p === _editingPlante.data.p);
-    if (cp) { cp.p = nom; cp.zone = zone; cp.m = m; }
+    if (_editingPlante.isRef) {
+      // Plante de référence modifiée → masquer l'original + créer une version custom
+      const originalName = _editingPlante.data.p;
+      if (!deletedRefNames.includes(originalName)) {
+        deletedRefNames.push(originalName);
+        localStorage.setItem('deletedRefPlantes', JSON.stringify(deletedRefNames));
+        if (currentUser && typeof saveDeletedRefToFirestore === 'function') saveDeletedRefToFirestore();
+      }
+      // Supprimer une éventuelle version custom précédente du même nom
+      const existIdx = customPlantes.findIndex(c => c.p === originalName);
+      if (existIdx > -1) customPlantes.splice(existIdx, 1);
+      customPlantes.push({ p: nom, zone, m });
+    } else {
+      // Plante custom existante
+      const cp = customPlantes.find(c => c.p === _editingPlante.data.p);
+      if (cp) { cp.p = nom; cp.zone = zone; cp.m = m; }
+    }
   } else {
     // Nouvelle plante
     customPlantes.push({ p: nom, zone, m });

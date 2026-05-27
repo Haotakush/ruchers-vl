@@ -273,6 +273,8 @@ async function _doSaveJournal() {
     ? { texte: rappelTexte, jours: rappelJours, echeance: addJoursToDate(date, rappelJours), fait: false }
     : null;
 
+  const dureeVal = parseInt(document.getElementById('j-duree')?.value) || null;
+
   const entry = {
     date,
     rucher,
@@ -283,6 +285,7 @@ async function _doSaveJournal() {
     interventions,
     intervention: interventions.length ? interventions.join(', ') : 'Visite contrôle',
     obs:          document.getElementById('j-obs').value || '',
+    duree:        dureeVal,
     rappel,
   };
 
@@ -430,6 +433,8 @@ function resetJournalForm() {
   document.getElementById('j-obs').value    = '';
   document.getElementById('j-rucher').value = '';
   document.getElementById('j-force').value  = '';
+  const dureeEl = document.getElementById('j-duree');
+  if (dureeEl) dureeEl.value = '';
   document.getElementById('j-nb-ruches').textContent    = '0';
   document.getElementById('j-nb-ruchettes').textContent = '0';
 
@@ -580,7 +585,7 @@ function openCompteRendu(idx) {
   html += `
     <div style="margin-bottom:12px;">
       <div class="cr-label">Ruches</div>
-      <div>🐝 ${v.nbRuches || '—'} ruches${v.nbRuchettes > 0 ? ` · 🪣 ${v.nbRuchettes} ruchette${v.nbRuchettes > 1 ? 's' : ''}` : ''}</div>
+      <div>🐝 ${v.nbRuches || '—'} ruches${v.nbRuchettes > 0 ? ` · 🪣 ${v.nbRuchettes} ruchette${v.nbRuchettes > 1 ? 's' : ''}` : ''}${v.duree ? ` · ⏱ ${v.duree} min` : ''}</div>
     </div>`;
 
   if (v.marquage?.length) html += `
@@ -675,6 +680,8 @@ function openEditJournal(idx) {
   document.getElementById('j-force').value  = v.force || '';
   document.getElementById('j-nb-ruches').textContent    = v.nbRuches    || 0;
   document.getElementById('j-nb-ruchettes').textContent = v.nbRuchettes || 0;
+  const dureeEl = document.getElementById('j-duree');
+  if (dureeEl) dureeEl.value = v.duree || '';
 
   // État général — cocher le bouton
   document.querySelectorAll('#j-force-btns .qbtn').forEach(btn => {
