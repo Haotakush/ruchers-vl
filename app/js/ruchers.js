@@ -243,18 +243,167 @@ async function addPhoto(rid, input) {
   input.value = '';
 }
 
+// ============================================================
+// CALENDRIER UNIFIÉ — Référence + Perso + Semaines
+// ============================================================
+
+let customPlantes   = JSON.parse(localStorage.getItem('customPlantes')     || '[]');
+let deletedRefNames = JSON.parse(localStorage.getItem('deletedRefPlantes') || '[]');
+let expandedMonths  = new Set();
+
+function _zoneFromHeader(h) {
+  const l = h.toLowerCase();
+  if (l.includes('pente') || l.includes('400')) return 'Mi-pente';
+  if (l.includes('haut')  || l.includes('800')) return 'Haut';
+  return 'Bas';
+}
+
+function _buildUnifiedPlantes() {
+  const list = [];
+  let zone = 'Bas';
+  CAL.forEach(row => {
+    if (row.zone) { zone = _zoneFromHeader(row.zone); return; }
+    if (deletedRefNames.includes(row.p)) return;
+    list.push({ p: row.p, zone, refM: row.m, isRef: true });
+  });
+  customPlantes.forEach(cp => list.push({ ...cp, isRef: false }));
+  return list;
+}
+
+function toggleCalMonth(idx) {
+  expandedMonths.has(idx) ? expandedMonths.delete(idx) : expandedMonths.add(idx);
+  renderCalendrier();
+}
+
+function toggleWeekCell(pi, wi) {
+  const list = _buildUnifiedPlantes();
+  const plant = list[pi];
+  if (plant.isRef) return;
+  const cp = customPlantes.find(c => c.p === plant.p);
+  if (!cp) return;
+  if (!cp.weeks) cp.weeks = new Array(48).fill(0);
+  cp.weeks[wi] = cp.weeks[wi] ? 0 : 1;
+  saveCustomPlantes();
+  renderCalendrier();
+}
+
+function deletePlanteFromCal(pi) {
+  const list = _buildUnifiedPlantes();
+  const plant = list[pi];
+  showConfirm(`Supprimer "${plant.p}" ?`, () => {
+    if (plant.isRef) {
+      deletedRefNames.push(plant.p);
+      localStorage.setItem('deletedRefPlantes', JSON.stringify(deletedRefNames));
+      if (currentUser && typeof saveDeletedRefToFirestore === 'function') saveDeletedRefToFirestore();
+    } else {
+      const i = customPlantes.findIndex(c => c.p === plant.p);
+      if (i > -1) customPlantes.splice(i, 1);
+      saveCustomPlantes();
+    }
+    renderCalendrier();
+  });
+}
+
+function addNewPlanteInline() {
+  const nomEl  = document.getElementById('np-nom');
+  const zoneEl = document.getElementById('np-zone');
+  const nom    = nomEl ? nomEl.value.trim() : '';
+  if (!nom) { toast('⚠️ Entrez un nom de plante'); return; }
+  customPlantes.push({ p: nom, zone: zoneEl ? zoneEl.value : 'Bas', weeks: new Array(48).fill(0) });
+  saveCustomPlantes();
+  if (nomEl) nomEl.value = '';
+  renderCalendrier();
+  toast('✅ Plante ajoutée');
+}
+
+function saveCustomPlantes() {
+  localStorage.setItem('customPlantes', JSON.stringify(customPlantes));
+  if (currentUser && typeof saveCustomPlantesToFirestore === 'function') saveCustomPlantesToFirestore();
+}
+
 function renderCalendrier() {
-  document.getElementById('cal-body').innerHTML = CAL.map(row => {
-    if (row.zone) return `<tr class="zone-row"><td colspan="13">${row.zone}</td></tr>`;
-    return `<tr>
-      <td class="col-p">${row.p}</td>
-      ${row.m.map(v =>
-        v === '+' ? `<td><span class="cm">+</span></td>` :
-        v === '/' ? `<td><span class="ca">/</span></td>` :
-                    `<td style="color:var(--border)">·</td>`
-      ).join('')}
+  const container = document.getElementById('cal-container');
+  if (!container) return;
+
+  const list   = _buildUnifiedPlantes();
+  const MONTHS = ['J','F','M','A','M','J','J','A','S','O','N','D'];
+
+  /* En-tête */
+  let thead = '<tr><th class="col-p">Plante</th><th style="font-size:.65rem;padding:4px 2px;white-space:nowrap;">Zone</th>';
+  MONTHS.forEach((m, i) => {
+    if (expandedMonths.has(i)) {
+      thead += `<th colspan="4" onclick="toggleCalMonth(${i})" style="cursor:pointer;background:var(--honey-pale);color:var(--honey);text-align:center;padding:4px 1px;font-size:.7rem;">${m}▲<br><span style="font-size:.55rem;color:var(--mid)">S1·S2·S3·S4</span></th>`;
+    } else {
+      thead += `<th onclick="toggleCalMonth(${i})" style="cursor:pointer;" title="Tap pour les semaines">${m}</th>`;
+    }
+  });
+  thead += '<th></th></tr>';
+
+  /* Corps */
+  let tbody = '';
+  list.forEach((plant, pi) => {
+    let cells = '';
+    MONTHS.forEach((m, mi) => {
+      if (expandedMonths.has(mi)) {
+        for (let w = 0; w < 4; w++) {
+          const wi = mi * 4 + w;
+          if (plant.isRef) {
+            const v = plant.refM[mi];
+            cells += `<td style="text-align:center;opacity:.4;font-size:.7rem;">${v === '+' ? '<span class="cm">+</span>' : v === '/' ? '<span class="ca">/</span>' : '·'}</td>`;
+          } else {
+            const on = plant.weeks && plant.weeks[wi];
+            cells += `<td onclick="toggleWeekCell(${pi},${wi})" style="cursor:pointer;text-align:center;padding:6px 1px;min-width:18px;background:${on ? 'rgba(212,130,10,.15)' : 'transparent'};border-radius:3px;">${on ? '<span class="cm">·</span>' : '<span style="color:var(--border)">·</span>'}</td>`;
+          }
+        }
+      } else {
+        if (plant.isRef) {
+          const v = plant.refM[mi];
+          cells += `<td style="text-align:center">${v === '+' ? '<span class="cm">+</span>' : v === '/' ? '<span class="ca">/</span>' : '<span style="color:var(--border)">·</span>'}</td>`;
+        } else {
+          const any = plant.weeks && plant.weeks.slice(mi*4, mi*4+4).some(Boolean);
+          cells += `<td style="text-align:center">${any ? '<span class="cm">·</span>' : '<span style="color:var(--border)">·</span>'}</td>`;
+        }
+      }
+    });
+    const zoneShort = { 'Mi-pente': 'Mi', 'Haut': 'Ht', 'Bas': 'Bs' }[plant.zone] || '';
+    tbody += `<tr>
+      <td class="col-p">${plant.p}</td>
+      <td style="text-align:center;font-size:.65rem;color:var(--mid);">${zoneShort}</td>
+      ${cells}
+      <td><button onclick="deletePlanteFromCal(${pi})" style="background:none;border:none;cursor:pointer;color:var(--soft);font-size:.75rem;">🗑</button></td>
     </tr>`;
-  }).join('');
+  });
+
+  /* Ligne ajout inline */
+  const addRow = `<tr style="border-top:1.5px solid var(--honey-pale);">
+    <td colspan="2" style="padding:6px 4px;">
+      <input id="np-nom" type="text" placeholder="+ Nouvelle plante…"
+        style="border:none;background:transparent;font-size:.82rem;width:100%;outline:none;color:var(--ink);font-family:'DM Sans',sans-serif;"
+        onkeypress="if(event.key==='Enter') addNewPlanteInline()">
+    </td>
+    <td colspan="12" style="padding:4px;text-align:right;">
+      <select id="np-zone" style="border:1px solid var(--border);border-radius:6px;font-size:.72rem;padding:3px 5px;background:var(--cream);color:var(--ink);">
+        <option value="Bas">🏖 Bas</option>
+        <option value="Mi-pente">⛰ Mi-pente</option>
+        <option value="Haut">🏔 Haut</option>
+      </select>
+      <button onclick="addNewPlanteInline()" style="background:var(--honey);color:#fff;border:none;border-radius:6px;padding:4px 10px;font-size:.75rem;cursor:pointer;margin-left:4px;">✓</button>
+    </td>
+    <td></td>
+  </tr>`;
+
+  container.innerHTML = `
+    <div style="overflow-x:auto;">
+      <table class="cal-table" style="min-width:100%;">
+        <thead>${thead}</thead>
+        <tbody>${tbody}${addRow}</tbody>
+      </table>
+    </div>
+    <div style="margin-top:8px;font-size:0.7rem;color:var(--mid);padding:0 4px;">
+      <span class="cm">+</span> Miellée principale &nbsp;·&nbsp;
+      <span class="ca">/</span> Appoint &nbsp;·&nbsp;
+      Tap sur un mois pour voir les semaines
+    </div>`;
 }
 
 function renderTranshumance() {
