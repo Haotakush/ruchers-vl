@@ -145,6 +145,50 @@
     .cal-dot { font-size: .65rem; width: 16px; text-align: center; color: var(--border); }
     .cal-dot-on { color: var(--honey); font-weight: 700; }
 
+    /* Sous-onglets calendrier */
+    .cal-subtabs { display: flex; gap: 8px; padding: 0 8px 12px; }
+    .cal-subtab {
+      flex: 1; padding: 9px 4px; border: 2px solid var(--border); border-radius: 10px;
+      background: transparent; color: var(--text); font-family: 'DM Sans', sans-serif;
+      font-size: 0.82rem; font-weight: 600; cursor: pointer; transition: all .15s;
+    }
+    .cal-subtab.active { background: var(--honey); border-color: var(--honey); color: #fff; }
+
+    /* Vue Gantt */
+    .gantt-wrapper { overflow-x: auto; -webkit-overflow-scrolling: touch; border-radius: 8px; border: 1px solid var(--border); }
+    .gantt-table { border-collapse: collapse; width: 100%; min-width: 480px; font-size: 0.72rem; }
+    .gantt-plant-th {
+      width: 90px; min-width: 90px; padding: 7px 8px; text-align: left;
+      font-weight: 700; color: var(--mid); font-size: 0.65rem; text-transform: uppercase;
+      letter-spacing: 0.06em; border-bottom: 2px solid var(--border);
+      position: sticky; left: 0; background: var(--card); z-index: 2;
+    }
+    .gantt-mois-th {
+      padding: 7px 2px; text-align: center; font-weight: 700; color: var(--mid);
+      font-size: 0.62rem; text-transform: uppercase; border-bottom: 2px solid var(--border);
+      min-width: 26px; letter-spacing: 0.03em;
+    }
+    .gantt-mois-th.gantt-cur { color: var(--honey); border-bottom-color: var(--honey); }
+    .gantt-zone-hdr td {
+      padding: 10px 8px 4px; font-size: 0.68rem; font-weight: 700;
+      letter-spacing: 0.06em; text-transform: uppercase; background: var(--card);
+    }
+    .gantt-row { cursor: pointer; }
+    .gantt-row:active .gantt-cell,
+    .gantt-row:active .gantt-plant-name { background: var(--honey-pale, #FFF8E7) !important; }
+    .gantt-plant-name {
+      padding: 5px 8px; font-size: 0.72rem; color: var(--text);
+      position: sticky; left: 0; background: var(--card); z-index: 1;
+      white-space: nowrap; max-width: 90px; overflow: hidden; text-overflow: ellipsis;
+      border-bottom: 1px solid var(--border);
+    }
+    .gantt-cell {
+      border-bottom: 1px solid var(--border); min-width: 26px; height: 26px;
+      vertical-align: middle; position: relative;
+    }
+    .gantt-cell-fill { display: block; height: 14px; margin: 0 2px; border-radius: 3px; }
+    .gantt-cur-col { box-shadow: inset 0 0 0 1px rgba(212,130,10,0.3); }
+
     /* Bottom sheet plante */
     #plante-sheet-overlay {
       display: none;
@@ -485,7 +529,15 @@
     <button class="btn-back" onclick="showTab('plus',null)">← Retour</button>
     <div class="card" style="padding:12px 8px;">
       <div class="card-title" style="padding:0 8px 10px;">🍯 Calendrier mellifère — Réunion</div>
+      <!-- Sous-onglets -->
+      <div class="cal-subtabs">
+        <button id="cal-tab-plantes" class="cal-subtab active" onclick="switchCalView('plantes')">📋 Plantes</button>
+        <button id="cal-tab-gantt"   class="cal-subtab"        onclick="switchCalView('gantt')">📅 Calendrier</button>
+      </div>
+      <!-- Vue registre -->
       <div id="cal-container"></div>
+      <!-- Vue Gantt -->
+      <div id="cal-gantt" style="display:none;"></div>
     </div>
   </div>
 
