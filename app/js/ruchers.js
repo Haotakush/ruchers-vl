@@ -393,6 +393,7 @@ function savePlanteSheet() {
   saveCustomPlantes();
   closePlanteSheet();
   renderCalendrier();
+  if (document.getElementById('cal-gantt')?.style.display !== 'none') renderGanttCalendrier();
   toast('✅ Plante enregistrée');
 }
 
@@ -411,10 +412,118 @@ function deletePlanteSheet() {
     }
     closePlanteSheet();
     renderCalendrier();
+    if (document.getElementById('cal-gantt')?.style.display !== 'none') renderGanttCalendrier();
     toast('🗑 Plante supprimée');
   });
 }
 
+
+/* ---- Sous-onglets calendrier ---- */
+function switchCalView(view) {
+  const calContainer = document.getElementById('cal-container');
+  const ganttEl      = document.getElementById('cal-gantt');
+  const tabPlantes   = document.getElementById('cal-tab-plantes');
+  const tabGantt     = document.getElementById('cal-tab-gantt');
+  if (!calContainer || !ganttEl) return;
+
+  if (view === 'gantt') {
+    calContainer.style.display = 'none';
+    ganttEl.style.display      = 'block';
+    tabPlantes.classList.remove('active');
+    tabGantt.classList.add('active');
+    renderGanttCalendrier();
+  } else {
+    calContainer.style.display = 'block';
+    ganttEl.style.display      = 'none';
+    tabPlantes.classList.add('active');
+    tabGantt.classList.remove('active');
+  }
+}
+
+/* ---- Vue Gantt ---- */
+function renderGanttCalendrier() {
+  const container = document.getElementById('cal-gantt');
+  if (!container) return;
+  const list     = _buildUnifiedPlantes();
+  const curMonth = new Date().getMonth(); // 0-indexed
+
+  // En-têtes mois
+  const headerCols = MONTH_LABELS.map((m, mi) => {
+    const isCur = mi === curMonth;
+    return `<th class="gantt-mois-th${isCur ? ' gantt-cur' : ''}">${m.slice(0,3)}</th>`;
+  }).join('');
+
+  // Groupes par zone
+  const ZONES = ['Bas', 'Mi-pente', 'Haut'];
+  const ZONE_LABELS = {
+    'Bas':      '🌴 Bas · 0 – 400 m',
+    'Mi-pente': '🌿 Mi-pente · 400 – 800 m',
+    'Haut':     '⛰ Hauts · 800 m +',
+  };
+  const ZONE_COLORS = { 'Bas': '#4CAF50', 'Mi-pente': '#FF9800', 'Haut': '#2196F3' };
+
+  let bodyRows = '';
+  ZONES.forEach(zone => {
+    const plantsInZone = list.filter(p => p.zone === zone);
+    if (!plantsInZone.length) return;
+
+    // Ligne titre de zone
+    bodyRows += `<tr class="gantt-zone-hdr">
+      <td colspan="13" style="color:${ZONE_COLORS[zone]}">${ZONE_LABELS[zone]}</td>
+    </tr>`;
+
+    plantsInZone.forEach(plant => {
+      const globalIdx = list.indexOf(plant);
+
+      const cells = MONTH_LABELS.map((m, mi) => {
+        const isCur = mi === curMonth;
+        let fillStyle = '';
+
+        if (plant.isRef) {
+          if (plant.refM[mi] === '+') {
+            fillStyle = `background:var(--honey);`;
+          } else if (plant.refM[mi] === '/') {
+            fillStyle = `background:var(--honey);opacity:.38;`;
+          }
+        } else {
+          if (plant.m && plant.m[mi]) {
+            fillStyle = `background:var(--honey);`;
+          }
+        }
+
+        const fillEl = fillStyle
+          ? `<span class="gantt-cell-fill" style="${fillStyle}"></span>`
+          : '';
+        return `<td class="gantt-cell${isCur ? ' gantt-cur-col' : ''}">${fillEl}</td>`;
+      }).join('');
+
+      bodyRows += `<tr class="gantt-row" onclick="openPlanteSheet(${globalIdx})">
+        <td class="gantt-plant-name" title="${plant.p}">${plant.p}</td>
+        ${cells}
+      </tr>`;
+    });
+  });
+
+  container.innerHTML = `
+    <div class="gantt-wrapper">
+      <table class="gantt-table">
+        <thead>
+          <tr>
+            <th class="gantt-plant-th">Plante</th>
+            ${headerCols}
+          </tr>
+        </thead>
+        <tbody>${bodyRows}</tbody>
+      </table>
+    </div>
+    <div style="margin-top:10px;font-size:0.68rem;color:var(--mid);text-align:center;line-height:1.6;">
+      Appuyez sur une plante pour modifier · <span style="display:inline-block;width:14px;height:8px;background:var(--honey);border-radius:2px;vertical-align:middle;"></span> Miellée principale &nbsp;
+      <span style="display:inline-block;width:14px;height:8px;background:var(--honey);opacity:.38;border-radius:2px;vertical-align:middle;"></span> Appoint
+    </div>
+    <button onclick="openNewPlanteSheet()" style="margin-top:12px;width:100%;padding:12px;background:var(--honey);color:#fff;border:none;border-radius:12px;font-size:.9rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;">
+      + Ajouter une plante
+    </button>`;
+}
 
 function renderTranshumance() {
   const types = [
