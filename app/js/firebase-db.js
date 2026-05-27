@@ -628,3 +628,15 @@ async function deleteAllUserData() {
   try { await userRef().delete(); } catch (e) {}
   localStorage.clear();
 }
+
+async function saveCustomPlantesToFirestore() {
+  try {
+    await userRef().collection('config').doc('customPlantes').set({ plantes: customPlantes });
+  } catch(err) { console.error('Erreur save customPlantes:', err); }
+}
+
+async function saveDeletedRefToFirestore() {
+  try {
+    await userRef().collection('config').doc('deletedRefPlantes').set({ names: deletedRefNames });
+  } catch(err) { console.error('Erreur save deletedRef:', err); }
+}

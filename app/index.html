@@ -419,35 +419,9 @@
   <!-- CALENDRIER MELLIFÈRE -->
   <div id="tab-calendrier" class="section">
     <button class="btn-back" onclick="showTab('plus',null)">← Retour</button>
-    <div class="card" style="overflow-x:auto;padding:12px 8px;">
-      <div class="card-title" style="padding:0 8px 10px;">🍯 Plantes mellifères — Sud &amp; Ouest</div>
-      <table class="cal-table">
-        <thead><tr>
-          <th class="col-p">Plante</th>
-          <th>J</th><th>F</th><th>M</th><th>A</th><th>M</th><th>J</th>
-          <th>J</th><th>A</th><th>S</th><th>O</th><th>N</th><th>D</th>
-        </tr></thead>
-        <tbody id="cal-body"></tbody>
-      </table>
-      <div style="margin-top:10px;font-size:0.7rem;color:var(--mid);padding:0 4px;">
-        <span class="cm">+</span> Miellée principale &nbsp;·&nbsp; <span class="ca">/</span> Appoint
-      </div>
-    </div>
-
-    <!-- Mes plantes perso -->
-    <div class="card" style="overflow-x:auto;padding:12px 8px;margin-top:12px;">
-      <div style="display:flex;justify-content:space-between;align-items:center;padding:0 8px 10px;">
-        <div class="card-title" style="padding:0;">🌸 Mes plantes</div>
-        <button class="btn-save" style="padding:5px 14px;font-size:0.78rem;" onclick="openNewPlante()">+ Ajouter</button>
-      </div>
-      <table class="cal-table">
-        <thead><tr>
-          <th class="col-p">Plante</th>
-          <th>J</th><th>F</th><th>M</th><th>A</th><th>M</th><th>J</th>
-          <th>J</th><th>A</th><th>S</th><th>O</th><th>N</th><th>D</th>
-        </tr></thead>
-        <tbody id="cal-custom-body"></tbody>
-      </table>
+    <div class="card" style="padding:12px 8px;">
+      <div class="card-title" style="padding:0 8px 10px;">🍯 Calendrier mellifère — Réunion</div>
+      <div id="cal-container"></div>
     </div>
   </div>
 
@@ -1794,58 +1768,5 @@
 </div>
 
 
-<!-- MODAL PLANTE PERSO -->
-<div class="modal-overlay" id="modal-plante">
-  <div class="modal">
-    <div class="modal-handle"></div>
-    <div class="modal-title">🌸 Nouvelle plante</div>
-    <div class="modal-body">
-      <div class="form-row">
-        <label class="form-label">Nom de la plante *</label>
-        <input type="text" class="form-input" id="plante-nom" placeholder="Ex : Ylang-ylang, Letchi, Arbuste perso…">
-      </div>
-      <div class="form-row">
-        <label class="form-label" style="margin-bottom:8px;">Période de floraison — cliquez pour cycler</label>
-        <div style="display:flex;flex-direction:column;align-items:center;gap:4px;width:100%;">
-          <div style="display:flex;gap:3px;width:100%;justify-content:space-between;">
-            <span style="font-size:.65rem;color:var(--soft);text-align:center;flex:1;">J</span>
-            <span style="font-size:.65rem;color:var(--soft);text-align:center;flex:1;">F</span>
-            <span style="font-size:.65rem;color:var(--soft);text-align:center;flex:1;">M</span>
-            <span style="font-size:.65rem;color:var(--soft);text-align:center;flex:1;">A</span>
-            <span style="font-size:.65rem;color:var(--soft);text-align:center;flex:1;">M</span>
-            <span style="font-size:.65rem;color:var(--soft);text-align:center;flex:1;">J</span>
-            <span style="font-size:.65rem;color:var(--soft);text-align:center;flex:1;">J</span>
-            <span style="font-size:.65rem;color:var(--soft);text-align:center;flex:1;">A</span>
-            <span style="font-size:.65rem;color:var(--soft);text-align:center;flex:1;">S</span>
-            <span style="font-size:.65rem;color:var(--soft);text-align:center;flex:1;">O</span>
-            <span style="font-size:.65rem;color:var(--soft);text-align:center;flex:1;">N</span>
-            <span style="font-size:.65rem;color:var(--soft);text-align:center;flex:1;">D</span>
-          </div>
-          <div style="display:flex;gap:3px;width:100%;justify-content:space-between;">
-            <button class="mois-toggle" data-val="0" onclick="toggleMoisPlante(this)" style="flex:1;border:1px solid var(--border);border-radius:6px;background:var(--honey-pale);padding:8px 2px;font-size:.9rem;color:var(--border);cursor:pointer;">·</button>
-            <button class="mois-toggle" data-val="0" onclick="toggleMoisPlante(this)" style="flex:1;border:1px solid var(--border);border-radius:6px;background:var(--honey-pale);padding:8px 2px;font-size:.9rem;color:var(--border);cursor:pointer;">·</button>
-            <button class="mois-toggle" data-val="0" onclick="toggleMoisPlante(this)" style="flex:1;border:1px solid var(--border);border-radius:6px;background:var(--honey-pale);padding:8px 2px;font-size:.9rem;color:var(--border);cursor:pointer;">·</button>
-            <button class="mois-toggle" data-val="0" onclick="toggleMoisPlante(this)" style="flex:1;border:1px solid var(--border);border-radius:6px;background:var(--honey-pale);padding:8px 2px;font-size:.9rem;color:var(--border);cursor:pointer;">·</button>
-            <button class="mois-toggle" data-val="0" onclick="toggleMoisPlante(this)" style="flex:1;border:1px solid var(--border);border-radius:6px;background:var(--honey-pale);padding:8px 2px;font-size:.9rem;color:var(--border);cursor:pointer;">·</button>
-            <button class="mois-toggle" data-val="0" onclick="toggleMoisPlante(this)" style="flex:1;border:1px solid var(--border);border-radius:6px;background:var(--honey-pale);padding:8px 2px;font-size:.9rem;color:var(--border);cursor:pointer;">·</button>
-            <button class="mois-toggle" data-val="0" onclick="toggleMoisPlante(this)" style="flex:1;border:1px solid var(--border);border-radius:6px;background:var(--honey-pale);padding:8px 2px;font-size:.9rem;color:var(--border);cursor:pointer;">·</button>
-            <button class="mois-toggle" data-val="0" onclick="toggleMoisPlante(this)" style="flex:1;border:1px solid var(--border);border-radius:6px;background:var(--honey-pale);padding:8px 2px;font-size:.9rem;color:var(--border);cursor:pointer;">·</button>
-            <button class="mois-toggle" data-val="0" onclick="toggleMoisPlante(this)" style="flex:1;border:1px solid var(--border);border-radius:6px;background:var(--honey-pale);padding:8px 2px;font-size:.9rem;color:var(--border);cursor:pointer;">·</button>
-            <button class="mois-toggle" data-val="0" onclick="toggleMoisPlante(this)" style="flex:1;border:1px solid var(--border);border-radius:6px;background:var(--honey-pale);padding:8px 2px;font-size:.9rem;color:var(--border);cursor:pointer;">·</button>
-            <button class="mois-toggle" data-val="0" onclick="toggleMoisPlante(this)" style="flex:1;border:1px solid var(--border);border-radius:6px;background:var(--honey-pale);padding:8px 2px;font-size:.9rem;color:var(--border);cursor:pointer;">·</button>
-            <button class="mois-toggle" data-val="0" onclick="toggleMoisPlante(this)" style="flex:1;border:1px solid var(--border);border-radius:6px;background:var(--honey-pale);padding:8px 2px;font-size:.9rem;color:var(--border);cursor:pointer;">·</button>
-          </div>
-        </div>
-        <div style="margin-top:8px;font-size:0.7rem;color:var(--mid);">
-          <span class="cm">+</span> Miellée principale &nbsp;·&nbsp; <span class="ca">/</span> Appoint &nbsp;·&nbsp; · Rien
-        </div>
-      </div>
-    </div>
-    <div class="modal-footer">
-      <button class="btn-cancel" onclick="closeModal('modal-plante')">Annuler</button>
-      <button class="btn-save" onclick="savePlante()">✓ Enregistrer</button>
-    </div>
-  </div>
-</div>
 </body>
 </html>
