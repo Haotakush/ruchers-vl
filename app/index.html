@@ -124,6 +124,70 @@
       0%, 80%, 100% { transform: scale(0.7); opacity: 0.3; }
       40%            { transform: scale(1.2); opacity: 1;   }
     }
+
+    /* =====================================================
+       CALENDRIER PLANTES
+       ===================================================== */
+    .cal-plant-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 8px;
+      border-bottom: 1px solid var(--border, #E8DCC8);
+      cursor: pointer;
+      transition: background .15s;
+    }
+    .cal-plant-row:active { background: var(--honey-pale, #FFF8E7); }
+    .cal-plant-info { display: flex; flex-direction: column; gap: 2px; min-width: 0; flex: 1; }
+    .cal-plant-name { font-size: .85rem; font-weight: 500; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .cal-plant-zone { font-size: .65rem; color: var(--mid); }
+    .cal-plant-months { display: flex; gap: 2px; flex-shrink: 0; margin-left: 8px; }
+    .cal-dot { font-size: .65rem; width: 16px; text-align: center; color: var(--border); }
+    .cal-dot-on { color: var(--honey); font-weight: 700; }
+
+    /* Bottom sheet plante */
+    #plante-sheet-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.4);
+      z-index: 1000;
+    }
+    #plante-sheet {
+      position: fixed;
+      bottom: -100%;
+      left: 0; right: 0;
+      background: var(--bg, #FAF6EF);
+      border-radius: 20px 20px 0 0;
+      padding: 20px 20px 40px;
+      z-index: 1001;
+      transition: bottom .3s ease;
+      max-height: 85vh;
+      overflow-y: auto;
+    }
+    #plante-sheet.open { bottom: 0; }
+    .ps-handle { width: 40px; height: 4px; background: var(--border); border-radius: 2px; margin: 0 auto 16px; }
+    .ps-mois-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin: 16px 0; }
+    .ps-mois-btn {
+      padding: 12px 4px;
+      border: 2px solid var(--border);
+      border-radius: 10px;
+      background: var(--cream, #F5F0E5);
+      color: var(--mid);
+      font-size: .82rem;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: 'DM Sans', sans-serif;
+      transition: all .15s;
+    }
+    .ps-mois-btn.ps-mois-on {
+      background: var(--honey);
+      border-color: var(--honey);
+      color: #fff;
+    }
+    .ps-actions { display: flex; gap: 10px; margin-top: 16px; }
+    .ps-btn-save { flex: 1; padding: 13px; background: linear-gradient(135deg,#F5A623,#D4820A); color: #fff; border: none; border-radius: 12px; font-size: .95rem; font-weight: 600; cursor: pointer; font-family: 'DM Sans', sans-serif; }
+    .ps-btn-delete { padding: 13px 16px; background: none; border: 2px solid #EF5350; color: #EF5350; border-radius: 12px; font-size: .9rem; cursor: pointer; font-family: 'DM Sans', sans-serif; }
   </style>
 </head>
 <body>
@@ -1768,5 +1832,50 @@
 </div>
 
 
+
+<!-- Overlay plante sheet -->
+<div id="plante-sheet-overlay" onclick="closePlanteSheet()"></div>
+
+<!-- Bottom sheet plante -->
+<div id="plante-sheet">
+  <div class="ps-handle"></div>
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+    <div class="modal-title" id="ps-title" style="margin:0;font-size:1rem;">Plante</div>
+    <button onclick="closePlanteSheet()" style="background:none;border:none;font-size:1.3rem;cursor:pointer;color:var(--mid);">✕</button>
+  </div>
+  <div class="form-row">
+    <label class="form-label">Nom</label>
+    <input type="text" class="form-input" id="ps-nom" placeholder="Nom de la plante">
+  </div>
+  <div class="form-row" style="margin-top:10px;">
+    <label class="form-label">Zone</label>
+    <select class="form-select" id="ps-zone">
+      <option value="Bas">🏖 Bas (0–400m)</option>
+      <option value="Mi-pente">⛰ Mi-pente (400–800m)</option>
+      <option value="Haut">🏔 Haut – Cilaos (800m+)</option>
+    </select>
+  </div>
+  <div class="form-row" style="margin-top:10px;">
+    <label class="form-label">Mois de floraison</label>
+    <div class="ps-mois-grid">
+      <button class="ps-mois-btn" onclick="togglePsMois(this)">Jan</button>
+      <button class="ps-mois-btn" onclick="togglePsMois(this)">Fév</button>
+      <button class="ps-mois-btn" onclick="togglePsMois(this)">Mar</button>
+      <button class="ps-mois-btn" onclick="togglePsMois(this)">Avr</button>
+      <button class="ps-mois-btn" onclick="togglePsMois(this)">Mai</button>
+      <button class="ps-mois-btn" onclick="togglePsMois(this)">Jun</button>
+      <button class="ps-mois-btn" onclick="togglePsMois(this)">Jul</button>
+      <button class="ps-mois-btn" onclick="togglePsMois(this)">Aoû</button>
+      <button class="ps-mois-btn" onclick="togglePsMois(this)">Sep</button>
+      <button class="ps-mois-btn" onclick="togglePsMois(this)">Oct</button>
+      <button class="ps-mois-btn" onclick="togglePsMois(this)">Nov</button>
+      <button class="ps-mois-btn" onclick="togglePsMois(this)">Déc</button>
+    </div>
+  </div>
+  <div class="ps-actions">
+    <button class="ps-btn-save" id="ps-save-btn" onclick="savePlanteSheet()">✓ Enregistrer</button>
+    <button class="ps-btn-delete" onclick="deletePlanteSheet()">🗑</button>
+  </div>
+</div>
 </body>
 </html>
