@@ -740,9 +740,12 @@
       <div class="form-row">
         <label class="form-label">⏱ Durée de la visite</label>
         <div style="display:flex;align-items:center;gap:10px;">
-          <input type="number" id="j-duree" class="form-input" placeholder="0"
-            min="0" max="480" style="width:90px;text-align:center;">
-          <span style="font-size:0.85rem;color:var(--mid);font-weight:500;">minutes</span>
+          <input type="number" id="j-duree-h" class="form-input" placeholder="0"
+            min="0" max="23" style="width:70px;text-align:center;">
+          <span style="font-size:0.85rem;color:var(--mid);font-weight:500;">h</span>
+          <input type="number" id="j-duree-m" class="form-input" placeholder="0"
+            min="0" max="59" style="width:70px;text-align:center;">
+          <span style="font-size:0.85rem;color:var(--mid);font-weight:500;">min</span>
         </div>
       </div>
 
