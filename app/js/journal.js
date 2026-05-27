@@ -17,6 +17,20 @@ let recordingTimer   = null;
 let recordingSeconds = 0;
 const MAX_RECORDING  = 60;
 
+/* ---- UTILITAIRES DURÉE ---- */
+/**
+ * Formate une durée en minutes totales en chaîne lisible.
+ * Ex : 80 → "1h 20min" | 45 → "45min" | 60 → "1h"
+ */
+function formatDuree(totalMinutes) {
+  if (!totalMinutes || totalMinutes <= 0) return '';
+  const h = Math.floor(totalMinutes / 60);
+  const m = totalMinutes % 60;
+  if (h > 0 && m > 0) return `${h}h ${m}min`;
+  if (h > 0) return `${h}h`;
+  return `${m}min`;
+}
+
 /* ---- PHOTOS DE VISITE ---- */
 async function addVisitPhoto(input) {
   const files = Array.from(input.files);
@@ -273,7 +287,9 @@ async function _doSaveJournal() {
     ? { texte: rappelTexte, jours: rappelJours, echeance: addJoursToDate(date, rappelJours), fait: false }
     : null;
 
-  const dureeVal = parseInt(document.getElementById('j-duree')?.value) || null;
+  const dureeH = parseInt(document.getElementById('j-duree-h')?.value) || 0;
+  const dureeM = parseInt(document.getElementById('j-duree-m')?.value) || 0;
+  const dureeVal = (dureeH * 60 + dureeM) || null;
 
   const entry = {
     date,
@@ -433,8 +449,10 @@ function resetJournalForm() {
   document.getElementById('j-obs').value    = '';
   document.getElementById('j-rucher').value = '';
   document.getElementById('j-force').value  = '';
-  const dureeEl = document.getElementById('j-duree');
-  if (dureeEl) dureeEl.value = '';
+  const dureeHEl = document.getElementById('j-duree-h');
+  const dureeMEl = document.getElementById('j-duree-m');
+  if (dureeHEl) dureeHEl.value = '';
+  if (dureeMEl) dureeMEl.value = '';
   document.getElementById('j-nb-ruches').textContent    = '0';
   document.getElementById('j-nb-ruchettes').textContent = '0';
 
@@ -585,7 +603,7 @@ function openCompteRendu(idx) {
   html += `
     <div style="margin-bottom:12px;">
       <div class="cr-label">Ruches</div>
-      <div>🐝 ${v.nbRuches || '—'} ruches${v.nbRuchettes > 0 ? ` · 🪣 ${v.nbRuchettes} ruchette${v.nbRuchettes > 1 ? 's' : ''}` : ''}${v.duree ? ` · ⏱ ${v.duree} min` : ''}</div>
+      <div>🐝 ${v.nbRuches || '—'} ruches${v.nbRuchettes > 0 ? ` · 🪣 ${v.nbRuchettes} ruchette${v.nbRuchettes > 1 ? 's' : ''}` : ''}${v.duree ? ` · ⏱ ${formatDuree(v.duree)}` : ''}</div>
     </div>`;
 
   if (v.marquage?.length) html += `
@@ -680,8 +698,10 @@ function openEditJournal(idx) {
   document.getElementById('j-force').value  = v.force || '';
   document.getElementById('j-nb-ruches').textContent    = v.nbRuches    || 0;
   document.getElementById('j-nb-ruchettes').textContent = v.nbRuchettes || 0;
-  const dureeEl = document.getElementById('j-duree');
-  if (dureeEl) dureeEl.value = v.duree || '';
+  const dureeHEl = document.getElementById('j-duree-h');
+  const dureeMEl = document.getElementById('j-duree-m');
+  if (dureeHEl) dureeHEl.value = v.duree ? Math.floor(v.duree / 60) || '' : '';
+  if (dureeMEl) dureeMEl.value = v.duree ? (v.duree % 60) || '' : '';
 
   // État général — cocher le bouton
   document.querySelectorAll('#j-force-btns .qbtn').forEach(btn => {
