@@ -1,0 +1,2746 @@
+/* ============================================================
+   RUCHERS VL — Feuille de styles principale
+   Version : 1.3 — Nouveau modèle visite, sync indicator, créer compte
+   ============================================================ */
+
+
+/* ============================================================
+   01. VARIABLES CSS
+   ============================================================ */
+:root {
+  /* Refonte V3 — identité miel modernisée */
+  --font-display: 'Bricolage Grotesque', 'Lexend', system-ui, sans-serif;
+  --font-body:    'Lexend', system-ui, -apple-system, sans-serif;
+
+  --honey:        #B36B00;   /* miel foncé : boutons, liens, texte accent (contraste AA sur blanc) */
+  --honey-light:  #F2A916;   /* miel vif : aplats, en-tête cheptel, graphiques */
+  --honey-pale:   #FFF3D6;   /* miel clair : fonds sélectionnés, puces */
+  --amber:        #2B2118;   /* anciens titres ambrés → encre propolis */
+  --dark:         #2B2118;   /* propolis */
+  --ink:          #2B2118;
+  --cream:        #F4F3EF;   /* fond général : pierre claire */
+  --white:        #FFFFFF;
+  --mid:          #6A5D4F;
+  --soft:         #8F8273;
+  --success:      #3D7A4F;
+  --warning:      #B8752E;
+  --danger:       #B3362B;
+  --border:       #E6E1D7;
+  --shadow:       rgba(43, 33, 24, 0.06);
+  --safe-bottom:  env(safe-area-inset-bottom, 0px);
+  --safe-top:     env(safe-area-inset-top, 0px);
+  --nav-height:   68px;
+  --topbar-height: 60px;
+  --fab-bottom:   calc(var(--nav-height) + var(--safe-bottom) + 16px);
+  --accent: var(--honey);
+  --fg: var(--ink);
+  --text: var(--ink);
+  --card: var(--white);
+  --bg: var(--cream);
+  --r-lg: 20px;
+  --r-md: 14px;
+  --r-sm: 10px;
+}
+
+
+/* ============================================================
+   02. RESET & BASE
+   ============================================================ */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html {
+  height: 100%;
+  height: 100dvh;
+  overflow: hidden;
+}
+
+body {
+  height: 100%;
+  height: 100dvh; /* modern iOS dynamic viewport height */
+  font-family: var(--font-body);
+  background: var(--cream);
+  color: var(--ink);
+  display: flex;
+  flex-direction: column;
+  -webkit-font-smoothing: antialiased;
+  /* FIX iOS v1.3 : overflow hidden SANS position:fixed (qui bloque le scroll iOS) */
+  overflow: hidden;
+}
+
+::-webkit-scrollbar { width: 0; }
+
+
+/* ============================================================
+   03. LAYOUT PRINCIPAL
+   ============================================================ */
+
+#app-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+}
+
+/* -- Topbar -- */
+.topbar {
+  background: var(--dark);
+  padding: calc(var(--safe-top) + 12px) 16px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
+  z-index: 10;
+  /* ✅ FIX : hauteur fixe pour que le scroll-area calcule correctement */
+  min-height: var(--topbar-height);
+}
+
+.topbar-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.topbar-brand span { font-size: 1.6rem; }
+
+.topbar-brand h1 {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  color: var(--honey-light);
+  line-height: 1.1;
+}
+
+.topbar-brand p {
+  font-size: 0.65rem;
+  color: var(--soft);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.topbar-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.topbar-btn {
+  background: rgba(212, 130, 10, 0.15);
+  border: 1px solid rgba(212, 130, 10, 0.3);
+  border-radius: 8px;
+  padding: 7px 11px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--honey-light);
+  font-family: var(--font-body);
+  cursor: pointer;
+  transition: background 0.2s;
+  white-space: nowrap;
+}
+
+.topbar-btn:active { background: rgba(212, 130, 10, 0.35); }
+
+/* ✅ FIX iOS SCROLL — Zone de scroll */
+.scroll-area {
+  flex: 1;
+  overflow-y: scroll;               /* scroll plutôt que auto */
+  -webkit-overflow-scrolling: touch; /* momentum scroll iOS */
+  overscroll-behavior-y: contain;   /* évite le pull-to-refresh */
+  padding: 16px 14px;
+  padding-bottom: calc(var(--nav-height) + var(--safe-bottom) + 24px);
+  /* ✅ FIX : will-change crée un nouveau contexte de stacking */
+  will-change: scroll-position;
+  /* ✅ FIX : transform3d force le GPU sur iOS */
+  -webkit-transform: translate3d(0, 0, 0);
+  transform: translate3d(0, 0, 0);
+}
+
+/* -- Bottom navigation -- */
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: var(--dark);
+  display: flex;
+  padding-bottom: var(--safe-bottom);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  z-index: 100;
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.3);
+  /* ✅ FIX : isolation pour éviter les conflits de stacking */
+  isolation: isolate;
+}
+
+.nav-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 10px 2px 8px;
+  cursor: pointer;
+  border: none;
+  background: none;
+  color: var(--soft);
+  font-family: var(--font-body);
+  font-size: 0.55rem;
+  font-weight: 500;
+  gap: 3px;
+  transition: color 0.15s;
+  letter-spacing: 0.02em;
+  /* ✅ FIX : touch-action pour meilleure réactivité iOS */
+  touch-action: manipulation;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.nav-item .nav-icon {
+  font-size: 1.2rem;
+  line-height: 1;
+}
+
+.nav-item.active { color: var(--honey-light); }
+
+.nav-item.active .nav-icon {
+  filter: drop-shadow(0 0 4px rgba(245, 166, 35, 0.5));
+}
+
+
+/* ============================================================
+   04. SECTIONS & NAVIGATION
+   ============================================================ */
+.section { display: none; }
+
+.section.active {
+  display: block;
+  animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.page-title {
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+  color: var(--amber);
+  margin-bottom: 14px;
+}
+
+
+/* ============================================================
+   05. COMPOSANTS — CARDS
+   ============================================================ */
+.card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 16px;
+  margin-bottom: 14px;
+  box-shadow: 0 2px 8px var(--shadow);
+}
+
+.card-title {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--soft);
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+
+
+/* ============================================================
+   06. COMPOSANTS — STATS (dashboard)
+   ============================================================ */
+.stats-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.stat-card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 14px;
+  box-shadow: 0 2px 8px var(--shadow);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.stat-icon  { font-size: 1.5rem; }
+.stat-value {
+  font-family: var(--font-display);
+  font-size: 1.8rem;
+  color: var(--honey);
+  line-height: 1;
+}
+.stat-label { font-size: 0.72rem; color: var(--mid); font-weight: 500; }
+
+
+/* ============================================================
+   07. COMPOSANTS — FAB
+   ============================================================ */
+.fab {
+  position: fixed;
+  bottom: var(--fab-bottom);
+  right: 18px;
+  width: 56px;
+  height: 56px;
+  background: var(--honey);
+  border-radius: 50%;
+  border: none;
+  color: white;
+  font-size: 1.6rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 20px rgba(212, 130, 10, 0.45);
+  cursor: pointer;
+  z-index: 50;
+  transition: transform 0.15s, box-shadow 0.15s;
+  touch-action: manipulation;
+}
+
+.fab:active {
+  transform: scale(0.92);
+  box-shadow: 0 2px 10px rgba(212, 130, 10, 0.3);
+}
+
+.fab.hidden { display: none; }
+
+
+/* ============================================================
+   08. COMPOSANTS — ENTRY CARDS
+   ============================================================ */
+.entry-card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 14px;
+  margin-bottom: 10px;
+  box-shadow: 0 1px 6px var(--shadow);
+  position: relative;
+  /* ✅ cursor pointer pour indiquer que c'est cliquable */
+  cursor: pointer;
+  transition: box-shadow 0.15s, transform 0.1s;
+}
+
+.entry-card:active {
+  transform: scale(0.99);
+  box-shadow: 0 1px 3px var(--shadow);
+}
+
+.entry-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 8px;
+}
+
+.entry-date {
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  color: var(--soft);
+}
+
+.entry-id {
+  background: var(--dark);
+  color: var(--honey-light);
+  border-radius: 5px;
+  padding: 2px 8px;
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.entry-main {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--ink);
+  margin-bottom: 5px;
+}
+
+.entry-sub { font-size: 0.78rem; color: var(--mid); }
+
+.entry-tags {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-top: 8px;
+}
+
+.cadres-summary {
+  display: flex;
+  gap: 10px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--mid);
+  margin-bottom: 4px;
+  font-family: var(--font-body);
+}
+
+/* Boutons d'action sur les cards */
+.entry-actions {
+  display: flex;
+  gap: 6px;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+}
+
+.btn-icon {
+  background: none;
+  border: none;
+  font-size: 1rem;
+  color: var(--border);
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 6px;
+  transition: color 0.15s, background 0.15s;
+  touch-action: manipulation;
+}
+
+.btn-icon:hover, .btn-icon:active { color: var(--ink); background: var(--cream); }
+.btn-icon.btn-delete:active { color: var(--danger); }
+.btn-icon.btn-edit:active   { color: var(--honey); }
+
+/* Bouton supprimer sur les cards */
+.btn-delete {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: none;
+  border: none;
+  font-size: 1rem;
+  color: var(--border);
+  cursor: pointer;
+  padding: 2px 4px;
+  touch-action: manipulation;
+  z-index: 2;
+}
+
+.btn-delete:active { color: var(--danger); }
+
+/* Empêche le badge rucher de chevaucher le bouton supprimer */
+.entry-top {
+  padding-right: 32px;
+}
+
+/* Bouton retour — utilisé dans les sous-pages du menu Plus */
+.btn-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 7px 14px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--mid);
+  cursor: pointer;
+  margin-bottom: 18px;
+  touch-action: manipulation;
+  transition: background 0.15s, color 0.15s;
+}
+
+.btn-back:active {
+  background: var(--cream);
+  color: var(--ink);
+}
+
+
+/* ============================================================
+   09. COMPOSANTS — BADGES
+   ============================================================ */
+.badge {
+  display: inline-block;
+  padding: 3px 9px;
+  border-radius: 20px;
+  font-size: 0.7rem;
+  font-weight: 600;
+}
+
+.badge-action  { background: #E8F0FE; color: #1A73E8; }
+.badge-forte   { background: #E8F5E9; color: #2E7D32; }
+.badge-moyenne { background: #FFF8E1; color: #F57F17; }
+.badge-faible  { background: #FFEBEE; color: #C62828; }
+.badge-couvain { background: #E8EAF6; color: #283593; }
+.badge-sani    { background: #F3E5F5; color: #6A1B9A; }
+.badge-zone-bas   { background: #E8F5E9; color: #2E7D32; }
+.badge-zone-mi    { background: #FFF8E1; color: #F57F17; }
+.badge-zone-hauts { background: #E3F2FD; color: #1565C0; }
+
+
+/* ============================================================
+   10. COMPOSANTS — RUCHERS
+   ============================================================ */
+.rucher-card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  overflow: hidden;
+  margin-bottom: 12px;
+  box-shadow: 0 2px 8px var(--shadow);
+}
+
+.rucher-head {
+  background: var(--dark);
+  padding: 12px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.rucher-rid {
+  font-family: var(--font-body);
+  font-size: 1rem;
+  color: var(--honey-light);
+  font-weight: 500;
+}
+
+.rucher-nb {
+  background: var(--honey);
+  color: white;
+  border-radius: 20px;
+  padding: 2px 10px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.rucher-body { padding: 12px 16px; }
+
+.rucher-meta {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.rucher-alt { font-size: 0.75rem; color: var(--mid); }
+
+/* ✅ FIX Photos — scroll horizontal natif iOS */
+.photo-scroll {
+  display: flex;
+  gap: 8px;
+  overflow-x: scroll;               /* scroll plutôt que auto */
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: 4px;
+  /* ✅ FIX : évite que le scroll horizontal soit capturé par le scroll vertical */
+  overscroll-behavior-x: contain;
+}
+
+.photo-scroll::-webkit-scrollbar { display: none; }
+
+.photo-thumb {
+  width: 80px;
+  height: 80px;
+  border-radius: 10px;
+  object-fit: cover;
+  border: 2px solid var(--border);
+  flex-shrink: 0;
+  cursor: zoom-in;
+  /* ✅ évite le long-press iOS "save image" sur les photos de ruchers */
+  -webkit-user-select: none;
+  user-select: none;
+  touch-action: manipulation;
+}
+
+.photo-add {
+  width: 80px;
+  height: 80px;
+  border-radius: 10px;
+  border: 2px dashed var(--border);
+  background: var(--cream);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  color: var(--soft);
+  flex-shrink: 0;
+  cursor: pointer;
+  gap: 2px;
+  touch-action: manipulation;
+}
+
+.photo-add span {
+  font-size: 0.6rem;
+  font-weight: 600;
+  color: var(--soft);
+  text-align: center;
+}
+
+/* Boutons d'action dans l'en-tête du rucher */
+.rucher-head-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.btn-rucher-action {
+  background: none;
+  border: none;
+  font-size: 1rem;
+  cursor: pointer;
+  padding: 4px 6px;
+  border-radius: 6px;
+  touch-action: manipulation;
+  transition: background 0.15s;
+}
+
+.btn-rucher-action:active { background: rgba(255,255,255,0.15); }
+
+
+/* ============================================================
+   11. COMPOSANTS — CALENDRIER MELLIFÈRE
+   ============================================================ */
+.cal-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.72rem;
+}
+
+.cal-table th {
+  background: var(--dark);
+  color: var(--honey-light);
+  padding: 6px 4px;
+  text-align: center;
+  font-size: 0.6rem;
+  letter-spacing: 0.03em;
+  font-weight: 600;
+}
+
+.cal-table th.col-p { text-align: left; padding-left: 8px; min-width: 110px; }
+
+.cal-table td {
+  padding: 6px 4px;
+  border-bottom: 1px solid var(--border);
+  text-align: center;
+}
+
+.cal-table td.col-p {
+  text-align: left;
+  padding-left: 8px;
+  font-weight: 500;
+  font-size: 0.75rem;
+}
+
+.cal-table tr:active td { background: var(--honey-pale); }
+
+.zone-row td {
+  background: var(--ink) !important;
+  color: var(--honey-pale);
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-align: left;
+  padding: 5px 8px;
+}
+
+.cm { color: var(--success); font-weight: 800; font-size: 0.9rem; }
+.ca { color: var(--warning); font-weight: 700; }
+
+
+/* ============================================================
+   12. COMPOSANTS — TRANSHUMANCE
+   ============================================================ */
+.trans-rucher { margin-bottom: 14px; }
+
+.trans-rid-header {
+  background: var(--dark);
+  color: var(--honey-light);
+  padding: 8px 12px;
+  border-radius: 8px 8px 0 0;
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  font-weight: 600;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.trans-grid {
+  background: white;
+  border: 1px solid var(--border);
+  border-top: none;
+  border-radius: 0 0 8px 8px;
+  padding: 10px 12px;
+}
+
+.trans-type-row { margin-bottom: 10px; }
+
+.trans-type-label {
+  font-size: 0.7rem;
+  color: var(--mid);
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.months-row {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 3px;
+}
+
+.month-cell {
+  aspect-ratio: 1;
+  border-radius: 4px;
+  border: 1px solid var(--border);
+  background: none;
+  font-size: 0.55rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.12s;
+  color: var(--soft);
+  line-height: 1.1;
+  touch-action: manipulation;
+}
+
+.month-cell .m-label { font-size: 0.5rem; }
+
+.month-cell.on-A { background: #E8F5E9; border-color: #4CAF50; color: #2E7D32; }
+.month-cell.on-D { background: #FFEBEE; border-color: #EF5350; color: #C62828; }
+.month-cell.on-R { background: #FFF8E1; border-color: #FFB300; color: #E65100; }
+
+
+/* ============================================================
+   13. COMPOSANTS — IDENTITÉ / PARAMÈTRES
+   ============================================================ */
+.id-row {
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.id-row:last-child { border-bottom: none; }
+
+.id-label {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--soft);
+  font-weight: 700;
+}
+
+.id-value {
+  font-size: 0.9rem;
+  color: var(--ink);
+  font-weight: 500;
+  font-family: var(--font-body);
+}
+
+.param-input {
+  width: 100%;
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-family: var(--font-body);
+  font-size: 0.88rem;
+  color: var(--ink);
+  background: var(--cream);
+  margin-top: 4px;
+}
+
+.param-input:focus { outline: none; border-color: var(--honey-light); }
+
+.btn-param-save {
+  background: var(--honey);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  padding: 12px;
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 0.92rem;
+  cursor: pointer;
+  width: 100%;
+  margin-top: 10px;
+  touch-action: manipulation;
+}
+
+
+/* ============================================================
+   14. COMPOSANTS — MODAL
+   ============================================================ */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+  z-index: 200;
+  align-items: flex-end;
+  justify-content: center;
+  /* ✅ FIX iOS : touch events sur l'overlay */
+  touch-action: none;
+}
+
+.modal-overlay.open { display: flex; }
+
+.modal {
+  background: var(--cream);
+  border-radius: 20px 20px 0 0;
+  width: 100%;
+  max-width: 600px;
+  max-height: 92vh;
+  overflow-y: scroll;              /* ✅ FIX iOS scroll dans modal */
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+  animation: slideUp 0.28s cubic-bezier(0.165, 0.84, 0.44, 1);
+  padding-bottom: calc(16px + var(--safe-bottom));
+  /* ✅ FIX iOS : autoriser le scroll dans la modal */
+  touch-action: pan-y;
+}
+
+@keyframes slideUp {
+  from { transform: translateY(100%); }
+  to   { transform: translateY(0); }
+}
+
+.modal-handle {
+  width: 36px;
+  height: 4px;
+  background: var(--border);
+  border-radius: 2px;
+  margin: 10px auto 0;
+}
+
+.modal-title {
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  color: var(--amber);
+  padding: 14px 20px 12px;
+  border-bottom: 1px solid var(--border);
+}
+
+.modal-body { padding: 16px 20px; }
+
+.modal-footer {
+  display: flex;
+  gap: 10px;
+  padding: 12px 20px 0;
+  border-top: 1px solid var(--border);
+}
+
+.btn-cancel {
+  flex: 1;
+  background: var(--cream);
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  padding: 13px;
+  font-family: var(--font-body);
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: var(--mid);
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+.btn-save {
+  flex: 2;
+  background: var(--honey);
+  border: none;
+  border-radius: 12px;
+  padding: 13px;
+  font-family: var(--font-body);
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: white;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+.btn-save:active { background: var(--honey-light); }
+
+
+/* ============================================================
+   15. COMPOSANTS — FORMULAIRES
+   ============================================================ */
+.form-row { margin-bottom: 14px; }
+
+.form-row-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.form-label {
+  display: block;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--mid);
+  margin-bottom: 5px;
+}
+
+.form-input,
+.form-select,
+.form-textarea {
+  width: 100%;
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  padding: 11px 13px;
+  font-family: var(--font-body);
+  font-size: 16px;
+  color: var(--ink);
+  background: var(--white);
+  transition: border-color 0.2s;
+  -webkit-appearance: none;
+}
+
+.form-input:focus,
+.form-select:focus,
+.form-textarea:focus {
+  outline: none;
+  border-color: var(--honey-light);
+}
+
+.form-textarea { min-height: 80px; resize: vertical; }
+
+
+/* ============================================================
+   16. COMPOSANTS — QUICK BUTTONS & CHECKBOXES
+   ============================================================ */
+.quick-btns {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 2px;
+}
+
+.qbtn {
+  background: var(--cream);
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  padding: 7px 10px;
+  font-family: var(--font-body);
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--mid);
+  cursor: pointer;
+  transition: all 0.15s;
+  white-space: nowrap;
+  touch-action: manipulation;
+}
+
+.qbtn:active { transform: scale(0.95); }
+
+.qbtn.selected           { background: var(--dark); color: var(--honey-light); border-color: var(--honey); }
+.qbtn-green.selected     { background: #2E7D32; color: white; border-color: #2E7D32; }
+.qbtn-red.selected       { background: #C62828; color: white; border-color: #C62828; }
+
+.check-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.check-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--cream);
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: var(--ink);
+  cursor: pointer;
+  transition: all 0.15s;
+  user-select: none;
+  position: relative;
+  touch-action: manipulation;
+}
+
+.check-item:active { transform: scale(0.97); }
+
+.check-item.checked {
+  background: var(--honey-pale);
+  border-color: var(--honey);
+  color: var(--amber);
+  font-weight: 700;
+}
+
+.check-item.checked::after {
+  content: '✓';
+  position: absolute;
+  right: 8px;
+  color: var(--honey);
+  font-weight: 800;
+}
+
+
+/* ============================================================
+   17. COMPOSANTS — STEPPER CADRES
+   ============================================================ */
+.cadres-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.cadre-item {
+  background: var(--cream);
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  padding: 10px 8px;
+  text-align: center;
+}
+
+.cadre-label { font-size: 0.72rem; font-weight: 700; color: var(--mid); margin-bottom: 8px; }
+
+.cadre-stepper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.step-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--dark);
+  color: var(--honey-light);
+  border: none;
+  font-size: 1.1rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  transition: background 0.15s;
+  touch-action: manipulation;
+  /* ✅ FIX iOS : taille minimale pour touch target */
+  min-width: 44px;
+  min-height: 44px;
+}
+
+.step-btn:active { background: var(--honey); }
+
+.step-val {
+  font-family: var(--font-body);
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--ink);
+  min-width: 28px;
+  text-align: center;
+}
+
+.cadre-max { font-size: 0.65rem; color: var(--soft); margin-top: 4px; }
+
+
+/* ============================================================
+   18. COMPOSANTS — SÉLECTEUR RUCHES & MARQUAGE
+   ============================================================ */
+.ruches-method-toggle {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.method-btn {
+  flex: 1;
+  padding: 8px;
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  background: var(--cream);
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--mid);
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.15s;
+  touch-action: manipulation;
+}
+
+.method-btn.active {
+  background: var(--dark);
+  color: var(--honey-light);
+  border-color: var(--honey);
+}
+
+.ruches-selector {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 4px;
+  min-height: 38px;
+  align-items: center;
+}
+
+.ruche-btn {
+  background: var(--cream);
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--mid);
+  cursor: pointer;
+  transition: all 0.15s;
+  touch-action: manipulation;
+  /* ✅ FIX iOS touch target minimal */
+  min-height: 36px;
+}
+
+.ruche-btn:active { transform: scale(0.95); }
+
+.ruche-btn.selected {
+  background: var(--dark);
+  color: var(--honey-light);
+  border-color: var(--honey);
+}
+
+.ruche-btn-all { background: var(--honey-pale); border-color: var(--honey-light); color: var(--amber); }
+.ruche-btn-all.selected { background: var(--honey); color: white; }
+
+.marquage-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.marquage-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  background: var(--cream);
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  padding: 10px 12px;
+  cursor: pointer;
+  transition: all 0.15s;
+  user-select: none;
+  position: relative;
+  touch-action: manipulation;
+}
+
+.marquage-item.checked {
+  background: var(--honey-pale);
+  border-color: var(--honey);
+  font-weight: 700;
+  color: var(--amber);
+}
+
+.marquage-item.checked::after {
+  content: '✓';
+  position: absolute;
+  right: 8px;
+  top: 8px;
+  color: var(--honey);
+  font-weight: 800;
+}
+
+.marquage-icon { font-size: 1.1rem; flex-shrink: 0; }
+.marquage-label { font-size: 0.8rem; font-weight: 600; color: var(--ink); }
+
+.champ-libre-input {
+  width: 100%;
+  border: 1.5px solid var(--border);
+  border-radius: 6px;
+  padding: 5px 8px;
+  font-family: var(--font-body);
+  font-size: 12px;
+  color: var(--ink);
+  background: var(--white);
+  margin-top: 4px;
+}
+
+.champ-libre-input:focus { outline: none; border-color: var(--honey-light); }
+
+
+/* ============================================================
+   19. COMPOSANTS — RECOMMANDATIONS
+   ============================================================ */
+.reco-card {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  border-radius: 10px;
+  padding: 12px;
+  margin-bottom: 10px;
+  border: 1px solid transparent;
+}
+
+.reco-red    { background: #FFF0F0; border-color: #FFCDD2; }
+.reco-orange { background: #FFF5EE; border-color: #FFCCBC; }
+.reco-yellow { background: #FFFDE7; border-color: #FFF9C4; }
+.reco-green  { background: #F1F8F4; border-color: #C8E6C9; }
+
+.reco-icon  { font-size: 1.3rem; flex-shrink: 0; margin-top: 1px; }
+.reco-title { font-weight: 700; font-size: 0.85rem; color: var(--ink); margin-bottom: 6px; }
+.reco-sites { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 6px; }
+
+.reco-badge {
+  background: var(--dark);
+  color: var(--honey-light);
+  border-radius: 5px;
+  padding: 2px 7px;
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.reco-tip { font-size: 0.75rem; color: var(--mid); line-height: 1.4; }
+
+
+/* ============================================================
+   20. COMPOSANTS — GRAPHIQUES
+   ============================================================ */
+.chart-container { position: relative; width: 100%; margin-bottom: 4px; }
+canvas.chart     { width: 100% !important; }
+
+
+/* ============================================================
+   21. COMPOSANTS — CARTE
+   ============================================================ */
+.map-legend {
+  position: absolute;
+  bottom: 40px;
+  left: 10px;
+  z-index: 1000;
+  background: white;
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-size: 0.72rem;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.2);
+  border: 1px solid var(--border);
+}
+
+.legend-item { display: flex; align-items: center; gap: 6px; margin-bottom: 4px; font-weight: 600; }
+.legend-item:last-child { margin-bottom: 0; }
+.legend-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+
+
+/* ============================================================
+   22. COMPOSANTS — REGISTRE D'ÉLEVAGE
+   ============================================================ */
+.registre-section { margin-bottom: 20px; }
+
+.registre-section-title {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  color: var(--amber);
+  border-bottom: 2px solid var(--honey-pale);
+  padding-bottom: 8px;
+  margin-bottom: 12px;
+}
+
+.registre-table { width: 100%; border-collapse: collapse; font-size: 0.78rem; }
+
+.registre-table th {
+  background: var(--dark);
+  color: var(--honey-light);
+  padding: 8px 10px;
+  text-align: left;
+  font-size: 0.68rem;
+  letter-spacing: 0.06em;
+  font-weight: 600;
+}
+
+.registre-table td {
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+}
+
+.registre-table tr:nth-child(even) td { background: var(--honey-pale); }
+
+.registre-header {
+  background: var(--dark);
+  color: var(--honey-pale);
+  border-radius: 14px;
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+.registre-header h2 {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  color: var(--honey-light);
+  margin-bottom: 8px;
+}
+
+.registre-header p { font-size: 0.75rem; color: var(--soft); line-height: 1.6; }
+
+.btn-pdf {
+  background: var(--danger);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  padding: 12px 20px;
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 0.88rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 14px;
+  width: 100%;
+  justify-content: center;
+  touch-action: manipulation;
+}
+
+
+/* ============================================================
+   23. COMPOSANTS — MÉTÉO BADGE
+   ============================================================ */
+.meteo-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: #E3F2FD;
+  border: 1px solid #90CAF9;
+  border-radius: 20px;
+  padding: 3px 10px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #1565C0;
+}
+
+
+/* ============================================================
+   24. COMPOSANTS — MENU ITEMS
+   ============================================================ */
+.menu-item {
+  width: 100%;
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 16px 18px;
+  text-align: left;
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--ink);
+  cursor: pointer;
+  box-shadow: 0 1px 5px var(--shadow);
+  transition: background 0.15s;
+  margin-bottom: 8px;
+  touch-action: manipulation;
+}
+
+.menu-item:active { background: var(--honey-pale); }
+
+
+/* ============================================================
+   25. COMPOSANTS — SYNC BAR
+   ============================================================ */
+.sync-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--honey-pale);
+  border: 1px solid rgba(212, 130, 10, 0.3);
+  border-radius: 10px;
+  padding: 10px 14px;
+  margin-bottom: 12px;
+  font-size: 0.78rem;
+}
+
+.sync-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.sync-dot.green  { background: #4CAF50; }
+.sync-dot.grey   { background: #999; }
+.sync-dot.orange { background: #FF9800; animation: pulse 1.5s infinite; }
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.4; }
+}
+
+
+/* ============================================================
+   26. COMPOSANTS — INFO BANNER
+   ============================================================ */
+.info-banner {
+  background: var(--honey-pale);
+  border-left: 3px solid var(--honey-light);
+  border-radius: 0 8px 8px 0;
+  padding: 10px 14px;
+  font-size: 0.78rem;
+  color: var(--mid);
+  margin-bottom: 14px;
+  line-height: 1.5;
+}
+
+
+/* ============================================================
+   27. COMPOSANTS — TIMELINE
+   ============================================================ */
+.timeline { padding-left: 16px; border-left: 2px solid var(--honey-pale); }
+
+.tl-item { position: relative; padding: 0 0 14px 16px; }
+
+.tl-item::before {
+  content: '';
+  position: absolute;
+  left: -7px;
+  top: 4px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--honey-light);
+  border: 2px solid var(--cream);
+}
+
+.tl-date { font-family: var(--font-body); font-size: 0.68rem; color: var(--soft); margin-bottom: 2px; }
+.tl-text { font-size: 0.82rem; font-weight: 500; color: var(--ink); }
+
+
+/* ============================================================
+   28. COMPOSANTS — EMPTY STATE
+   ============================================================ */
+.empty { text-align: center; padding: 40px 20px; color: var(--soft); }
+.empty-icon { font-size: 2.8rem; margin-bottom: 8px; }
+.empty p { font-size: 0.84rem; }
+
+
+/* ============================================================
+   29. COMPOSANTS — TOAST
+   ============================================================ */
+.toast {
+  position: fixed;
+  bottom: calc(var(--nav-height) + var(--safe-bottom) + 12px);
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: var(--dark);
+  color: var(--honey-light);
+  padding: 11px 22px;
+  border-radius: 30px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.3);
+  z-index: 400;
+  opacity: 0;
+  transition: all 0.25s;
+  pointer-events: none;
+  border: 1px solid rgba(212, 130, 10, 0.3);
+  white-space: nowrap;
+}
+
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+
+/* ============================================================
+   30. COMPOSANTS — LIGHTBOX
+   ============================================================ */
+.lightbox {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.92);
+  z-index: 500;
+  align-items: center;
+  justify-content: center;
+}
+
+.lightbox.open { display: flex; }
+
+.lightbox img {
+  max-width: 94vw;
+  max-height: 88vh;
+  border-radius: 10px;
+}
+
+.lightbox-close {
+  position: fixed;
+  top: calc(var(--safe-top) + 14px);
+  right: 18px;
+  font-size: 1.8rem;
+  color: white;
+  background: none;
+  border: none;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+
+/* ============================================================
+   31. COMPOSANTS — INSTALL BANNER
+   ============================================================ */
+.install-banner {
+  background: linear-gradient(135deg, var(--dark), #2a1c08);
+  color: var(--honey-pale);
+  border-radius: 14px;
+  padding: 16px;
+  margin-bottom: 14px;
+  font-size: 0.82rem;
+  line-height: 1.6;
+  border: 1px solid rgba(212, 130, 10, 0.25);
+}
+
+.install-banner strong { color: var(--honey-light); }
+
+.install-banner .install-steps {
+  margin-top: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.install-banner button {
+  margin-top: 10px;
+  background: var(--honey);
+  border: none;
+  border-radius: 8px;
+  padding: 9px 16px;
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: white;
+  cursor: pointer;
+  width: 100%;
+  touch-action: manipulation;
+}
+
+
+/* ============================================================
+   32. MODAL COMPTE RENDU VISITE
+   ============================================================ */
+.cr-section {
+  margin-bottom: 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+.cr-section:last-child { border-bottom: none; margin-bottom: 0; }
+
+.cr-section-title {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--soft);
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
+.cr-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 5px 0;
+  font-size: 0.84rem;
+}
+
+.cr-label { color: var(--mid); font-size: 0.8rem; }
+.cr-value { font-weight: 600; color: var(--ink); text-align: right; max-width: 60%; }
+
+.cr-obs {
+  background: var(--cream);
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-size: 0.82rem;
+  color: var(--ink);
+  line-height: 1.5;
+  margin-top: 6px;
+  font-style: italic;
+}
+
+.cr-cadres-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.cr-cadre-box {
+  background: var(--cream);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 8px;
+  text-align: center;
+}
+
+.cr-cadre-val {
+  font-family: var(--font-body);
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--honey);
+}
+
+.cr-cadre-label { font-size: 0.65rem; color: var(--mid); margin-top: 2px; }
+
+.modal-title-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 20px 12px;
+  border-bottom: 1px solid var(--border);
+}
+
+.modal-title-actions .modal-title {
+  padding: 0;
+  border-bottom: none;
+  flex: 1;
+}
+
+.btn-edit-modal {
+  background: var(--honey-pale);
+  border: 1px solid var(--honey-light);
+  color: var(--amber);
+  border-radius: 8px;
+  padding: 6px 12px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: var(--font-body);
+  touch-action: manipulation;
+  white-space: nowrap;
+}
+
+
+/* ============================================================
+   33. UTILITAIRES
+   ============================================================ */
+.hidden { display: none !important; }
+.mono   { font-family: var(--font-body); }
+
+
+/* ============================================================
+   33. FORMULAIRE VISITE v1.2 — Mode rapide / Ruche par ruche
+   ============================================================ */
+
+/* Toggle mode visite */
+.visite-mode-toggle {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.mode-visite-btn {
+  padding: 12px 8px;
+  border: 2px solid var(--border);
+  border-radius: 12px;
+  background: var(--cream);
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--mid);
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.18s;
+  touch-action: manipulation;
+  line-height: 1.4;
+}
+
+.mode-visite-btn .mode-icon { font-size: 1.3rem; display: block; margin-bottom: 3px; }
+.mode-visite-btn .mode-label { display: block; }
+.mode-visite-btn .mode-sub { display: block; font-size: 0.65rem; font-weight: 400; color: var(--soft); margin-top: 2px; }
+
+.mode-visite-btn.active {
+  background: var(--dark);
+  color: var(--honey-light);
+  border-color: var(--honey);
+}
+
+.mode-visite-btn.active .mode-sub { color: var(--soft); }
+
+/* Séparateur de section */
+.form-section-sep {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 14px 0;
+}
+
+/* ── Cartes ruches (mode complet) ── */
+.ruche-card-form {
+  background: var(--white);
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  margin-bottom: 8px;
+  overflow: hidden;
+  transition: border-color 0.2s;
+}
+
+.ruche-card-form:has(.ruche-card-body[style*="block"]) {
+  border-color: var(--honey-light);
+}
+
+.ruche-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 14px;
+  cursor: pointer;
+  background: var(--cream);
+  touch-action: manipulation;
+  user-select: none;
+  gap: 8px;
+}
+
+.ruche-card-header:active { background: var(--honey-pale); }
+
+.ruche-card-num {
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: var(--ink);
+  flex-shrink: 0;
+}
+
+.ruche-card-summary {
+  font-size: 0.75rem;
+  color: var(--soft);
+  flex: 1;
+  text-align: center;
+  transition: color 0.2s;
+}
+
+.ruche-card-chevron {
+  font-size: 0.7rem;
+  color: var(--soft);
+  flex-shrink: 0;
+  transition: transform 0.2s;
+}
+
+.ruche-card-body {
+  padding: 14px;
+  border-top: 1px solid var(--border);
+  background: var(--white);
+  /* ✅ scroll dans la carte si très long */
+  overflow: visible;
+}
+
+
+/* ============================================================
+   34. ÉCRAN DE CONNEXION — V1.3
+   ============================================================ */
+#login-screen {
+  position: fixed;
+  inset: 0;
+  background: var(--dark);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: calc(var(--safe-top) + 20px) 20px calc(var(--safe-bottom) + 20px);
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.login-card {
+  background: var(--cream);
+  border-radius: 20px;
+  padding: 32px 24px;
+  width: 100%;
+  max-width: 380px;
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(212, 130, 10, 0.2);
+}
+
+.login-emoji {
+  font-size: 3rem;
+  text-align: center;
+  margin-bottom: 8px;
+}
+
+.login-card h1 {
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  color: var(--amber);
+  text-align: center;
+  margin-bottom: 4px;
+}
+
+.login-subtitle {
+  font-size: 0.78rem;
+  color: var(--soft);
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.login-input {
+  width: 100%;
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  padding: 13px 16px;
+  font-family: var(--font-body);
+  font-size: 16px;    /* 16px évite le zoom iOS */
+  color: var(--ink);
+  background: var(--white);
+  margin-bottom: 10px;
+  -webkit-appearance: none;
+  transition: border-color 0.2s;
+}
+
+.login-input:focus {
+  outline: none;
+  border-color: var(--honey-light);
+}
+
+.login-btn {
+  width: 100%;
+  background: var(--honey);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  padding: 14px;
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  margin-top: 4px;
+  touch-action: manipulation;
+  transition: background 0.2s;
+}
+
+.login-btn:active { background: var(--honey-light); }
+
+.login-error {
+  color: var(--danger);
+  font-size: 0.78rem;
+  text-align: center;
+  min-height: 18px;
+  margin-top: 6px;
+  font-weight: 500;
+}
+
+/* Bouton toggle "Pas encore de compte / Retour" */
+.login-switch-btn {
+  width: 100%;
+  background: none;
+  border: none;
+  font-family: var(--font-body);
+  font-size: 0.78rem;
+  color: var(--soft);
+  text-align: center;
+  cursor: pointer;
+  padding: 10px 0 0;
+  margin-top: 6px;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  touch-action: manipulation;
+}
+
+.login-switch-btn:active { color: var(--honey); }
+
+/* Titre de section dans le formulaire de création */
+.login-section-title {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  color: var(--amber);
+  text-align: center;
+  margin-bottom: 16px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border);
+}
+
+
+/* ============================================================
+   35. SYNC INDICATOR — Topbar V1.3
+   ============================================================ */
+.sync-indicator {
+  font-size: 0.62rem;
+  color: var(--soft);
+  font-weight: 500;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  max-width: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  /* animation de clignotement quand sync en cours */
+  transition: color 0.3s;
+}
+
+.sync-indicator.syncing {
+  color: var(--honey-light);
+  animation: pulse 1.2s infinite;
+}
+
+
+/* ============================================================
+   36. EFFECTIF ROW — Ruches + Ruchettes V1.3
+   ============================================================ */
+.effectif-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.effectif-item {
+  background: var(--cream);
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  padding: 12px 10px;
+  text-align: center;
+}
+
+.effectif-label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--mid);
+  margin-bottom: 10px;
+}
+
+.effectif-item .cadre-stepper {
+  justify-content: center;
+  gap: 10px;
+}
+
+.effectif-item .step-val {
+  font-size: 1.5rem;
+  min-width: 32px;
+}
+
+
+/* ============================================================
+   37. BADGE MARQUAGE — Cartes de visite V1.3
+   ============================================================ */
+.badge-marquage {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: #FEF3DC;
+  border: 1px solid #D4820A;
+  border-radius: 20px;
+  padding: 3px 9px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: #8B4513;
+}
+
+
+/* ============================================================
+   38. MODAL CONFIRM — Petit modal centré V1.3
+   ============================================================ */
+.modal-confirm-inner {
+  border-radius: 20px;        /* arrondi des 4 côtés (pas bas seulement) */
+  max-height: 50vh;
+  margin-bottom: auto;        /* centre verticalement */
+  margin-top: auto;
+}
+
+/* Quand c'est un modal-confirm, le parent overlay doit centrer */
+#modal-confirm {
+  align-items: center;
+  padding: 20px;
+}
+
+#modal-confirm .modal {
+  border-radius: 20px;
+  max-height: 50vh;
+}
+
+
+/* ============================================================
+   39. ENTRY CARD — Champs effectif sur les cards V1.3
+   ============================================================ */
+.entry-effectif {
+  display: flex;
+  gap: 10px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--mid);
+  margin-bottom: 4px;
+  font-family: var(--font-body);
+}
+
+.entry-effectif span {
+  background: var(--cream);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 2px 8px;
+}
+
+
+/* ============================================================
+   40. STATS ROW — 4 colonnes (dashboard remodelé V1.3)
+   ============================================================ */
+/* On hérite de .stats-row qui fait grid 1fr 1fr — pas besoin de changer */
+
+
+/* ============================================================
+   41. APP CONTAINER — Masqué par défaut (avant login)
+   ============================================================ */
+#app-container {
+  display: none;  /* Affiché via JS après login */
+}
+
+/* ✅ FIX : une fois app affiché, il doit utiliser flex */
+#app-container.visible {
+  display: flex;
+}
+
+
+/* ============================================================
+   42. BOTTOM NAV — Hauteur fixe garantie V1.3
+   ============================================================ */
+
+/* ✅ FIX : s'assurer que scroll-area prend bien en compte la bottom-nav */
+.scroll-area {
+  /* Hérite des propriétés existantes, on s'assure juste du padding-bottom */
+  padding-bottom: calc(var(--nav-height) + var(--safe-bottom) + 32px);
+}
+
+
+/* ============================================================
+   43. MÉDIAS DE VISITE — Photos & audio (V1.3)
+   ============================================================ */
+
+/* Wrapper d'une photo dans le formulaire */
+.visit-photo-wrap {
+  position: relative;
+  flex-shrink: 0;
+}
+
+/* Bouton suppression sur la photo */
+.visit-photo-del {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(0, 0, 0, 0.55);
+  color: #fff;
+  font-size: 0.65rem;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+
+.visit-photo-del:active {
+  background: rgba(0, 0, 0, 0.8);
+}
+
+/* Zone enregistreur audio */
+.audio-recorder {
+  background: var(--cream);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Bouton enregistrer */
+.audio-record-btn {
+  background: var(--honey);
+  color: #fff;
+  border: none;
+  border-radius: 20px;
+  padding: 9px 18px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: var(--font-body);
+  transition: background 0.2s, transform 0.1s;
+}
+
+.audio-record-btn:active {
+  transform: scale(0.97);
+}
+
+/* État enregistrement en cours */
+.audio-record-btn.recording {
+  background: #E53935;
+  animation: pulse-rec 1.2s ease-in-out infinite;
+}
+
+@keyframes pulse-rec {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(229, 57, 53, 0.4); }
+  50%       { box-shadow: 0 0 0 8px rgba(229, 57, 53, 0); }
+}
+
+/* Timer d'enregistrement */
+.audio-timer {
+  font-size: 0.82rem;
+  font-family: var(--font-body);
+  color: var(--mid);
+  min-width: 80px;
+}
+
+/* Aperçu audio */
+.audio-preview {
+  background: var(--cream);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 10px 12px;
+}
+
+/* Bouton supprimer l'audio */
+.audio-del-btn {
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 4px 10px;
+  font-size: 0.75rem;
+  color: #C62828;
+  cursor: pointer;
+  font-family: var(--font-body);
+}
+
+.audio-del-btn:active {
+  background: #FFEBEE;
+}
+
+
+/* ============================================================
+   44. MODAL NOUVEAUTÉS (What's New)
+   ============================================================ */
+
+/* Badge de version (ex. "V1.3") */
+.wn-badge {
+  display: inline-block;
+  background: var(--honey);
+  color: #fff;
+  font-size: 0.7rem;
+  font-weight: 700;
+  font-family: var(--font-body);
+  border-radius: 8px;
+  padding: 3px 10px;
+  margin-bottom: 14px;
+  letter-spacing: 0.04em;
+}
+
+/* Section regroupant les items d'une version */
+.wn-section {
+  margin-bottom: 8px;
+}
+
+/* Un item de nouveauté */
+.wn-item {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.wn-item:last-child {
+  border-bottom: none;
+}
+
+.wn-icon {
+  font-size: 1.3rem;
+  flex-shrink: 0;
+  width: 28px;
+  text-align: center;
+  margin-top: 1px;
+}
+
+.wn-title {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--ink);
+  margin-bottom: 3px;
+}
+
+.wn-desc {
+  font-size: 0.78rem;
+  color: var(--mid);
+  line-height: 1.45;
+}
+
+
+/* ============================================================
+   45. RAPPELS J+ — formulaire + cards dashboard
+   ============================================================ */
+
+/* Formulaire de saisie rappel */
+.rappel-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.rappel-delai-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.rappel-delai-label {
+  font-size: 0.78rem;
+  color: var(--mid);
+  white-space: nowrap;
+}
+
+/* Chips J+7 J+14 … */
+.rappel-chip {
+  background: var(--cream);
+  border: 1.5px solid var(--border);
+  border-radius: 20px;
+  padding: 5px 12px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  color: var(--ink);
+  font-family: var(--font-body);
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.rappel-chip.selected,
+.rappel-chip:active {
+  background: var(--honey);
+  border-color: var(--honey);
+  color: #fff;
+}
+
+/* Input nombre custom */
+.rappel-jours-input {
+  width: 64px !important;
+  padding: 6px 8px;
+  text-align: center;
+  font-family: var(--font-body);
+}
+
+/* Bouton activer notifs */
+.btn-notif {
+  background: none;
+  border: 1.5px solid var(--honey);
+  border-radius: 16px;
+  color: var(--honey);
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 4px 10px;
+  cursor: pointer;
+  font-family: var(--font-body);
+}
+
+/* Item rappel */
+.rappel-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  margin-bottom: 8px;
+  border-left: 4px solid transparent;
+}
+
+.rappel-item:last-child { margin-bottom: 0; }
+
+.rappel-retard  { background: #FFF0F0; border-left-color: #E53935; }
+.rappel-today   { background: #FFF8E1; border-left-color: #FFB300; }
+.rappel-proche  { background: #FFF3E0; border-left-color: #FF8C00; }
+.rappel-ok      { background: var(--cream); border-left-color: var(--border); }
+
+.rappel-info { flex: 1; min-width: 0; }
+
+.rappel-texte {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--ink);
+  margin-bottom: 3px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.rappel-meta {
+  font-size: 0.72rem;
+  color: var(--mid);
+}
+
+.rappel-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.rappel-statut {
+  font-size: 0.72rem;
+  font-weight: 700;
+  font-family: var(--font-body);
+  white-space: nowrap;
+}
+
+.rappel-retard  .rappel-statut { color: #E53935; }
+.rappel-today   .rappel-statut { color: #FFB300; }
+.rappel-proche  .rappel-statut { color: #FF8C00; }
+.rappel-ok      .rappel-statut { color: var(--mid); }
+
+/* Bouton marquer fait */
+.rappel-done-btn {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 1.5px solid var(--border);
+  background: #fff;
+  color: #4CAF50;
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  transition: background 0.15s;
+}
+
+.rappel-done-btn:active {
+  background: #E8F5E9;
+}
+
+/* Bouton calendrier sur les rappels */
+.rappel-cal-btn {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 1.5px solid var(--border);
+  background: #fff;
+  font-size: 0.85rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  transition: background 0.15s;
+}
+
+.rappel-cal-btn:active {
+  background: #E3F2FD;
+}
+
+/* ---- Chips type traitement sanitaire ---- */
+.type-chip {
+  padding: 5px 12px;
+  border-radius: 20px;
+  border: 1.5px solid var(--border);
+  background: var(--card);
+  color: var(--soft);
+  font-size: 0.78rem;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.type-chip.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: white;
+  font-weight: 600;
+}
+
+
+
+/* ============================================================
+   46. REFONTE V3 — Couche visuelle (bêta)
+   Tout ce qui suit remplace l'apparence sans toucher aux fonctions.
+   ============================================================ */
+
+body {
+  font-family: var(--font-body);
+  font-variant-numeric: tabular-nums;
+  font-size: 16px;
+  line-height: 1.45;
+}
+
+:focus-visible { outline: 3px solid var(--honey-light); outline-offset: 2px; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}
+
+/* -- Barre du haut : claire, sobre -- */
+.topbar {
+  background: var(--white);
+  box-shadow: none;
+  border-bottom: 1px solid var(--border);
+  padding: calc(var(--safe-top) + 10px) 16px 10px;
+}
+.topbar-brand { gap: 12px; }
+.topbar-brand > span {
+  width: 38px; height: 42px;
+  display: grid; place-items: center;
+  font-size: 1.25rem;
+  background: var(--honey-light);
+  clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%);
+}
+.topbar-brand h1 {
+  font-family: var(--font-display);
+  font-weight: 750;
+  font-size: 1.15rem;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+}
+.topbar-brand p {
+  font-size: 0.8rem;
+  color: var(--mid);
+  letter-spacing: 0;
+  text-transform: none;
+  margin-top: 1px;
+}
+.topbar-btn {
+  background: var(--cream) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: var(--r-sm) !important;
+  width: 42px; height: 42px;
+}
+
+.scroll-area { padding: 18px 16px; padding-bottom: calc(var(--nav-height) + var(--safe-bottom) + 28px); }
+
+/* -- Navigation du bas : blanche, onglet actif en pastille miel -- */
+.bottom-nav {
+  background: var(--white);
+  border-top: 1px solid var(--border);
+  box-shadow: 0 -6px 24px rgba(43, 33, 24, 0.06);
+  padding: 6px 4px var(--safe-bottom);
+}
+.nav-item {
+  color: var(--mid);
+  font-size: 0.64rem;
+  font-weight: 700;
+  letter-spacing: 0;
+  padding: 4px 0 8px;
+  gap: 4px;
+}
+.nav-item .nav-icon {
+  font-size: 1.2rem;
+  width: 48px; height: 30px;
+  display: grid; place-items: center;
+  border-radius: 999px;
+  transition: background 0.15s;
+}
+.nav-item.active { color: var(--ink); }
+.nav-item.active .nav-icon { background: var(--honey-pale); filter: none; box-shadow: inset 0 0 0 1.5px var(--honey-light); }
+
+/* -- Titres de page et de carte : phrase normale, pas de capitales -- */
+.page-title {
+  font-family: var(--font-display);
+  font-weight: 750;
+  font-size: 1.5rem;
+  letter-spacing: -0.015em;
+  color: var(--ink);
+}
+.card {
+  border-radius: var(--r-lg);
+  padding: 18px;
+  margin-bottom: 14px;
+  box-shadow: none;
+}
+.card-title {
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: -0.005em;
+  text-transform: none;
+  color: var(--ink);
+  margin-bottom: 14px;
+}
+
+/* -- Accueil : en-tête cheptel (l'élément signature) -- */
+.herd {
+  position: relative;
+  overflow: hidden;
+  background-color: var(--honey-light);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='97' viewBox='0 0 56 97'%3E%3Cpath d='M28 1 55 16.5v31L28 63 1 47.5v-31z M28 63v34 M1 16.5 0 16 M55 16.5 56 16' fill='none' stroke='%232B2118' stroke-opacity='.09' stroke-width='1.5'/%3E%3C/svg%3E");
+  background-size: 42px 73px;
+  background-position: right -6px top -10px;
+  color: var(--ink);
+  border-radius: 24px;
+  padding: 20px 20px 18px;
+  margin-bottom: 12px;
+}
+.herd::after {
+  /* fondu pour que le motif alvéolé reste discret sous les chiffres */
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(100deg, var(--honey-light) 35%, rgba(242,169,22,0) 85%);
+  pointer-events: none;
+}
+.herd > * { position: relative; z-index: 1; }
+.herd-head { display: flex; flex-direction: column; gap: 2px; }
+.herd-label { font-weight: 700; font-size: 0.95rem; }
+.herd-total {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 4.25rem;
+  line-height: 0.95;
+  letter-spacing: -0.04em;
+  font-variation-settings: 'opsz' 96;
+}
+.herd-bar {
+  height: 12px;
+  margin: 16px 0 10px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.75);
+  overflow: hidden;
+}
+.herd-bar span {
+  display: block; height: 100%; width: 50%;
+  background: var(--ink);
+  border-radius: 999px 0 0 999px;
+  transition: width 0.6s cubic-bezier(.2,.8,.2,1);
+}
+.herd-legend { display: flex; justify-content: space-between; gap: 12px; font-size: 0.95rem; }
+.herd-key { display: inline-flex; align-items: center; gap: 7px; }
+.herd-key::before { content: ''; width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+.herd-key-ruches::before { background: var(--ink); }
+.herd-key-ruchettes::before { background: #fff; box-shadow: inset 0 0 0 1.5px rgba(43,33,24,.35); }
+.herd-key b { font-family: var(--font-display); font-weight: 800; font-size: 1.2rem; }
+
+.mini-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  margin-bottom: 14px;
+}
+.mini-stat { display: flex; flex-direction: column; align-items: center; padding: 12px 4px; gap: 1px; }
+.mini-stat + .mini-stat { border-left: 1px solid var(--border); }
+.mini-stat b { font-family: var(--font-display); font-weight: 800; font-size: 1.5rem; line-height: 1.1; color: var(--ink); }
+.mini-stat span { font-size: 0.8rem; color: var(--mid); }
+
+/* -- Fiches (visites, traitements, mouvements) -- */
+.entry-card {
+  border-radius: var(--r-lg);
+  padding: 16px;
+  margin-bottom: 10px;
+  box-shadow: none;
+}
+.entry-date { font-size: 0.85rem; color: var(--mid); font-weight: 700; }
+.entry-id {
+  background: var(--honey-pale);
+  color: #6B4100;
+  border-radius: 999px;
+  padding: 3px 10px;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+.entry-main { font-size: 1rem; font-weight: 700; }
+.entry-sub  { font-size: 0.88rem; }
+.badge {
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 0.78rem;
+  padding: 3px 10px;
+}
+
+/* -- Ruchers -- */
+.rucher-card { border-radius: var(--r-lg); box-shadow: none; }
+.rucher-head {
+  background: var(--white);
+  border-bottom: 1px solid var(--border);
+  padding: 14px 16px;
+  gap: 10px;
+}
+.rucher-rid {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--ink);
+  line-height: 1.2;
+}
+.rucher-nb {
+  background: var(--honey-pale) !important;
+  color: #6B4100 !important;
+  border-radius: 999px;
+  min-width: 34px;
+  text-align: center;
+  font-weight: 700;
+}
+.rucher-meta { font-size: 0.88rem; color: var(--mid); }
+.btn-rucher-action {
+  background: var(--cream) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: var(--r-sm) !important;
+}
+.photo-add { border-radius: var(--r-md); border-color: var(--border); background: var(--cream); }
+
+/* -- Bouton + flottant -- */
+.fab {
+  width: 60px; height: 60px;
+  border-radius: 20px;
+  background: var(--ink);
+  color: var(--honey-light);
+  font-size: 1.8rem;
+  box-shadow: 0 8px 24px rgba(43, 33, 24, 0.28);
+}
+
+/* -- Fenêtres (modales) -- */
+.modal-overlay { background: rgba(43, 33, 24, 0.5); }
+.modal { background: var(--white); border-radius: 26px 26px 0 0; }
+.modal-handle { width: 44px; height: 5px; background: #D9D3C7; }
+.modal-title {
+  font-family: var(--font-display);
+  font-weight: 750;
+  font-size: 1.35rem;
+  letter-spacing: -0.015em;
+  color: var(--ink);
+  border-bottom: none;
+  padding: 16px 20px 4px;
+}
+.modal-body { padding: 14px 20px; }
+.modal-footer { border-top: 1px solid var(--border); padding: 14px 20px 0; }
+
+/* -- Boutons -- */
+.btn-save, .login-btn, .btn-param-save, .btn-pdf {
+  background: var(--honey);
+  color: #fff;
+  border-radius: var(--r-md);
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 1rem;
+  min-height: 52px;
+}
+.btn-save:active, .login-btn:active { background: #8F5500; }
+.btn-cancel {
+  background: var(--white);
+  border: 1.5px solid var(--border);
+  border-radius: var(--r-md);
+  font-size: 1rem;
+  color: var(--ink);
+  min-height: 52px;
+}
+.btn-back {
+  border-radius: 999px !important;
+  background: var(--white) !important;
+  border: 1px solid var(--border) !important;
+  color: var(--ink) !important;
+  font-weight: 700;
+}
+
+/* -- Formulaires : grandes cibles, libellés lisibles -- */
+.form-label, .effectif-label, .id-label, .cr-section-title, .registre-section-title, .login-section-title, .trans-type-label {
+  text-transform: none;
+  letter-spacing: 0;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--ink);
+}
+.form-input, .form-select, .form-textarea, .param-input, .login-input, .champ-libre-input, select, input[type=text], input[type=number], input[type=date], input[type=email], input[type=password], textarea {
+  border-radius: var(--r-md);
+  border: 1.5px solid var(--border);
+  font-family: var(--font-body);
+  font-size: 16px;
+  background: var(--white);
+  color: var(--ink);
+}
+.form-input:focus, .form-select:focus, .form-textarea:focus, .param-input:focus, .login-input:focus, select:focus, input:focus, textarea:focus {
+  outline: none;
+  border-color: var(--honey-light);
+  box-shadow: 0 0 0 3px rgba(242, 169, 22, 0.25);
+}
+
+/* Choix rapides, cases, marquage : sélection = miel clair + contour miel */
+.qbtn, .check-item, .marquage-item, .method-btn, .mode-visite-btn, .rappel-chip, .type-chip, .ruche-btn {
+  border-radius: var(--r-md);
+  border: 1.5px solid var(--border);
+  background: var(--white);
+  font-family: var(--font-body);
+  font-weight: 700;
+  color: var(--ink);
+  min-height: 46px;
+}
+.qbtn.selected, .check-item.checked, .marquage-item.checked, .method-btn.active, .mode-visite-btn.active, .rappel-chip.active, .type-chip.active, .ruche-btn.selected {
+  background: var(--honey-pale);
+  border-color: var(--honey-light);
+  color: var(--ink);
+  box-shadow: inset 0 0 0 1px var(--honey-light);
+}
+.effectif-item, .cadre-item { border-radius: var(--r-md); border: 1.5px solid var(--border); background: var(--cream); }
+.step-btn {
+  background: var(--ink) !important;
+  color: var(--honey-light) !important;
+  width: 48px !important; height: 48px !important;
+  font-size: 1.4rem !important;
+}
+.step-val { font-family: var(--font-display); font-weight: 800; font-size: 1.6rem; color: var(--ink); }
+
+/* -- Menu « Plus » -- */
+.menu-item {
+  border-radius: var(--r-md);
+  box-shadow: none;
+  font-size: 1rem;
+  font-weight: 700;
+  min-height: 58px;
+  margin-bottom: 8px;
+}
+.menu-item:active { background: var(--honey-pale); }
+
+/* -- Bandeaux, rappels, recommandations -- */
+.info-banner { border-radius: var(--r-md); }
+.reco-card, .rappel-item { border-radius: var(--r-md); }
+.reco-badge { border-radius: 999px; }
+.timeline .tl-date { font-size: 0.82rem; font-weight: 700; color: var(--mid); }
+.timeline .tl-text { font-size: 0.95rem; }
+
+/* -- Écran de connexion -- */
+#login-screen { background: var(--cream); }
+.login-card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 26px;
+  box-shadow: 0 20px 60px rgba(43, 33, 24, 0.10);
+}
+.login-emoji {
+  width: 64px; height: 72px;
+  margin: 0 auto 14px;
+  display: grid; place-items: center;
+  font-size: 2rem;
+  background: var(--honey-light);
+  clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%);
+}
+.login-card h1 {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 1.9rem;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+}
+.login-subtitle { font-size: 0.92rem; color: var(--mid); }
+.login-switch-btn { color: var(--honey); font-weight: 700; }
+
+/* -- Divers -- */
+.toast { border-radius: var(--r-md); background: var(--ink); font-family: var(--font-body); font-weight: 700; }
+.sync-bar { border-radius: var(--r-md); }
+.registre-table th { text-transform: none; letter-spacing: 0; }
+.wn-item, .cr-section { border-radius: var(--r-md); }
+
+.registre-header { background: var(--white); border: 1px solid var(--border); color: var(--ink); border-radius: var(--r-lg); padding: 18px; }
+.registre-header h2 { color: var(--ink); font-weight: 750; font-size: 1.3rem; letter-spacing: -0.015em; }
+.registre-header p { color: var(--mid); font-size: 0.88rem; }
+.btn-pdf { justify-content: center; text-align: center; }
+.btn-pdf-ghost { background: var(--white); color: var(--ink); border: 1.5px solid var(--border); }
+.entry-date { white-space: nowrap; }
+
+.registre-section { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.registre-section-title { font-weight: 700; font-size: 1.05rem; color: var(--ink); border-bottom: 1px solid var(--border); }
+.registre-table { font-size: 0.82rem; }
+.registre-table th { background: var(--honey-pale); color: #6B4100; font-weight: 700; }
+.registre-table th:first-child { border-radius: var(--r-sm) 0 0 var(--r-sm); }
+.registre-table th:last-child  { border-radius: 0 var(--r-sm) var(--r-sm) 0; }
+.registre-table tr:nth-child(even) td { background: #FAF9F6; }
