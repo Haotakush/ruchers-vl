@@ -93,7 +93,11 @@ function checkRappelsNotifications() {
 }
 
 function updateStats() {
-  document.getElementById('s-ruches').textContent  = getTotalRuches();
+  const nbRuches    = getTotalRuches();
+  const nbRuchettes = getTotalRuchettes();
+  document.getElementById('s-ruches').textContent    = nbRuches;
+  document.getElementById('s-ruchettes').textContent = nbRuchettes;
+  document.getElementById('s-total').textContent     = nbRuches + nbRuchettes;
   document.getElementById('s-visites').textContent = journalData.length;
   document.getElementById('s-traits').textContent  = sanitaireData.length;
   document.getElementById('s-sites').textContent   = RUCHERS.length;

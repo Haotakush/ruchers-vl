@@ -7,7 +7,8 @@
 function updateTopbar() {
   const totalRuches = getTotalRuches();
   document.getElementById('topbar-title').textContent = 'Ruchers VL';
-  document.getElementById('topbar-sub').textContent   = `${RUCHERS.length} sites · ${totalRuches} ruches`;
+  const totalRuchettes = getTotalRuchettes();
+  document.getElementById('topbar-sub').textContent   = `${RUCHERS.length} sites · ${totalRuches} ruches` + (totalRuchettes ? ` · ${totalRuchettes} ruchettes` : '');
   const regInfo = document.getElementById('reg-header-info');
   if (regInfo) regInfo.innerHTML = `${PARAMS.nom} · NAPI ${PARAMS.napi}<br>Conforme à l'arrêté du 11 août 1994`;
 }

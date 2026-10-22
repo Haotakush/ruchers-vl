@@ -81,6 +81,10 @@ function getTotalRuches() {
   return RUCHERS.reduce((acc, r) => acc + (r.nb || 0), 0);
 }
 
+function getTotalRuchettes() {
+  return RUCHERS.reduce((acc, r) => acc + (r.nbRuchettes || 0), 0);
+}
+
 function buildLastVisitMap() {
   const lastVisitMap = {};
   RUCHERS.forEach(r => { lastVisitMap[r.id] = null; });
