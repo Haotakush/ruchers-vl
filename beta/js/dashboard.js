@@ -226,8 +226,14 @@ function updateRecommandations() {
 
 function updateTimeline() {
   const all = [
-    ...journalData.map(v  => ({ date: v.date, text: `Visite ${v.rucher} — ${v.intervention}` })),
-    ...sanitaireData.map(s => ({ date: s.date, text: `Sanitaire ${s.rucher} — ${s.type}` })),
+    ...journalData.map(v => {
+      // Les visites récentes stockent une liste `interventions` ; les anciennes un champ `intervention`
+      const actions = (v.interventions && v.interventions.length)
+        ? v.interventions.join(', ')
+        : (v.intervention || '');
+      return { date: v.date || '', text: `Visite ${v.rucher}${actions ? ' — ' + actions : ''}` };
+    }),
+    ...sanitaireData.map(s => ({ date: s.date || '', text: `Sanitaire ${s.rucher}${s.type ? ' — ' + s.type : ''}` })),
   ].sort((a, b) => b.date.localeCompare(a.date)).slice(0, 6);
 
   document.getElementById('timeline').innerHTML = all.length
@@ -265,13 +271,25 @@ function updateZoneBars() {
 function drawChartVisites() {
   const canvas = document.getElementById('chart-visites');
   if (!canvas) return;
+  // Redessine quand la largeur du graphique change (rotation, ouverture de l'onglet…)
+  if (!canvas._resizeObserver && 'ResizeObserver' in window) {
+    let lastW = 0;
+    canvas._resizeObserver = new ResizeObserver(entries => {
+      const w = Math.round(entries[0].contentRect.width);
+      if (w && w !== lastW) { lastW = w; drawChartVisites(); }
+    });
+    canvas._resizeObserver.observe(canvas);
+  }
   const ctx = canvas.getContext('2d');
   const dpr = window.devicePixelRatio || 1;
   const W   = canvas.offsetWidth;
   const H   = 140;
+  // L'appli est encore masquée pendant le chargement : largeur nulle, on attend
+  // que le graphique soit visible (le ResizeObserver relancera le dessin).
+  if (!W) return;
   canvas.width  = W * dpr;
   canvas.height = H * dpr;
-  canvas.style.width  = W + 'px';
+  canvas.style.width  = '100%';
   canvas.style.height = H + 'px';
   ctx.scale(dpr, dpr);
   ctx.clearRect(0, 0, W, H);
@@ -283,10 +301,10 @@ function drawChartVisites() {
     const d  = new Date(now.getFullYear(), now.getMonth() - i, 1);
     const ym = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
     labels.push(MONTHS[d.getMonth()]);
-    counts.push(journalData.filter(v => v.date.startsWith(ym)).length);
+    counts.push(journalData.filter(v => (v.date || '').startsWith(ym)).length);
   }
   const maxVal = Math.max(...counts, 1);
-  const padL = 30, padR = 10, padT = 10, padB = 30;
+  const padL = 30, padR = 10, padT = 20, padB = 30;
   const chartW = W - padL - padR;
   const chartH = H - padT - padB;
   const barW   = Math.floor(chartW / 6 * 0.6);
