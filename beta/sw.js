@@ -7,8 +7,17 @@
        pour invalider l'ancien cache et déclencher la mise à jour.
    ============================================================ */
 
-const CACHE_VERSION = 'ruchers-vl-beta-v3.0.0';
+const CACHE_VERSION = 'ruchers-vl-beta-v4.0.0';
 const CACHE_PREFIX  = 'ruchers-vl-beta-';  // la bêta ne touche jamais aux caches de /app/
+
+// Bibliothèques externes (versions figées dans leur adresse) : gardées d'une version à l'autre
+const LIB_CACHE = 'ruchers-vl-beta-libs-v1';
+const LIB_HOSTS = [
+  'https://www.gstatic.com/firebasejs/',
+  'https://cdnjs.cloudflare.com/ajax/libs/',
+  'https://fonts.googleapis.com/css',
+  'https://fonts.gstatic.com/',
+];
 
 const STATIC_ASSETS = [
   './',
@@ -16,6 +25,7 @@ const STATIC_ASSETS = [
   './manifest.json',
   './css/style.css',
   './js/firebase-init.js',
+  './js/icons.js',
   './js/data.js',
   './js/ui.js',
   './js/journal.js',
@@ -49,7 +59,7 @@ self.addEventListener('activate', event => {
     caches.keys()
       .then(keys => Promise.all(
         keys
-          .filter(k => k.startsWith(CACHE_PREFIX) && k !== CACHE_VERSION)
+          .filter(k => k.startsWith(CACHE_PREFIX) && k !== CACHE_VERSION && k !== LIB_CACHE)
           .map(k => {
             console.log(`[SW] Suppression ancien cache : ${k}`);
             return caches.delete(k);
@@ -62,6 +72,23 @@ self.addEventListener('activate', event => {
 /* ---- Fetch : cache-first pour les assets locaux ---- */
 self.addEventListener('fetch', event => {
   const url = event.request.url;
+
+  // Firebase, Leaflet et les polices : mis en cache au premier chargement,
+  // pour que l'appli démarre aussi hors réseau (au rucher).
+  if (event.request.method === 'GET' && LIB_HOSTS.some(h => url.startsWith(h))) {
+    event.respondWith(
+      caches.open(LIB_CACHE).then(cache =>
+        cache.match(event.request).then(cached => {
+          const network = fetch(event.request).then(response => {
+            if (response && (response.ok || response.type === 'opaque')) cache.put(event.request, response.clone());
+            return response;
+          }).catch(() => cached);
+          return cached || network;
+        })
+      )
+    );
+    return;
+  }
 
   // Ne pas intercepter Firebase, Google APIs, CDN externes
   // (ces requêtes ont besoin d'aller sur le réseau)

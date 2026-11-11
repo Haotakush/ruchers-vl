@@ -98,14 +98,14 @@ function checkComptageReminder() {
   // Mois de comptage : 12=Déc, 3=Mars, 5=Mai, 7=Juil
   // On affiche aussi le mois précédent comme rappel anticipé
   const periodes = {
-    11: { title: '🔬 Comptage varroa — dans 1 mois', text: 'Le mois de décembre est la période de comptage. Préparez vos outils.' },
-    12: { title: '🔬 Période de comptage — Décembre', text: 'C\'est le moment de faire votre comptage varroa de fin d\'année.' },
-    2:  { title: '🔬 Comptage varroa — dans 1 mois', text: 'Le mois de mars est une période de comptage. Anticipez.' },
-    3:  { title: '🔬 Période de comptage — Mars', text: 'Effectuez votre comptage varroa de sortie de miellée baies roses.' },
-    4:  { title: '🔬 Comptage varroa — dans 1 mois', text: 'Le mois de mai est une période de comptage. Préparez-vous.' },
-    5:  { title: '🔬 Période de comptage — Mai', text: 'Effectuez votre comptage varroa de sortie de miellée intermédiaire.' },
-    6:  { title: '🔬 Comptage varroa — dans 1 mois', text: 'Juillet est une période de comptage. Anticipez dès maintenant.' },
-    7:  { title: '🔬 Période de comptage — Juillet', text: 'Effectuez votre comptage varroa post-traitement d\'été.' },
+    11: { title: 'Comptage varroa — dans 1 mois', text: 'Le mois de décembre est la période de comptage. Préparez vos outils.' },
+    12: { title: 'Période de comptage — Décembre', text: 'C\'est le moment de faire votre comptage varroa de fin d\'année.' },
+    2:  { title: 'Comptage varroa — dans 1 mois', text: 'Le mois de mars est une période de comptage. Anticipez.' },
+    3:  { title: 'Période de comptage — Mars', text: 'Effectuez votre comptage varroa de sortie de miellée baies roses.' },
+    4:  { title: 'Comptage varroa — dans 1 mois', text: 'Le mois de mai est une période de comptage. Préparez-vous.' },
+    5:  { title: 'Période de comptage — Mai', text: 'Effectuez votre comptage varroa de sortie de miellée intermédiaire.' },
+    6:  { title: 'Comptage varroa — dans 1 mois', text: 'Juillet est une période de comptage. Anticipez dès maintenant.' },
+    7:  { title: 'Période de comptage — Juillet', text: 'Effectuez votre comptage varroa post-traitement d\'été.' },
   };
 
   const info = periodes[mois];
@@ -126,7 +126,7 @@ function openEditSanitaire(idx) {
   if (!s) return;
   editingSanitaireIdx = idx;
   const modalTitle = document.querySelector('#modal-sanitaire .modal-title');
-  if (modalTitle) modalTitle.textContent = '✏️ Modifier le traitement';
+  if (modalTitle) modalTitle.textContent = 'Modifier le traitement';
 
   document.getElementById('s-date').value    = s.date;
   document.getElementById('s-rucher').value  = s.rucher;
@@ -140,31 +140,69 @@ function openEditSanitaire(idx) {
   openModal('modal-sanitaire');
 }
 
+/* Durée saisie librement (« 10 semaines », « 30 jours », « 3 mois ») → nombre de jours */
+function dureeEnJours(duree) {
+  const m = String(duree || '').toLowerCase().match(/(\d+(?:[.,]\d+)?)\s*(j|jour|jours|s|sem|semaine|semaines|m|mois)\b/);
+  if (!m) return null;
+  const n = parseFloat(m[1].replace(',', '.'));
+  const u = m[2];
+  if (u.startsWith('j')) return Math.round(n);
+  if (u.startsWith('s')) return Math.round(n * 7);
+  return Math.round(n * 30);
+}
+
 function renderSanitaire() {
   const list = document.getElementById('sanitaire-list');
   if (!sanitaireData.length) {
-    list.innerHTML = `<div class="empty"><div class="empty-icon">💊</div>
-      <p>Aucun traitement.<br>Appuyez sur + pour en ajouter.</p></div>`;
+    list.innerHTML = `<div class="empty"><div class="empty-icon">${icon('shield', 36)}</div>
+      <p>Aucun traitement.<br>Touchez « Nouveau traitement » pour en ajouter un.</p></div>`;
     return;
   }
-  list.innerHTML = sanitaireData.map((s, i) => {
+  const lieu = id => { const r = getRucherById(id); return r ? r.lieu : id; };
+  const items = sanitaireData.map((s, i) => {
+    const jours = dureeEnJours(s.duree);
+    const debut = parseISODate(s.date);
+    let fin = null, enCours = false, pct = 0;
+    if (jours && debut) {
+      fin = new Date(debut); fin.setDate(fin.getDate() + jours);
+      const today = new Date(); today.setHours(0, 0, 0, 0);
+      enCours = today >= debut && today < fin;
+      pct = Math.min(100, Math.max(3, Math.round((today - debut) / (fin - debut) * 100)));
+    }
+    const finIso = fin ? `${fin.getFullYear()}-${String(fin.getMonth() + 1).padStart(2, '0')}-${String(fin.getDate()).padStart(2, '0')}` : null;
+    return { s, i, enCours, pct, finIso };
+  }).sort((a, b) => (b.s.date || '').localeCompare(a.s.date || ''));
+
+  const card = ({ s, i, enCours, pct, finIso }) => {
     const deleteAction = s._docId ? `confirmDelSanitaire('${s._docId}', ${i})` : `confirmDelSanitaire(null, ${i})`;
+    const details = [s.produit, s.dose, s.duree].filter(x => x && x !== '—').join(' · ');
+    const fin = finIso ? fmtEcheance(finIso) : null;
     return `
-    <div class="entry-card" onclick="openEditSanitaire(${i})" style="cursor:pointer;">
-      <button class="btn-delete" onclick="event.stopPropagation();${deleteAction}">🗑</button>
-      <div class="entry-top">
-        <span class="entry-date">${s.date}</span>
-        <span class="entry-id">${getRucherLabel(s.rucher)}</span>
+    <div class="visit-card" onclick="openEditSanitaire(${i})">
+      <div class="visit-head">
+        <span class="visit-title">${esc(s.type || 'Traitement')} · ${esc(lieu(s.rucher))}</span>
+        <span class="visit-date">${fmtDate(s.date)}</span>
+        <button class="icon-btn icon-btn-sm" onclick="event.stopPropagation();${deleteAction}" title="Supprimer le traitement" aria-label="Supprimer le traitement">${icon('trash', 16)}</button>
       </div>
-      <div class="entry-main">${s.type}</div>
-      <div class="entry-sub">${[s.produit, s.dose, s.duree].filter(x => x && x !== '—').join(' · ') || '—'}</div>
-      ${s.motif && s.motif !== '—' ? `<div class="entry-sub" style="margin-top:3px;">${s.motif}</div>` : ''}
-      <div class="entry-tags">
-        <span class="badge badge-sani">${s.gdsa === 'Oui' ? '🚨 GDSA déclaré' : 'GDSA: Non'}</span>
-        ${s.obs ? `<span class="badge badge-couvain">${s.obs}</span>` : ''}
+      ${details ? `<div class="list-meta">${esc(details)}</div>` : ''}
+      ${s.motif && s.motif !== '—' ? `<div class="list-meta">${esc(s.motif)}</div>` : ''}
+      ${enCours ? `
+      <div class="treat-progress">
+        <div class="meter"><span class="meter-soon" style="width:${pct}%"></span></div>
+        <div class="treat-dates"><span>Posé le ${fmtDate(s.date)}</span><span>Retrait ${fin.tone === 'neutral' ? 'le ' + fmtDate(finIso) : fin.label.toLowerCase()}</span></div>
+      </div>` : ''}
+      <div class="visit-tags">
+        ${s.gdsa === 'Oui' ? `<span class="pill pill-late">Déclaré au GDSA</span>` : ''}
+        ${s.obs ? `<span class="tag">${esc(s.obs)}</span>` : ''}
       </div>
     </div>`;
-  }).join('');
+  };
+
+  const encours = items.filter(x => x.enCours);
+  const autres  = items.filter(x => !x.enCours);
+  list.innerHTML =
+    (encours.length ? `<div class="list-section">En cours</div>` + encours.map(card).join('') : '') +
+    (autres.length ? `<div class="list-section">Historique</div>` + autres.map(card).join('') : '');
 }
 
 function confirmDelSanitaire(docId, i) {

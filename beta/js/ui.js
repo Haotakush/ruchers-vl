@@ -20,25 +20,53 @@ function updateSyncIndicator() {
   if (!lastSyncTime) { el.textContent = ''; return; }
   const now     = new Date();
   const diffMin = Math.floor((now - lastSyncTime) / 60000);
-  if (diffMin < 1)  el.textContent = '✓ Sync à l\'instant';
-  else if (diffMin < 60) el.textContent = `✓ Sync il y a ${diffMin} min`;
-  else el.textContent = `✓ Sync ${lastSyncTime.toLocaleTimeString('fr-FR', {hour:'2-digit',minute:'2-digit'})}`;
+  if (diffMin < 1)  el.textContent = 'Synchronisé';
+  else if (diffMin < 60) el.textContent = `Synchronisé il y a ${diffMin} min`;
+  else el.textContent = `Synchronisé à ${lastSyncTime.toLocaleTimeString('fr-FR', {hour:'2-digit',minute:'2-digit'})}`;
 }
 
 // Mettre à jour l'indicateur toutes les minutes
 setInterval(updateSyncIndicator, 60000);
 
 /* ---- NAVIGATION ---- */
+/* Onglet de la barre du bas qui correspond à chaque page */
+const NAV_FOR_TAB = {
+  dashboard: 'dashboard', journal: 'journal', sanitaire: 'sanitaire',
+  ruchers: 'ruchers', carte: 'ruchers', transhumance: 'ruchers',
+  plus: 'plus', params: 'plus', calendrier: 'plus', registre: 'plus', admin: 'plus', documents: 'plus',
+};
+/* Libellé du bouton flottant selon la page */
+const FAB_LABEL = { dashboard: 'Nouvelle visite', journal: 'Nouvelle visite', sanitaire: 'Nouveau traitement', ruchers: 'Nouveau rucher' };
+
 function showTab(name, el) {
   document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
   document.getElementById('tab-' + name).classList.add('active');
-  if (el) el.classList.add('active');
+  const navKey = NAV_FOR_TAB[name];
+  const navBtn = navKey && document.querySelector(`.nav-item[data-nav="${navKey}"]`);
+  if (navBtn) navBtn.classList.add('active');
+  else if (el) el.classList.add('active');
   currentTab = name;
   if (name !== 'carte') document.getElementById('scroll-area').scrollTop = 0;
   const fab = document.getElementById('fab');
-  fab.classList.toggle('hidden', !['journal', 'sanitaire', 'ruchers'].includes(name));
+  fab.classList.toggle('hidden', !FAB_LABEL[name]);
+  const fabLabel = document.getElementById('fab-label');
+  if (fabLabel && FAB_LABEL[name]) fabLabel.textContent = FAB_LABEL[name];
   if (name === 'sanitaire' && typeof checkComptageReminder === 'function') checkComptageReminder();
+}
+
+/* Ruchers, Carte et Transhumance : trois vues d'un même onglet */
+function showRuchersView(view) {
+  showTab(view, null);
+  document.querySelectorAll('.ruchers-seg .seg-btn').forEach(b => {
+    b.classList.toggle('active', b.getAttribute('onclick').includes(`'${view}'`));
+  });
+  if (view === 'carte' && typeof initMap === 'function') initMap();
+  if (view === 'transhumance') {
+    if (typeof populateMouvRucherSelect === 'function') populateMouvRucherSelect();
+    if (typeof renderMouvements === 'function') renderMouvements();
+    setTimeout(() => { if (typeof mouvMapInstance !== 'undefined' && mouvMapInstance) mouvMapInstance.invalidateSize(); }, 300);
+  }
 }
 
 function showSubSection(id) {
@@ -49,18 +77,18 @@ function showSubSection(id) {
 
 /* ---- FAB ---- */
 function openFab() {
-  if (currentTab === 'journal') {
+  if (currentTab === 'journal' || currentTab === 'dashboard') {
     editingJournalIdx = null;
     resetJournalForm();
     const modalTitle = document.querySelector('#modal-journal .modal-title');
-    if (modalTitle) modalTitle.textContent = '📋 Nouvelle visite';
+    if (modalTitle) modalTitle.textContent = 'Nouvelle visite';
     openModal('modal-journal');
   }
   if (currentTab === 'sanitaire') {
     editingSanitaireIdx = null;
     resetSanitaireForm();
     const modalTitle = document.querySelector('#modal-sanitaire .modal-title');
-    if (modalTitle) modalTitle.textContent = '💊 Nouveau traitement';
+    if (modalTitle) modalTitle.textContent = 'Nouveau traitement';
     openModal('modal-sanitaire');
   }
   if (currentTab === 'ruchers') openModal('modal-rucher');
@@ -107,12 +135,26 @@ function confirmNo() {
 
 /* ---- TOAST ---- */
 let toastTimer = null;
-function toast(msg) {
+/* Message bref en bas d'écran. Avec onUndo, affiche un bouton « Annuler ». */
+function toast(msg, onUndo) {
   const el = document.getElementById('toast');
-  el.textContent = msg;
+  // Les anciens messages commencent souvent par un emoji : on le retire
+  const text = String(msg).replace(/^(?:[\u{1F300}-\u{1FAFF}\u2600-\u27BF\u2B05-\u2B07\u231A-\u23FA\uFE0F\u200D]+\s*)+/u, '');
+  el.innerHTML = '';
+  const span = document.createElement('span');
+  span.className = 'toast-text';
+  span.textContent = text;
+  el.appendChild(span);
+  if (typeof onUndo === 'function') {
+    const btn = document.createElement('button');
+    btn.className = 'toast-undo';
+    btn.textContent = 'Annuler';
+    btn.onclick = () => { el.classList.remove('show'); onUndo(); };
+    el.appendChild(btn);
+  }
   el.classList.add('show');
   if (toastTimer) clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => el.classList.remove('show'), 2600);
+  toastTimer = setTimeout(() => el.classList.remove('show'), onUndo ? 4500 : 2600);
 }
 
 /* ---- FORMULAIRES ---- */

@@ -8,49 +8,52 @@ let editingRucherIdx = null;
 function renderRuchers() {
   const list = document.getElementById('ruchers-list');
   if (!RUCHERS.length) {
-    list.innerHTML = `<div class="empty"><div class="empty-icon">📍</div>
-      <p>Aucun rucher.<br>Appuyez sur + pour en ajouter.</p></div>`;
+    list.innerHTML = `<div class="empty"><div class="empty-icon">${icon('pin', 36)}</div>
+      <p>Aucun rucher.<br>Touchez « Nouveau rucher » pour en ajouter un.</p></div>`;
     return;
   }
 
+  const lastVisitMap = buildLastVisitMap();
   list.innerHTML = RUCHERS.map((r, idx) => {
-    const photos  = rucherPhotos[r.id] || [];
-    const zoneCls = r.zone === 'Bas'       ? 'badge-zone-bas'
-                  : r.zone === 'Mi-pentes' ? 'badge-zone-mi'
-                  : 'badge-zone-hauts';
-    const zoneLabel = r.zone === 'Bas'       ? 'Bas 0–400m'
-                    : r.zone === 'Mi-pentes' ? 'Mi-pentes 400–800m'
-                    : 'Hauts 800m+';
-    const coords = r.lat
-      ? `<span style="font-size:0.68rem;color:var(--soft);font-family:var(--font-body);">${r.lat.toFixed(4)}, ${r.lng.toFixed(4)}</span>`
+    const zoneCls = r.zone === 'Bas'       ? 'pill-ok'
+                  : r.zone === 'Mi-pentes' ? 'pill-soon'
+                  : 'pill-blue';
+    const zoneLabel = r.zone === 'Bas'       ? 'Bas · 0–400 m'
+                    : r.zone === 'Mi-pentes' ? 'Mi-pentes · 400–800 m'
+                    : 'Hauts · 800 m et +';
+    const place = [r.alt ? `${r.alt} m` : '', r.cp].filter(Boolean).join(' · ');
+    const days  = daysSince(lastVisitMap[r.id]);
+    const last  = days === null ? 'Jamais visité' : days === 0 ? "Visité aujourd'hui" : `Dernière visite il y a ${days} j`;
+    const route = r.lat && r.lng
+      ? `<a class="link-btn" href="https://www.google.com/maps/dir/?api=1&destination=${r.lat},${r.lng}" target="_blank" rel="noopener" onclick="event.stopPropagation()">${icon('nav', 16)} Itinéraire</a>`
       : '';
 
     return `
       <div class="rucher-card">
-        <div class="rucher-head">
-          <span class="rucher-rid">${r.id} — ${r.lieu}</span>
-          <div class="rucher-head-actions">
-            <span class="rucher-nb">🐝 ${r.nb !== null && r.nb !== undefined ? r.nb : '—'}</span>
-            ${r.nbRuchettes ? `<span class="rucher-nb" style="color:#E65100;">🪣 ${r.nbRuchettes}</span>` : ''}
-            <button class="btn-rucher-action" title="Modifier" onclick="openEditRucher(${idx})">✏️</button>
-            <button class="btn-rucher-action" title="Supprimer" onclick="confirmDeleteRucher(${idx})">🗑️</button>
+        <div class="rucher-top">
+          <div class="rucher-name-wrap">
+            <div class="rucher-name">${esc(r.lieu)} <span class="code-chip">${esc(r.id)}</span></div>
+            ${place ? `<div class="list-meta">${esc(place)}</div>` : ''}
           </div>
+          <button class="icon-btn" title="Modifier" aria-label="Modifier le rucher" onclick="openEditRucher(${idx})">${icon('edit', 18)}</button>
+          <button class="icon-btn" title="Supprimer" aria-label="Supprimer le rucher" onclick="confirmDeleteRucher(${idx})">${icon('trash', 18)}</button>
         </div>
-        <div class="rucher-body">
-          <div class="rucher-meta">
-            <span class="rucher-alt">⛰ ${r.alt}m · ${r.cp}</span>
-            <span class="badge ${zoneCls}">${zoneLabel}</span>
-            ${coords}
-          </div>
-          <div style="font-size:0.7rem;color:var(--soft);font-weight:700;margin-bottom:8px;">Photos</div>
-          <div class="photo-scroll" id="photos-${r.id}">
-            <label class="photo-add" title="Ajouter des photos">
-              <span style="font-size:1.4rem;">＋</span>
-              <span>Photo</span>
-              <input type="file" accept="image/*" multiple style="display:none"
-                onchange="addPhoto('${r.id}', this)">
-            </label>
-          </div>
+        <div class="visit-tags">
+          <span class="pill pill-honey">${r.nb !== null && r.nb !== undefined ? r.nb : '—'} ruches</span>
+          ${r.nbRuchettes ? `<span class="pill pill-neutral">${r.nbRuchettes} ruchette${r.nbRuchettes > 1 ? 's' : ''}</span>` : ''}
+          <span class="pill ${zoneCls}">${zoneLabel}</span>
+        </div>
+        <div class="photo-scroll" id="photos-${r.id}">
+          <label class="photo-add" title="Ajouter des photos">
+            ${icon('camera', 20)}
+            <span>Photo</span>
+            <input type="file" accept="image/*" multiple style="display:none"
+              onchange="addPhoto('${r.id}', this)">
+          </label>
+        </div>
+        <div class="rucher-foot">
+          <span class="list-meta">${last}</span>
+          ${route}
         </div>
       </div>`;
   }).join('');

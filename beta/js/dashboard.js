@@ -12,12 +12,12 @@ function updateDashboard() {
   updateTopbar();
 }
 
-/* ---- RAPPELS J+ ---- */
+/* ---- RAPPELS J+ → bloc « À faire » ---- */
 function updateRappels() {
-  const today      = new Date().toISOString().split('T')[0];
-  const card       = document.getElementById('card-rappels');
-  const list       = document.getElementById('rappels-list');
-  const btnNotif   = document.getElementById('btn-notif');
+  const card     = document.getElementById('card-rappels');
+  const list     = document.getElementById('rappels-list');
+  const btnNotif = document.getElementById('btn-notif');
+  const countEl  = document.getElementById('rappels-count');
   if (!card || !list) return;
 
   // Collecter rappels actifs (non faits, toutes visites)
@@ -28,36 +28,26 @@ function updateRappels() {
 
   if (!rappels.length) { card.style.display = 'none'; return; }
   card.style.display = 'block';
+  if (countEl) countEl.textContent = rappels.length;
 
   // Bouton notif si pas encore accordé
   if (btnNotif) {
     const perm = ('Notification' in window) ? Notification.permission : 'denied';
-    btnNotif.style.display = (perm === 'default') ? 'inline-block' : 'none';
+    btnNotif.style.display = (perm === 'default') ? 'inline-flex' : 'none';
   }
 
   list.innerHTML = rappels.map(r => {
-    const echeance = new Date(r.echeance + 'T00:00:00');
-    const todayD   = new Date(today + 'T00:00:00');
-    const diff     = Math.round((echeance - todayD) / 86400000);
-    let statut, statutCls;
-    if (diff < 0)      { statut = `En retard de ${Math.abs(diff)}j`; statutCls = 'rappel-retard'; }
-    else if (diff === 0) { statut = "Aujourd'hui !"; statutCls = 'rappel-today'; }
-    else if (diff <= 3)  { statut = `Dans ${diff}j`; statutCls = 'rappel-proche'; }
-    else                 { statut = `Dans ${diff}j`; statutCls = 'rappel-ok'; }
-
+    const e = fmtEcheance(r.echeance);
+    const rucher = getRucherById(r.rucher);
     return `
-      <div class="rappel-item ${statutCls}">
-        <div class="rappel-info">
-          <div class="rappel-texte">${r.texte}</div>
-          <div class="rappel-meta">
-            📍 ${getRucherLabel(r.rucher)} · 🗓 ${r.echeance}
-          </div>
+      <div class="list-row">
+        <div class="list-main">
+          <div class="list-title">${esc(r.texte)}</div>
+          <div class="list-meta">${esc(rucher ? rucher.lieu : r.rucher)} · ${fmtDate(r.echeance)}</div>
+          <span class="pill pill-${e.tone}">${e.label}</span>
         </div>
-        <div class="rappel-actions">
-          <span class="rappel-statut">${statut}</span>
-          <button class="rappel-cal-btn" onclick="exportRappelByIdx(${r._idx})" title="Ajouter au calendrier">📅</button>
-          <button class="rappel-done-btn" onclick="marquerRappelFait(${r._idx})" title="Marquer fait">✓</button>
-        </div>
+        <button class="icon-btn" onclick="exportRappelByIdx(${r._idx})" title="Ajouter au calendrier" aria-label="Ajouter au calendrier">${icon('calendar', 18)}</button>
+        <button class="done-btn" onclick="marquerRappelFait(${r._idx})" title="Marquer comme fait" aria-label="Marquer comme fait">${icon('check', 20)}</button>
       </div>`;
   }).join('');
 }
@@ -65,10 +55,14 @@ function updateRappels() {
 function marquerRappelFait(idx) {
   const v = journalData[idx];
   if (!v?.rappel) return;
+  const save = () => {
+    localStorage.setItem('journal', JSON.stringify(journalData));
+    if (v._docId) updateJournalInFirestore(v._docId, v).catch(() => {});
+    updateRappels();
+  };
   v.rappel.fait = true;
-  localStorage.setItem('journal', JSON.stringify(journalData));
-  if (v._docId) updateJournalInFirestore(v._docId, v).catch(() => {});
-  updateRappels();
+  save();
+  toast(`Fait : ${v.rappel.texte}`, () => { v.rappel.fait = false; save(); });
 }
 
 function requestNotifPermission() {
@@ -105,167 +99,104 @@ function updateStats() {
   document.getElementById('s-sites').textContent   = RUCHERS.length;
 }
 
+/* ---- RUCHERS À VISITER (fréquence + recommandations fusionnées) ---- */
 function updateFreqVisites() {
+  const el = document.getElementById('visite-freq');
+  if (!el) return;
   const lastVisitMap = buildLastVisitMap();
-  const freqMap = {};
-  RUCHERS.forEach(r => { freqMap[r.id] = 0; });
-  journalData.forEach(v => {
-    if (freqMap[v.rucher] !== undefined) freqMap[v.rucher]++;
-  });
-  const maxVisits = Math.max(...Object.values(freqMap), 1);
   // Tri par urgence : jamais visité → plus de jours → moins de jours
   const sorted = [...RUCHERS].sort((a, b) => {
     const dA = daysSince(lastVisitMap[a.id]);
     const dB = daysSince(lastVisitMap[b.id]);
     if (dA === null && dB === null) return 0;
-    if (dA === null) return -1; // jamais visité passe devant
+    if (dA === null) return -1;
     if (dB === null) return 1;
-    return dB - dA; // plus de jours = plus urgent = en premier
+    return dB - dA;
   });
 
-  document.getElementById('visite-freq').innerHTML = sorted.map(r => {
-    const nb    = freqMap[r.id] || 0;
-    const last  = lastVisitMap[r.id];
-    const days  = daysSince(last);
-    const pct   = Math.round((nb / maxVisits) * 100);
-    const barColor = nb === 0 ? '#EF5350' : nb === maxVisits ? '#4CAF50' : '#FFB300';
-    const dot      = days === null ? '🔴' : days > 30 ? '🔴' : days > 14 ? '🟡' : '🟢';
-    const lastLabel= last
-      ? `Dernière visite il y a <strong>${days}j</strong> (${last})`
-      : `<span style="color:var(--danger);font-weight:600;">Jamais visité</span>`;
-
+  el.innerHTML = sorted.map(r => {
+    const last = lastVisitMap[r.id];
+    const days = daysSince(last);
+    const tone = days === null || days > 30 ? 'late' : days > 14 ? 'soon' : 'ok';
+    const pct  = days === null ? 100 : Math.min(100, Math.max(4, Math.round(days / 30 * 100)));
+    const right = days === null ? 'Jamais visité' : days === 0 ? "Aujourd'hui" : `il y a ${days} j`;
+    const meta = [r.nb ? `${r.nb} ruches` : '', r.cp ? String(r.cp).replace(/^\d{5}\s*/, '') : '', r.alt ? `${r.alt} m` : '']
+      .filter(Boolean).join(' · ');
     return `
-      <div style="margin-bottom:14px;">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:3px;">
-          <span style="font-weight:600;font-size:0.85rem;">${dot} ${r.id} — ${r.lieu}</span>
-          <span style="font-family:var(--font-body);font-size:0.78rem;font-weight:700;color:${barColor};">
-            ${nb} visite${nb > 1 ? 's' : ''}
-          </span>
+      <button class="list-row list-row-link" onclick="showRuchersView('ruchers')">
+        <div class="list-main">
+          <div class="list-line">
+            <span class="list-title">${esc(r.lieu)}</span>
+            <span class="days days-${tone}">${right}</span>
+          </div>
+          <div class="meter"><span class="meter-${tone}" style="width:${pct}%"></span></div>
+          <div class="list-meta">${esc(meta)}</div>
         </div>
-        <div style="background:var(--border);border-radius:4px;height:7px;margin-bottom:4px;">
-          <div style="background:${barColor};height:7px;border-radius:4px;width:${pct || 2}%;transition:width 0.5s;"></div>
-        </div>
-        <div style="font-size:0.72rem;color:var(--mid);">${lastLabel}</div>
-      </div>`;
-  }).join('') || `<div class="empty"><div class="empty-icon">📋</div><p>Aucune visite encore.</p></div>`;
+        <span class="list-chev">${icon('chevron', 18)}</span>
+      </button>`;
+  }).join('') || `<div class="list-empty">Ajoutez votre premier rucher pour suivre vos visites.</div>`;
 }
 
+/* Fusionné dans « Ruchers à visiter » (conservé pour les appels existants) */
 function updateRecommandations() {
-  const lastVisitMap = buildLastVisitMap();
-  const nonVisites  = RUCHERS.filter(r => !lastVisitMap[r.id]);
-  const urgents     = RUCHERS
-    .filter(r => { const d = daysSince(lastVisitMap[r.id]); return d !== null && d > 30; })
-    .sort((a, b) => daysSince(lastVisitMap[b.id]) - daysSince(lastVisitMap[a.id]));
-  const attentions  = RUCHERS.filter(r => {
-    const d = daysSince(lastVisitMap[r.id]);
-    return d !== null && d > 14 && d <= 30;
-  });
-
-  let html = '';
-  if (!journalData.length) {
-    html = `<div style="font-size:0.84rem;color:var(--mid);padding:8px 0;">
-      Commencez à enregistrer des visites pour obtenir des recommandations.
-    </div>`;
-  } else {
-    if (nonVisites.length) {
-      html += `
-        <div class="reco-card reco-red">
-          <div class="reco-icon">🔴</div>
-          <div>
-            <div class="reco-title">Jamais visités (${nonVisites.length})</div>
-            <div class="reco-sites">${nonVisites.map(r => `<span class="reco-badge">${r.id}</span>`).join('')}</div>
-            <div class="reco-tip">Ces ruchers n'ont aucune visite enregistrée. À prioriser.</div>
-          </div>
-        </div>`;
-    }
-    if (urgents.length) {
-      html += `
-        <div class="reco-card reco-orange">
-          <div class="reco-icon">🟠</div>
-          <div>
-            <div class="reco-title">Visite urgente &gt; 30 jours (${urgents.length})</div>
-            <div class="reco-sites">
-              ${urgents.map(r => `
-                <span class="reco-badge">${r.id}
-                  <span style="opacity:0.7;font-size:0.65rem;">${daysSince(lastVisitMap[r.id])}j</span>
-                </span>`).join('')}
-            </div>
-            <div class="reco-tip">Risque d'essaimage ou problème sanitaire.</div>
-          </div>
-        </div>`;
-    }
-    if (attentions.length) {
-      html += `
-        <div class="reco-card reco-yellow">
-          <div class="reco-icon">🟡</div>
-          <div>
-            <div class="reco-title">À surveiller 14–30 jours (${attentions.length})</div>
-            <div class="reco-sites">
-              ${attentions.map(r => `
-                <span class="reco-badge">${r.id}
-                  <span style="opacity:0.7;font-size:0.65rem;">${daysSince(lastVisitMap[r.id])}j</span>
-                </span>`).join('')}
-            </div>
-            <div class="reco-tip">Planifiez une visite dans la semaine.</div>
-          </div>
-        </div>`;
-    }
-    if (!nonVisites.length && !urgents.length && !attentions.length) {
-      html = `
-        <div class="reco-card reco-green">
-          <div class="reco-icon">✅</div>
-          <div>
-            <div class="reco-title">Tous les ruchers sont à jour !</div>
-            <div class="reco-tip">Toutes les visites ont été effectuées dans les 14 derniers jours.</div>
-          </div>
-        </div>`;
-    }
-  }
-  document.getElementById('recommandations').innerHTML = html;
+  const el = document.getElementById('recommandations');
+  if (!el) return;
 }
 
 function updateTimeline() {
+  const el = document.getElementById('timeline');
+  if (!el) return;
+  const lieu = id => { const r = getRucherById(id); return r ? r.lieu : id; };
   const all = [
     ...journalData.map(v => {
       // Les visites récentes stockent une liste `interventions` ; les anciennes un champ `intervention`
       const actions = (v.interventions && v.interventions.length)
         ? v.interventions.join(', ')
         : (v.intervention || '');
-      return { date: v.date || '', text: `Visite ${v.rucher}${actions ? ' — ' + actions : ''}` };
+      const meta = [actions, v.force && v.force !== '—' ? `colonie ${v.force.toLowerCase()}` : ''].filter(Boolean).join(' · ');
+      return { date: v.date || '', kind: 'visit', title: `Visite · ${lieu(v.rucher)}`, meta };
     }),
-    ...sanitaireData.map(s => ({ date: s.date || '', text: `Sanitaire ${s.rucher}${s.type ? ' — ' + s.type : ''}` })),
+    ...sanitaireData.map(s => ({
+      date: s.date || '', kind: 'sani',
+      title: `${s.type || 'Traitement'} · ${lieu(s.rucher)}`,
+      meta: [s.produit, s.duree].filter(x => x && x !== '—').join(' · '),
+    })),
   ].sort((a, b) => b.date.localeCompare(a.date)).slice(0, 6);
 
-  document.getElementById('timeline').innerHTML = all.length
+  el.innerHTML = all.length
     ? all.map(e => `
-        <div class="tl-item">
-          <div class="tl-date">${e.date}</div>
-          <div class="tl-text">${e.text}</div>
+        <div class="list-row">
+          <span class="row-ico ${e.kind === 'visit' ? 'ico-honey' : 'ico-blue'}">${icon(e.kind === 'visit' ? 'visits' : 'shield', 18)}</span>
+          <div class="list-main">
+            <div class="list-title">${esc(e.title)}</div>
+            ${e.meta ? `<div class="list-meta">${esc(e.meta)}</div>` : ''}
+          </div>
+          <span class="row-when">${fmtDate(e.date)}</span>
         </div>`).join('')
-    : `<div class="empty"><div class="empty-icon">📭</div><p>Aucune activité encore.</p></div>`;
+    : `<div class="list-empty">Aucune activité pour l'instant.</div>`;
 }
 
 function updateZoneBars() {
+  const el = document.getElementById('zone-bars');
+  if (!el) return;
   const zones = { Bas: 0, 'Mi-pentes': 0, Hauts: 0 };
   RUCHERS.forEach(r => { if (r.nb) zones[r.zone] = (zones[r.zone] || 0) + r.nb; });
-  const total = Object.values(zones).reduce((a, b) => a + b, 0) || 1;
-
-  document.getElementById('zone-bars').innerHTML = [
-    { z:'Bas',       label:'🟢 Bas (0–400m)',       color:'#4CAF50' },
-    { z:'Mi-pentes', label:'🟡 Mi-pentes (400–800m)', color:'#FFB300' },
-    { z:'Hauts',     label:'🔵 Hauts (800m+)',        color:'#1E88E5' },
-  ].map(({ z, label, color }) => `
-    <div style="margin-bottom:12px;">
-      <div style="display:flex;justify-content:space-between;font-size:0.8rem;margin-bottom:4px;">
-        <span>${label}</span>
-        <span style="font-family:var(--font-body);font-weight:600;">${zones[z] || 0} ruches</span>
-      </div>
-      <div style="background:var(--border);border-radius:4px;height:7px;">
-        <div style="background:${color};height:7px;border-radius:4px;
-          width:${Math.round((zones[z] || 0) / total * 100)}%;transition:width 0.5s;">
-        </div>
-      </div>
-    </div>`).join('');
+  const total = Object.values(zones).reduce((a, b) => a + b, 0);
+  const totalEl = document.getElementById('zone-total');
+  if (totalEl) totalEl.textContent = total ? `${total} ruches` : '';
+  const defs = [
+    { z: 'Bas',       label: 'Bas · 0–400 m',       color: '#3D7A4F' },
+    { z: 'Mi-pentes', label: 'Mi-pentes · 400–800 m', color: '#C98A12' },
+    { z: 'Hauts',     label: 'Hauts · 800 m et +',   color: '#2F6DB5' },
+  ];
+  if (!total) { el.innerHTML = `<div class="list-empty" style="padding:4px 0;">Aucune ruche enregistrée.</div>`; return; }
+  el.innerHTML = `
+    <div class="stack-bar">${defs.filter(d => zones[d.z]).map(d => `<span style="width:${zones[d.z] / total * 100}%;background:${d.color}"></span>`).join('')}</div>
+    <div class="zone-legend">
+      ${defs.map(d => zones[d.z]
+        ? `<div class="zone-row"><span class="zone-key"><span class="zone-dot" style="background:${d.color}"></span>${d.label}</span><b>${zones[d.z]}</b></div>`
+        : `<div class="zone-row zone-empty"><span class="zone-key"><span class="zone-dot zone-dot-empty"></span>${d.label}</span><span>aucune ruche</span></div>`).join('')}
+    </div>`;
 }
 
 function drawChartVisites() {
