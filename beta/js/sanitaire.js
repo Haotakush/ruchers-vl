@@ -154,8 +154,8 @@ function renderSanitaire() {
         <span class="entry-id">${getRucherLabel(s.rucher)}</span>
       </div>
       <div class="entry-main">${s.type}</div>
-      <div class="entry-sub">${s.produit} · ${s.dose} · ${s.duree}</div>
-      <div class="entry-sub" style="margin-top:3px;">${s.motif}</div>
+      <div class="entry-sub">${[s.produit, s.dose, s.duree].filter(x => x && x !== '—').join(' · ') || '—'}</div>
+      ${s.motif && s.motif !== '—' ? `<div class="entry-sub" style="margin-top:3px;">${s.motif}</div>` : ''}
       <div class="entry-tags">
         <span class="badge badge-sani">${s.gdsa === 'Oui' ? '🚨 GDSA déclaré' : 'GDSA: Non'}</span>
         ${s.obs ? `<span class="badge badge-couvain">${s.obs}</span>` : ''}
