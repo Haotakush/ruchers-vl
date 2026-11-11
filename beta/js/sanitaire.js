@@ -118,6 +118,9 @@ function checkComptageReminder() {
   }
 }
 
+/* Valeur de champ sûre : ni « undefined », ni le tiret des champs vides */
+function fieldVal(v) { return (v === undefined || v === null || v === '—') ? '' : v; }
+
 function openEditSanitaire(idx) {
   const s = sanitaireData[idx];
   if (!s) return;
@@ -127,12 +130,12 @@ function openEditSanitaire(idx) {
 
   document.getElementById('s-date').value    = s.date;
   document.getElementById('s-rucher').value  = s.rucher;
-  document.getElementById('s-type').value    = s.type    !== '—' ? s.type    : '';
-  document.getElementById('s-produit').value = s.produit !== '—' ? s.produit : '';
-  document.getElementById('s-dose').value    = s.dose    !== '—' ? s.dose    : '';
-  document.getElementById('s-duree').value   = s.duree   !== '—' ? s.duree   : '';
-  document.getElementById('s-gdsa').value    = s.gdsa;
-  document.getElementById('s-motif').value   = s.motif   !== '—' ? s.motif   : '';
+  document.getElementById('s-type').value    = fieldVal(s.type);
+  document.getElementById('s-produit').value = fieldVal(s.produit);
+  document.getElementById('s-dose').value    = fieldVal(s.dose);
+  document.getElementById('s-duree').value   = fieldVal(s.duree);
+  document.getElementById('s-gdsa').value    = s.gdsa || 'Non';
+  document.getElementById('s-motif').value   = fieldVal(s.motif);
   document.getElementById('s-obs').value     = s.obs     || '';
   openModal('modal-sanitaire');
 }

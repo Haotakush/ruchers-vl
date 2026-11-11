@@ -209,7 +209,7 @@ function exportRappelICS(rappel, rucherLabel) {
     `DTSTART;VALUE=DATE:${dateICS}`,
     `DTEND;VALUE=DATE:${dateICS}`,
     `SUMMARY:🍯 ${rappel.texte} — ${rucherLabel}`,
-    `DESCRIPTION:Rappel créé depuis Ruchers VL (J+${rappel.jours})`,
+    `DESCRIPTION:Rappel créé depuis Ruchers VL${rappel.jours ? ` (J+${rappel.jours})` : ''}`,
     'BEGIN:VALARM',
     'TRIGGER:-PT0M',
     'ACTION:DISPLAY',
@@ -668,7 +668,7 @@ function openCompteRendu(idx) {
         background:#FFF8E1;border-radius:10px;padding:10px 12px;">
         <div>
           <div style="font-size:0.88rem;font-weight:600;color:var(--ink);">${v.rappel.texte}</div>
-          <div style="font-size:0.72rem;color:var(--mid);margin-top:2px;">📅 ${v.rappel.echeance} (J+${v.rappel.jours})</div>
+          <div style="font-size:0.72rem;color:var(--mid);margin-top:2px;">📅 ${v.rappel.echeance}${v.rappel.jours ? ` (J+${v.rappel.jours})` : ''}</div>
         </div>
         <button onclick="exportRappelByIdx(${idx})"
           style="background:var(--honey);color:#fff;border:none;border-radius:10px;
