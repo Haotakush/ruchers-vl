@@ -24,6 +24,8 @@ function initApp() {
   updateDashboard();
   drawChartVisites();
   updateTopbar();
+  hydrateIcons();
+  showTab('dashboard', null);   // affiche le bouton « Nouvelle visite » dès l'ouverture
 
   const today = new Date().toISOString().split('T')[0];
   document.getElementById('j-date').value = today;
@@ -53,10 +55,27 @@ function updateLogoutButton() {
   const logoutWrap = document.getElementById('logout-wrap');
   if (logoutWrap && currentUser) {
     logoutWrap.innerHTML = `
-      <button class="menu-item" onclick="doLogout()" style="color:#C62828;">
-        🚪 Déconnexion <span style="font-size:0.72rem;color:var(--soft);margin-left:6px;">(${currentUser.email})</span>
+      <button class="menu-row menu-danger" onclick="doLogout()">
+        <span class="menu-ico ico-red">${icon('logout', 18)}</span>
+        <span class="menu-label">Se déconnecter</span>
+        <span class="menu-hint">${esc(currentUser.email || '')}</span>
       </button>`;
   }
+  updateProfileCard();
+}
+
+/* Carte profil du menu Plus (nom, NAPI, e-mail) */
+function updateProfileCard() {
+  const nameEl = document.getElementById('profile-name');
+  if (!nameEl) return;
+  const nom  = (PARAMS && PARAMS.nom || '').trim();
+  const napi = (PARAMS && PARAMS.napi || '').trim();
+  const mail = currentUser && currentUser.email || '';
+  nameEl.textContent = nom || 'Mon exploitation';
+  document.getElementById('profile-meta').textContent =
+    [napi ? `NAPI ${napi}` : 'NAPI à renseigner', mail].filter(Boolean).join(' · ');
+  const initials = (nom || 'Ruchers VL').split(/\s+/).filter(Boolean).slice(0, 2).map(w => w[0]).join('').toUpperCase();
+  document.getElementById('profile-initials').textContent = initials || 'RV';
 }
 
 /* ============================================================

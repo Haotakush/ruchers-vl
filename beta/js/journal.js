@@ -95,7 +95,7 @@ async function startRecording() {
     recordingSeconds = 0;
     const btn   = document.getElementById('j-record-btn');
     const timer = document.getElementById('j-record-timer');
-    btn.textContent = '⏹ Arrêter';
+    btn.textContent = 'Arrêter';
     btn.onclick     = stopRecording;
     btn.classList.add('recording');
     recordingTimer = setInterval(() => {
@@ -116,7 +116,7 @@ function stopRecording() {
   clearInterval(recordingTimer);
   const btn   = document.getElementById('j-record-btn');
   const timer = document.getElementById('j-record-timer');
-  if (btn)   { btn.textContent = '🎙 Enregistrer'; btn.onclick = startRecording; btn.classList.remove('recording'); }
+  if (btn)   { btn.textContent = 'Enregistrer un mémo'; btn.onclick = startRecording; btn.classList.remove('recording'); }
   if (timer) { timer.textContent = ''; }
 }
 
@@ -209,7 +209,7 @@ function exportRappelICS(rappel, rucherLabel) {
     `DTSTART;VALUE=DATE:${dateICS}`,
     `DTEND;VALUE=DATE:${dateICS}`,
     `SUMMARY:🍯 ${rappel.texte} — ${rucherLabel}`,
-    `DESCRIPTION:Rappel créé depuis Ruchers VL (J+${rappel.jours})`,
+    `DESCRIPTION:Rappel créé depuis Ruchers VL${rappel.jours ? ` (J+${rappel.jours})` : ''}`,
     'BEGIN:VALARM',
     'TRIGGER:-PT0M',
     'ACTION:DISPLAY',
@@ -247,13 +247,13 @@ async function saveJournal() {
 
   // Désactiver le bouton visuellement
   const saveBtn = document.querySelector('#modal-journal .btn-save');
-  if (saveBtn) { saveBtn.disabled = true; saveBtn.textContent = '⏳ Enregistrement…'; }
+  if (saveBtn) { saveBtn.disabled = true; saveBtn.textContent = 'Enregistrement…'; }
 
   try {
     await _doSaveJournal();
   } finally {
     _isSavingJournal = false;
-    if (saveBtn) { saveBtn.disabled = false; saveBtn.textContent = '✓ Enregistrer'; }
+    if (saveBtn) { saveBtn.disabled = false; saveBtn.textContent = 'Enregistrer'; }
   }
 }
 
@@ -483,7 +483,7 @@ function resetJournalForm() {
 
   editingJournalIdx = null;
   const modalTitle = document.querySelector('#modal-journal .modal-title');
-  if (modalTitle) modalTitle.textContent = '📋 Nouvelle visite';
+  if (modalTitle) modalTitle.textContent = 'Nouvelle visite';
 }
 
 /* ---- RENDU LISTE ---- */
@@ -492,71 +492,73 @@ function renderJournal() {
   const filterRucher = document.getElementById('flt-rucher').value;
   const filterForce  = document.getElementById('flt-force').value;
 
-  const data = journalData.filter(v =>
-    (!filterRucher || v.rucher === filterRucher) &&
-    (!filterForce  || v.force  === filterForce)
-  );
+  const data = journalData
+    .filter(v =>
+      (!filterRucher || v.rucher === filterRucher) &&
+      (!filterForce  || v.force  === filterForce))
+    .sort((a, b) => (b.date || '').localeCompare(a.date || ''));
 
   if (!data.length) {
-    list.innerHTML = `<div class="empty"><div class="empty-icon">📋</div>
-      <p>Aucune visite.<br>Appuyez sur + pour en ajouter.</p></div>`;
+    list.innerHTML = `<div class="empty"><div class="empty-icon">${icon('visits', 36)}</div>
+      <p>Aucune visite.<br>Touchez « Nouvelle visite » pour en ajouter une.</p></div>`;
     return;
   }
 
-  list.innerHTML = data.map(v => {
-    const realIdx = journalData.indexOf(v);
-    return buildJournalCard(v, realIdx);
-  }).join('');
+  // Regroupement par mois
+  let html = '', lastMonth = null;
+  data.forEach(v => {
+    const month = fmtMonth(v.date);
+    if (month !== lastMonth) { html += `<div class="list-section">${month}</div>`; lastMonth = month; }
+    html += buildJournalCard(v, journalData.indexOf(v));
+  });
+  list.innerHTML = html;
 }
 
 function buildJournalCard(v, idx) {
-  const forceCls = { 'Forte':'badge-forte', 'Moyenne':'badge-moyenne', 'Faible':'badge-faible' }[v.force] || '';
+  const forceCls = { 'Forte':'pill-ok', 'Moyenne':'pill-soon', 'Faible':'pill-late' }[v.force] || '';
+  const rucher = getRucherById(v.rucher);
 
   const marquageBadges = v.marquage?.length
-    ? v.marquage.map(m => `<span class="badge badge-marquage">🪨 ${m}</span>`).join('')
+    ? v.marquage.map(m => `<span class="tag">${esc(m)}</span>`).join('')
     : '';
 
-  const intv = v.interventions?.length
-    ? v.interventions.map(x => `<span class="badge badge-action">${x}</span>`).join('')
-    : `<span class="badge badge-couvain">${v.intervention || '—'}</span>`;
+  const actions = v.interventions?.length ? v.interventions : (v.intervention && v.intervention !== '—' ? [v.intervention] : []);
+  const intv = actions.map(x => `<span class="tag">${esc(x)}</span>`).join('');
 
-  const ruchettesBadge = v.nbRuchettes > 0
-    ? `<span class="badge" style="background:#FFF3E0;color:#E65100;">🪣 ${v.nbRuchettes} ruchette${v.nbRuchettes > 1 ? 's' : ''}</span>`
-    : '';
+  const effectif = [
+    v.nbRuches ? `${v.nbRuches} ruches` : '',
+    v.nbRuchettes > 0 ? `${v.nbRuchettes} ruchette${v.nbRuchettes > 1 ? 's' : ''}` : '',
+  ].filter(Boolean).join(' · ');
 
   const hasPhotos = v._docId && visitPhotos[v._docId]?.length > 0;
   const hasAudio  = v._docId && visitAudio[v._docId];
   const mediaBadges = [
-    hasPhotos ? `<span class="badge" style="background:#E8F5E9;color:#2E7D32;">📸 ${visitPhotos[v._docId].length}</span>` : '',
-    hasAudio  ? `<span class="badge" style="background:#E3F2FD;color:#1565C0;">🎙</span>` : '',
+    hasPhotos ? `<span class="tag tag-media">${icon('camera', 14)} ${visitPhotos[v._docId].length}</span>` : '',
+    hasAudio  ? `<span class="tag tag-media">${icon('mic', 14)} Mémo</span>` : '',
   ].filter(Boolean).join('');
 
   const deleteAction = v._docId ? `confirmDelJournal('${v._docId}', ${idx})` : `confirmDelJournal(null, ${idx})`;
+  const rap = v.rappel && !v.rappel.fait ? fmtEcheance(v.rappel.echeance) : null;
 
   return `
-    <div class="entry-card" onclick="openCompteRendu(${idx})" style="cursor:pointer;">
-      <button class="btn-delete" onclick="event.stopPropagation();${deleteAction}">🗑</button>
-      <div class="entry-top">
-        <span class="entry-date">${v.date}</span>
-        <span class="entry-id">${getRucherLabel(v.rucher)}</span>
+    <div class="visit-card" onclick="openCompteRendu(${idx})">
+      <div class="visit-head">
+        <span class="visit-title">${esc(rucher ? rucher.lieu : v.rucher)}</span>
+        <span class="visit-date">${fmtDate(v.date, true)}</span>
+        <button class="icon-btn icon-btn-sm" onclick="event.stopPropagation();${deleteAction}" title="Supprimer la visite" aria-label="Supprimer la visite">${icon('trash', 16)}</button>
       </div>
-      <div style="font-size:0.75rem;color:var(--soft);margin-bottom:6px;">
-        🐝 <strong style="color:var(--ink)">${v.nbRuches || '—'} ruches</strong>
-        ${v.nbRuchettes > 0 ? `· ${ruchettesBadge}` : ''}
+      <div class="visit-tags">
+        ${v.force && v.force !== '—' ? `<span class="pill ${forceCls}">${esc(v.force)}</span>` : ''}
+        ${intv}${marquageBadges}${mediaBadges}
+        ${effectif ? `<span class="visit-effectif">${effectif}</span>` : ''}
       </div>
-      ${marquageBadges ? `<div class="entry-tags" style="margin-bottom:6px;">${marquageBadges}</div>` : ''}
-      <div class="entry-tags" style="margin-bottom:6px;">${intv}</div>
-      <div class="entry-tags">
-        ${v.force && v.force !== '—' ? `<span class="badge ${forceCls}">${v.force}</span>` : ''}
-        ${mediaBadges}
-      </div>
-      ${v.obs ? `<div class="entry-sub" style="margin-top:6px;">💬 ${v.obs}</div>` : ''}
-      ${v.rappel && !v.rappel.fait ? `
-      <div style="margin-top:8px;display:flex;align-items:center;justify-content:space-between;
-        background:#FFF8E1;border-radius:8px;padding:6px 10px;">
-        <span style="font-size:0.75rem;color:#8B4513;">📌 ${v.rappel.texte} — ${v.rappel.echeance}</span>
-        <button class="rappel-cal-btn" style="border:none;background:none;font-size:0.9rem;cursor:pointer;padding:0;"
-          onclick="event.stopPropagation();exportRappelByIdx(${idx})" title="Ajouter au calendrier">📅</button>
+      ${v.obs ? `<div class="visit-obs">${esc(v.obs)}</div>` : ''}
+      ${rap ? `
+      <div class="visit-rappel">
+        ${icon('clock', 16)}
+        <span class="visit-rappel-text">${esc(v.rappel.texte)}</span>
+        <span class="visit-rappel-when">${rap.tone === 'neutral' ? fmtDate(v.rappel.echeance) : rap.label}</span>
+        <button class="icon-btn icon-btn-sm" onclick="event.stopPropagation();exportRappelByIdx(${idx})" title="Ajouter au calendrier" aria-label="Ajouter au calendrier">${icon('calendar', 16)}</button>
       </div>` : ''}
     </div>`;
 }
@@ -668,7 +670,7 @@ function openCompteRendu(idx) {
         background:#FFF8E1;border-radius:10px;padding:10px 12px;">
         <div>
           <div style="font-size:0.88rem;font-weight:600;color:var(--ink);">${v.rappel.texte}</div>
-          <div style="font-size:0.72rem;color:var(--mid);margin-top:2px;">📅 ${v.rappel.echeance} (J+${v.rappel.jours})</div>
+          <div style="font-size:0.72rem;color:var(--mid);margin-top:2px;">📅 ${v.rappel.echeance}${v.rappel.jours ? ` (J+${v.rappel.jours})` : ''}</div>
         </div>
         <button onclick="exportRappelByIdx(${idx})"
           style="background:var(--honey);color:#fff;border:none;border-radius:10px;
@@ -691,7 +693,7 @@ function openEditJournal(idx) {
   closeModal('modal-compte-rendu');
   editingJournalIdx = idx;
   const modalTitle = document.querySelector('#modal-journal .modal-title');
-  if (modalTitle) modalTitle.textContent = '✏️ Modifier la visite';
+  if (modalTitle) modalTitle.textContent = 'Modifier la visite';
 
   document.getElementById('j-date').value   = v.date;
   document.getElementById('j-rucher').value = v.rucher;

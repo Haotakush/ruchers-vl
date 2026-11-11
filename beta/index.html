@@ -327,7 +327,7 @@
 <!-- TOPBAR -->
 <div class="topbar">
   <div class="topbar-brand">
-    <span>🐝</span>
+    <span class="topbar-mark" data-brand data-size="40"></span>
     <div>
       <h1 id="topbar-title">Ruchers VL</h1>
       <p  id="topbar-sub">Chargement…</p>
@@ -335,7 +335,7 @@
   </div>
   <div class="topbar-actions">
     <span id="sync-indicator" class="sync-indicator"></span>
-    <button class="topbar-btn" onclick="forceSyncFromFirestore()" title="Synchroniser">🔄</button>
+    <button class="topbar-btn" onclick="forceSyncFromFirestore()" title="Synchroniser" aria-label="Synchroniser"><span data-icon="sync" data-size="20"></span></button>
   </div>
 </div>
 
@@ -359,40 +359,36 @@
         <span class="herd-key herd-key-ruchettes"><b id="s-ruchettes">0</b> ruchettes</span>
       </div>
     </section>
+    <section class="dash-block" id="card-rappels" style="display:none;">
+      <div class="dash-head">
+        <h2 class="dash-title">À faire <span class="dash-count" id="rappels-count"></span></h2>
+        <button class="btn-notif" id="btn-notif" onclick="requestNotifPermission()" style="display:none;">
+          <span data-icon="bell" data-size="15"></span> Activer les notifications
+        </button>
+      </div>
+      <div class="list-card" id="rappels-list"></div>
+    </section>
     <div class="mini-stats">
       <div class="mini-stat"><b id="s-sites">0</b><span>ruchers</span></div>
       <div class="mini-stat"><b id="s-visites">0</b><span>visites</span></div>
       <div class="mini-stat"><b id="s-traits">0</b><span>traitements</span></div>
     </div>
     <div class="card">
-      <div class="card-title">📈 Visites — 6 derniers mois</div>
+      <div class="dash-head"><h2 class="card-title">Visites</h2><span class="dash-hint">6 derniers mois</span></div>
       <div class="chart-container" style="height:140px;">
         <canvas id="chart-visites" class="chart"></canvas>
       </div>
     </div>
+    <section class="dash-block">
+      <div class="dash-head"><h2 class="dash-title">Ruchers à visiter</h2><span class="dash-hint">alerte après 30 j</span></div>
+      <div class="list-card" id="visite-freq"></div>
+    </section>
+    <section class="dash-block">
+      <div class="dash-head"><h2 class="dash-title">Activité récente</h2></div>
+      <div class="list-card" id="timeline"></div>
+    </section>
     <div class="card">
-      <div class="card-title">📊 Fréquence de visite par rucher</div>
-      <div id="visite-freq"></div>
-    </div>
-    <div class="card" id="card-rappels" style="display:none;">
-      <div class="card-title" style="display:flex;justify-content:space-between;align-items:center;">
-        <span>📌 Rappels</span>
-        <button class="btn-notif" id="btn-notif" onclick="requestNotifPermission()" style="display:none;">
-          🔔 Activer les notifications
-        </button>
-      </div>
-      <div id="rappels-list"></div>
-    </div>
-    <div class="card">
-      <div class="card-title">🔔 Recommandations</div>
-      <div id="recommandations"></div>
-    </div>
-    <div class="card">
-      <div class="card-title">🕐 Activité récente</div>
-      <div class="timeline" id="timeline"></div>
-    </div>
-    <div class="card">
-      <div class="card-title">Répartition par zone</div>
+      <div class="dash-head"><h2 class="card-title">Répartition par zone</h2><span class="dash-hint" id="zone-total"></span></div>
       <div id="zone-bars"></div>
     </div>
   </div>
@@ -400,13 +396,13 @@
 
   <!-- JOURNAL -->
   <div id="tab-journal" class="section">
-    <div style="display:flex;gap:8px;margin-bottom:12px;">
-      <select class="form-select" style="font-size:0.82rem;padding:8px 10px;flex:1;"
-        id="flt-rucher" onchange="renderJournal()">
+    <div class="filter-row">
+      <select class="form-select filter-pill"
+        id="flt-rucher" onchange="renderJournal()" aria-label="Filtrer par rucher">
         <option value="">Tous ruchers</option>
       </select>
-      <select class="form-select" style="font-size:0.82rem;padding:8px 10px;flex:1;"
-        id="flt-force" onchange="renderJournal()">
+      <select class="form-select filter-pill"
+        id="flt-force" onchange="renderJournal()" aria-label="Filtrer par état">
         <option value="">Tous états</option>
         <option>Forte</option>
         <option>Moyenne</option>
@@ -419,24 +415,25 @@
 
   <!-- SANITAIRE -->
   <div id="tab-sanitaire" class="section">
-    <div class="info-banner">
-      ⚠️ <strong>La Réunion est indemne de Varroa.</strong>
-      Toute suspicion = signalement immédiat au GDSA.
+    <div class="note-card">
+      <span class="note-ico" data-icon="alert" data-size="20"></span>
+      <div><strong>Le varroa est présent à La Réunion depuis 2017.</strong>
+      Faites vos comptages régulièrement et notez chaque traitement.</div>
     </div>
 
     <!-- Bannière rappel comptage (affichée dynamiquement) -->
     <div id="comptage-reminder" style="display:none;background:#EAF1F9;border:1px solid #D5E1EF;border-radius:12px;padding:12px 14px;margin-bottom:12px;display:none;align-items:center;gap:10px;">
-      <span style="font-size:1.3rem;">🔬</span>
+      <span style="color:#1F5D99;" data-icon="flask" data-size="22"></span>
       <div style="flex:1;font-size:0.82rem;line-height:1.5;">
         <strong style="color:#1F5D99;" id="comptage-reminder-title">Période de comptage varroa</strong><br>
         <span style="color:var(--mid);" id="comptage-reminder-text">Pensez à effectuer un comptage ce mois-ci.</span>
       </div>
-      <button onclick="openVarroaGuide()" style="flex-shrink:0;padding:5px 10px;border-radius:8px;border:none;background:#D5E1EF;color:#1F5D99;font-size:0.75rem;font-weight:600;cursor:pointer;">Guide ℹ️</button>
+      <button onclick="openVarroaGuide()" style="flex-shrink:0;padding:5px 10px;border-radius:8px;border:none;background:#D5E1EF;color:#1F5D99;font-size:0.75rem;font-weight:600;cursor:pointer;">Guide</button>
     </div>
 
     <!-- Bouton guide varroa -->
-    <div style="display:flex;justify-content:flex-end;margin-bottom:8px;">
-      <button onclick="openVarroaGuide()" style="padding:6px 14px;border-radius:10px;border:1px solid var(--border);background:var(--card);color:var(--soft);font-size:0.78rem;cursor:pointer;">ℹ️ Guide varroa & VP100</button>
+    <div style="display:flex;justify-content:flex-end;margin-bottom:12px;">
+      <button class="link-btn" onclick="openVarroaGuide()"><span data-icon="book" data-size="16"></span> Guide varroa et VP100</button>
     </div>
 
     <div id="sanitaire-list"></div>
@@ -445,9 +442,12 @@
 
   <!-- RUCHERS -->
   <div id="tab-ruchers" class="section">
-    <div class="info-banner">
-      📸 Appuyez sur <strong>+</strong> pour ajouter des photos. Elles sont synchronisées sur tous vos appareils.
+    <div class="seg ruchers-seg" role="tablist">
+      <button role="tab" class="seg-btn active" onclick="showRuchersView('ruchers')">Liste</button>
+      <button role="tab" class="seg-btn" onclick="showRuchersView('carte')">Carte</button>
+      <button role="tab" class="seg-btn" onclick="showRuchersView('transhumance')">Transhumance</button>
     </div>
+
     <div id="ruchers-list"></div>
   </div>
 
@@ -455,12 +455,12 @@
   <!-- REGISTRE -->
   <div id="tab-registre" class="section">
     <div class="registre-header">
-      <h2>📖 Registre d'Élevage Apicole</h2>
+      <h2>Registre d'Élevage Apicole</h2>
       <p id="reg-header-info">Chargement…<br>Conforme à l'arrêté du 11 août 1994</p>
     </div>
     <div style="display:flex;gap:10px;margin-bottom:0;">
-      <button class="btn-pdf" style="flex:1;" onclick="exportPDF()">📄 Exporter / Imprimer</button>
-      <button class="btn-pdf btn-pdf-ghost" style="flex:1;" onclick="partagerRegistre()">📤 Partager</button>
+      <button class="btn-pdf" style="flex:1;" onclick="exportPDF()">Exporter / Imprimer</button>
+      <button class="btn-pdf btn-pdf-ghost" style="flex:1;" onclick="partagerRegistre()">Partager</button>
     </div>
     <div id="registre-content"></div>
   </div>
@@ -469,6 +469,12 @@
   <!-- CARTE -->
   <div id="tab-carte" class="section"
     style="padding:0; position:relative; height:calc(100vh - 120px);">
+    <div class="seg ruchers-seg seg-floating" role="tablist">
+      <button role="tab" class="seg-btn" onclick="showRuchersView('ruchers')">Liste</button>
+      <button role="tab" class="seg-btn active" onclick="showRuchersView('carte')">Carte</button>
+      <button role="tab" class="seg-btn" onclick="showRuchersView('transhumance')">Transhumance</button>
+    </div>
+
     <div id="map" style="width:100%; height:100%;"></div>
     <div class="map-legend" id="map-legend">
       <div class="legend-item"><div class="legend-dot" style="background:#4CAF50"></div>Bas — OK</div>
@@ -482,24 +488,46 @@
 
   <!-- PLUS — Menu principal -->
   <div id="tab-plus" class="section">
-    <button class="menu-item" onclick="showTab('params',null);loadParamsUI()">⚙️ Paramètres</button>
-    <button class="menu-item" onclick="showTab('calendrier',null);renderCalendrier()">🍯 Calendrier mellifère</button>
-    <button class="menu-item" onclick="showTab('registre',null);renderRegistre()">📖 Registre d'élevage</button>
-    <button class="menu-item" onclick="showTab('admin',null);initAdminConformite()">🛡 Admin &amp; Conformité</button>
-    <button class="menu-item" onclick="showTab('documents',null);populateDocRucherSelect();renderDocuments()">📎 Documents réglementaires</button>
-    <button class="menu-item" onclick="openTutoriel()">🎓 Guide de démarrage</button>
-    <button class="menu-item" onclick="openModal('modal-cgu')">📄 CGU &amp; Confidentialité</button>
-    <div id="logout-wrap" style="margin-top:20px;"></div>
-    <div style="margin-top:8px;">
-      <button class="menu-item" style="color:#B3362B;border-color:#F1CFCB;" onclick="confirmDeleteAccount()">🗑 Supprimer mon compte</button>
+    <button class="profile-card" onclick="showTab('params',null);loadParamsUI()">
+      <span class="profile-avatar" id="profile-initials">RV</span>
+      <span class="profile-text">
+        <span class="profile-name" id="profile-name">Mon exploitation</span>
+        <span class="profile-meta" id="profile-meta">Renseignez votre NAPI</span>
+      </span>
+      <span class="profile-edit">Modifier</span>
+    </button>
+
+    <div class="menu-group-title">Registre et conformité</div>
+    <div class="menu-group">
+      <button class="menu-row" onclick="showTab('registre',null);renderRegistre()"><span class="menu-ico ico-honey" data-icon="book" data-size="18"></span><span class="menu-label">Registre d'élevage</span><span data-icon="chevron" data-size="18" class="menu-chev"></span></button>
+      <button class="menu-row" onclick="showTab('admin',null);initAdminConformite()"><span class="menu-ico ico-green" data-icon="shield" data-size="18"></span><span class="menu-label">Admin et conformité</span><span data-icon="chevron" data-size="18" class="menu-chev"></span></button>
+      <button class="menu-row" onclick="showTab('documents',null);populateDocRucherSelect();renderDocuments()"><span class="menu-ico ico-blue" data-icon="file" data-size="18"></span><span class="menu-label">Documents réglementaires</span><span data-icon="chevron" data-size="18" class="menu-chev"></span></button>
     </div>
+
+    <div class="menu-group-title">Outils</div>
+    <div class="menu-group">
+      <button class="menu-row" onclick="showTab('calendrier',null);renderCalendrier()"><span class="menu-ico ico-honey" data-icon="flower" data-size="18"></span><span class="menu-label">Calendrier mellifère</span><span data-icon="chevron" data-size="18" class="menu-chev"></span></button>
+      <button class="menu-row" onclick="openTutoriel()"><span class="menu-ico" data-icon="help" data-size="18"></span><span class="menu-label">Guide de démarrage</span><span data-icon="chevron" data-size="18" class="menu-chev"></span></button>
+    </div>
+
+    <div class="menu-group-title">Compte</div>
+    <div class="menu-group">
+      <button class="menu-row" onclick="showTab('params',null);loadParamsUI()"><span class="menu-ico" data-icon="settings" data-size="18"></span><span class="menu-label">Paramètres</span><span data-icon="chevron" data-size="18" class="menu-chev"></span></button>
+      <button class="menu-row" onclick="openModal('modal-cgu')"><span class="menu-ico" data-icon="file" data-size="18"></span><span class="menu-label">CGU et confidentialité</span><span data-icon="chevron" data-size="18" class="menu-chev"></span></button>
+      <div id="logout-wrap"></div>
+    </div>
+
+    <div class="menu-group" style="margin-top:22px;">
+      <button class="menu-row menu-danger" onclick="confirmDeleteAccount()"><span class="menu-ico ico-red" data-icon="trash" data-size="18"></span><span class="menu-label">Supprimer mon compte</span></button>
+    </div>
+    <div class="app-version">Ruchers VL · bêta</div>
   </div>
 
   <!-- PARAMÈTRES -->
   <div id="tab-params" class="section">
-    <button class="btn-back" onclick="showTab('plus',null)">← Retour</button>
+    <button class="btn-back" onclick="showTab('plus',null)"><span data-icon="back" data-size="18"></span> Retour</button>
     <div class="card">
-      <div class="card-title">⚙️ Mes informations</div>
+      <div class="card-title">Mes informations</div>
       <div class="form-row"><label class="form-label">Nom / Raison sociale</label>
         <input class="param-input" id="p-nom" placeholder="Ex : DUPONT Jean"></div>
       <div class="form-row"><label class="form-label">NAPI</label>
@@ -516,18 +544,18 @@
         <input class="param-input" id="p-refdecl" placeholder="Ex : 2025-00000000"></div>
       <div class="form-row"><label class="form-label">Colonies déclarées</label>
         <input class="param-input" id="p-colonies" type="number" placeholder="Ex : 50"></div>
-      <button class="btn-param-save" onclick="saveParams()">✓ Enregistrer</button>
+      <button class="btn-param-save" onclick="saveParams()">Enregistrer</button>
     </div>
   </div>
 
   <!-- CALENDRIER MELLIFÈRE -->
   <div id="tab-calendrier" class="section">
-    <button class="btn-back" onclick="showTab('plus',null)">← Retour</button>
+    <button class="btn-back" onclick="showTab('plus',null)"><span data-icon="back" data-size="18"></span> Retour</button>
     <div class="card" style="padding:12px 8px;">
-      <div class="card-title" style="padding:0 8px 10px;">🍯 Calendrier mellifère — Réunion</div>
+      <div class="card-title" style="padding:0 8px 10px;">Calendrier mellifère — Réunion</div>
       <!-- Sous-onglets -->
       <div class="cal-subtabs">
-        <button id="cal-tab-plantes" class="cal-subtab active" onclick="switchCalView('plantes')">📋 Plantes</button>
+        <button id="cal-tab-plantes" class="cal-subtab active" onclick="switchCalView('plantes')">Plantes</button>
         <button id="cal-tab-gantt"   class="cal-subtab"        onclick="switchCalView('gantt')">📅 Calendrier</button>
       </div>
       <!-- Vue registre -->
@@ -539,13 +567,19 @@
 
   <!-- TRANSHUMANCE -->
   <div id="tab-transhumance" class="section">
+    <div class="seg ruchers-seg" role="tablist">
+      <button role="tab" class="seg-btn" onclick="showRuchersView('ruchers')">Liste</button>
+      <button role="tab" class="seg-btn" onclick="showRuchersView('carte')">Carte</button>
+      <button role="tab" class="seg-btn active" onclick="showRuchersView('transhumance')">Transhumance</button>
+    </div>
+
     <!-- Carte des mouvements -->
     <div id="mouv-map-container" style="display:none;margin:0 0 16px;border-radius:14px;overflow:hidden;border:1px solid rgba(212,130,10,0.2);">
       <div id="mouv-map" style="height:220px;width:100%;"></div>
     </div>
     <!-- Journal des mouvements (registre légal) -->
     <div style="display:flex;justify-content:space-between;align-items:center;margin:0 0 12px;">
-      <div class="card-title" style="margin:0;">🚛 Journal des mouvements</div>
+      <div class="card-title" style="margin:0;">Journal des mouvements</div>
       <button class="btn-save" style="padding:6px 16px;font-size:0.8rem;" onclick="openNewMouvement()">+ Ajouter</button>
     </div>
     <div style="font-size:.75rem;color:var(--soft);margin-bottom:12px;">
@@ -556,7 +590,7 @@
 
   <!-- ADMIN & CONFORMITÉ -->
   <div id="tab-admin" class="section">
-    <button class="btn-back" onclick="showTab('plus',null)">← Retour</button>
+    <button class="btn-back" onclick="showTab('plus',null)"><span data-icon="back" data-size="18"></span> Retour</button>
     <div id="sub-admin">
       <!-- Contenu injecté dynamiquement par admin-conformite.js -->
     </div>
@@ -564,7 +598,7 @@
 
   <!-- DOCUMENTS RÉGLEMENTAIRES -->
   <div id="tab-documents" class="section">
-    <button class="btn-back" onclick="showTab('plus',null)">← Retour</button>
+    <button class="btn-back" onclick="showTab('plus',null)"><span data-icon="back" data-size="18"></span> Retour</button>
     <div id="sub-documents"></div>
   </div>
 
@@ -577,7 +611,7 @@
 <div class="modal-overlay" id="modal-mouvement">
   <div class="modal">
     <div class="modal-handle"></div>
-    <div class="modal-title">🚛 Nouveau mouvement de colonies</div>
+    <div class="modal-title">Nouveau mouvement de colonies</div>
     <div class="modal-body">
       <div class="form-row-2">
         <div>
@@ -601,7 +635,7 @@
           <input type="text" class="form-input" id="mouv-destination" placeholder="Ex : Plaine des Cafres, 97418" style="flex:1;">
           <button type="button" onclick="grabGPSForDestination()" id="btn-gps-dest"
             style="white-space:nowrap;padding:8px 10px;background:var(--accent);color:#fff;border:none;border-radius:10px;font-size:0.8rem;cursor:pointer;flex-shrink:0;">
-            📍 GPS
+            GPS
           </button>
         </div>
         <div id="gps-dest-hint" style="font-size:0.72rem;color:var(--soft);margin-top:4px;display:none;">
@@ -611,12 +645,12 @@
       <div class="form-row">
         <label class="form-label">Motif du mouvement</label>
         <select class="form-select" id="mouv-motif">
-          <option value="Transhumance">🚛 Transhumance</option>
-          <option value="Hivernage">❄️ Mise en hivernage</option>
-          <option value="Miellée">🍯 Suivi de miellée</option>
-          <option value="Traitement sanitaire">💊 Traitement sanitaire</option>
-          <option value="Pollinisation">🌸 Pollinisation</option>
-          <option value="Autre">📋 Autre</option>
+          <option value="Transhumance">Transhumance</option>
+          <option value="Hivernage">Mise en hivernage</option>
+          <option value="Miellée">Suivi de miellée</option>
+          <option value="Traitement sanitaire">Traitement sanitaire</option>
+          <option value="Pollinisation">Pollinisation</option>
+          <option value="Autre">Autre</option>
         </select>
       </div>
       <div class="form-row">
@@ -626,7 +660,7 @@
     </div>
     <div class="modal-footer">
       <button class="btn-cancel" onclick="closeModal('modal-mouvement');resetMouvementForm()">Annuler</button>
-      <button class="btn-save" onclick="saveMouvement()">✓ Enregistrer</button>
+      <button class="btn-save" onclick="saveMouvement()">Enregistrer</button>
     </div>
   </div>
 </div>
@@ -637,7 +671,7 @@
 <div class="modal-overlay" id="modal-new-doc">
   <div class="modal">
     <div class="modal-handle"></div>
-    <div class="modal-title">📎 Ajouter un document</div>
+    <div class="modal-title">Ajouter un document</div>
     <div class="modal-body">
       <div class="form-row">
         <label class="form-label">Nom du document *</label>
@@ -647,12 +681,12 @@
         <div>
           <label class="form-label">Type *</label>
           <select class="form-select" id="doc-type">
-            <option value="ordonnance">📋 Ordonnance</option>
-            <option value="analyse">🔬 Analyse</option>
-            <option value="declaration">📄 Déclaration</option>
-            <option value="controle">🛡 Contrôle vét.</option>
-            <option value="facture">🧾 Facture</option>
-            <option value="autre">📎 Autre</option>
+            <option value="ordonnance">Ordonnance</option>
+            <option value="analyse">Analyse</option>
+            <option value="declaration">Déclaration</option>
+            <option value="controle">Contrôle vét.</option>
+            <option value="facture">Facture</option>
+            <option value="autre">Autre</option>
           </select>
         </div>
         <div>
@@ -665,7 +699,7 @@
       <div class="form-row">
         <label class="form-label">Fichier * <span style="color:var(--soft);font-weight:400;">(PDF ou image, max 15 Mo)</span></label>
         <label style="display:flex;align-items:center;gap:10px;padding:12px 14px;background:var(--honey-pale);border:2px dashed var(--honey);border-radius:12px;cursor:pointer;">
-          <span style="font-size:1.4rem;">📁</span>
+          <span style="color:var(--honey);" data-icon="file" data-size="22"></span>
           <div>
             <div style="font-weight:600;color:var(--honey);font-size:.85rem;">Choisir un fichier</div>
             <div id="doc-file-label" style="font-size:.75rem;color:var(--soft);margin-top:2px;">Aucun fichier sélectionné</div>
@@ -676,34 +710,28 @@
     </div>
     <div class="modal-footer">
       <button class="btn-cancel" onclick="closeModal('modal-new-doc');resetDocForm()">Annuler</button>
-      <button class="btn-save" id="doc-save-btn" onclick="saveNewDocument()">✓ Enregistrer</button>
+      <button class="btn-save" id="doc-save-btn" onclick="saveNewDocument()">Enregistrer</button>
     </div>
   </div>
 </div>
 
-<button class="fab hidden" id="fab" onclick="openFab()">＋</button>
+<button class="fab hidden" id="fab" onclick="openFab()"><span data-icon="plus" data-size="22"></span><span id="fab-label">Nouvelle visite</span></button>
 
-<nav class="bottom-nav">
-  <button class="nav-item active" onclick="showTab('dashboard',this)">
-    <span class="nav-icon">📊</span>Accueil
+<nav class="bottom-nav" aria-label="Navigation principale">
+  <button class="nav-item active" data-nav="dashboard" onclick="showTab('dashboard',this)">
+    <span class="nav-icon" data-icon="home"></span>Accueil
   </button>
-  <button class="nav-item" onclick="showTab('journal',this)">
-    <span class="nav-icon">📋</span>Visites
+  <button class="nav-item" data-nav="journal" onclick="showTab('journal',this)">
+    <span class="nav-icon" data-icon="visits"></span>Visites
   </button>
-  <button class="nav-item" onclick="showTab('sanitaire',this)">
-    <span class="nav-icon">💊</span>Sanitaire
+  <button class="nav-item" data-nav="sanitaire" onclick="showTab('sanitaire',this)">
+    <span class="nav-icon" data-icon="shield"></span>Sanitaire
   </button>
-  <button class="nav-item" onclick="showTab('ruchers',this)">
-    <span class="nav-icon">📍</span>Ruchers
+  <button class="nav-item" data-nav="ruchers" onclick="showRuchersView('ruchers')">
+    <span class="nav-icon" data-icon="pin"></span>Ruchers
   </button>
-  <button class="nav-item" onclick="showTab('carte',this); initMap()">
-    <span class="nav-icon">🗺️</span>Carte
-  </button>
-  <button class="nav-item" onclick="showTab('transhumance',this);populateMouvRucherSelect();renderMouvements();setTimeout(()=>{if(mouvMapInstance)mouvMapInstance.invalidateSize();},300);">
-    <span class="nav-icon">🚛</span>Transhumance
-  </button>
-  <button class="nav-item" onclick="showTab('plus',this)">
-    <span class="nav-icon">☰</span>Plus
+  <button class="nav-item" data-nav="plus" onclick="showTab('plus',this)">
+    <span class="nav-icon" data-icon="menu"></span>Plus
   </button>
 </nav>
 
@@ -714,7 +742,7 @@
 <div class="modal-overlay" id="modal-journal">
   <div class="modal">
     <div class="modal-handle"></div>
-    <div class="modal-title">📋 Nouvelle visite</div>
+    <div class="modal-title">Nouvelle visite</div>
 
     <div class="modal-body">
 
@@ -734,7 +762,7 @@
 
       <!-- Durée de la visite -->
       <div class="form-row">
-        <label class="form-label">⏱ Durée de la visite</label>
+        <label class="form-label">Durée de la visite</label>
         <div style="display:flex;align-items:center;gap:10px;">
           <input type="number" id="j-duree-h" class="form-input" placeholder="0"
             min="0" max="23" style="width:70px;text-align:center;">
@@ -750,7 +778,7 @@
         <label class="form-label">Effectif</label>
         <div class="effectif-row">
           <div class="effectif-item">
-            <div class="effectif-label">🐝 Ruches</div>
+            <div class="effectif-label">Ruches</div>
             <div class="cadre-stepper">
               <button type="button" class="step-btn" onclick="stepCadre('j-nb-ruches',-1,200)">−</button>
               <span class="step-val" id="j-nb-ruches">0</span>
@@ -758,7 +786,7 @@
             </div>
           </div>
           <div class="effectif-item">
-            <div class="effectif-label">🪣 Ruchettes</div>
+            <div class="effectif-label">Ruchettes</div>
             <div class="cadre-stepper">
               <button type="button" class="step-btn" onclick="stepCadre('j-nb-ruchettes',-1,50)">−</button>
               <span class="step-val" id="j-nb-ruchettes">0</span>
@@ -772,9 +800,9 @@
       <div class="form-row">
         <label class="form-label">État général du rucher <span style="font-size:0.72rem;color:var(--soft);font-weight:400;">(appréciation globale)</span></label>
         <div class="quick-btns" id="j-force-btns">
-          <button type="button" class="qbtn" onclick="selectQuick('j-force-btns','Forte',this)">💪 Forte</button>
-          <button type="button" class="qbtn" onclick="selectQuick('j-force-btns','Moyenne',this)">👌 Moyenne</button>
-          <button type="button" class="qbtn" onclick="selectQuick('j-force-btns','Faible',this)">👎 Faible</button>
+          <button type="button" class="qbtn" onclick="selectQuick('j-force-btns','Forte',this)">Forte</button>
+          <button type="button" class="qbtn" onclick="selectQuick('j-force-btns','Moyenne',this)">Moyenne</button>
+          <button type="button" class="qbtn" onclick="selectQuick('j-force-btns','Faible',this)">Faible</button>
         </div>
         <input type="hidden" id="j-force" value="">
       </div>
@@ -784,28 +812,28 @@
         <label class="form-label">Marquage</label>
         <div class="marquage-grid" id="j-marquage-grid">
           <div class="marquage-item" data-val="Pierre seule">
-            <span class="marquage-icon">🪨</span>
+            <span class="marquage-icon"></span>
             <div>
               <div class="marquage-label">Pierre seule</div>
               <input class="champ-libre-input" placeholder="Description…" onclick="event.stopPropagation()">
             </div>
           </div>
           <div class="marquage-item" data-val="Bois seul">
-            <span class="marquage-icon">🪵</span>
+            <span class="marquage-icon"></span>
             <div>
               <div class="marquage-label">Bois seul</div>
               <input class="champ-libre-input" placeholder="Description…" onclick="event.stopPropagation()">
             </div>
           </div>
           <div class="marquage-item" data-val="Pierre + Bois">
-            <span class="marquage-icon">🪨🪵</span>
+            <span class="marquage-icon"></span>
             <div>
               <div class="marquage-label">Pierre + Bois</div>
               <input class="champ-libre-input" placeholder="Description…" onclick="event.stopPropagation()">
             </div>
           </div>
           <div class="marquage-item" data-val="Autre marquage">
-            <span class="marquage-icon">🏷️</span>
+            <span class="marquage-icon"></span>
             <div>
               <div class="marquage-label">Autre</div>
               <input class="champ-libre-input" placeholder="Décrire…" onclick="event.stopPropagation()">
@@ -818,15 +846,15 @@
       <div class="form-row">
         <label class="form-label">Interventions réalisées</label>
         <div class="check-grid" id="j-interventions-grid">
-          <div class="check-item" data-val="Nourrissement">🍯 Nourrissement</div>
-          <div class="check-item" data-val="Pose hausse">⬆️ Pose hausse</div>
-          <div class="check-item" data-val="Récolte hausse">🪣 Récolte hausse</div>
-          <div class="check-item" data-val="Pose traitement">💊 Pose traitement</div>
-          <div class="check-item" data-val="Retrait traitement">✂️ Retrait traitement</div>
-          <div class="check-item" data-val="Division">🔪 Division</div>
-          <div class="check-item" data-val="Changement reine">👑 Chgt reine</div>
-          <div class="check-item" data-val="Visite contrôle">🔍 Visite contrôle</div>
-          <div class="check-item" data-val="Nettoyage rucher">🌿 Nettoyage rucher</div>
+          <div class="check-item" data-val="Nourrissement">Nourrissement</div>
+          <div class="check-item" data-val="Pose hausse">Pose hausse</div>
+          <div class="check-item" data-val="Récolte hausse">Récolte hausse</div>
+          <div class="check-item" data-val="Pose traitement">Pose traitement</div>
+          <div class="check-item" data-val="Retrait traitement">Retrait traitement</div>
+          <div class="check-item" data-val="Division">Division</div>
+          <div class="check-item" data-val="Changement reine">Chgt reine</div>
+          <div class="check-item" data-val="Visite contrôle">Visite contrôle</div>
+          <div class="check-item" data-val="Nettoyage rucher">Nettoyage rucher</div>
         </div>
       </div>
 
@@ -855,7 +883,7 @@
         <div class="audio-recorder">
           <div style="display:flex;align-items:center;gap:10px;">
             <button type="button" class="audio-record-btn" id="j-record-btn"
-              onclick="startRecording()">🎙 Enregistrer</button>
+              onclick="startRecording()">Enregistrer un mémo</button>
             <span class="audio-timer" id="j-record-timer"></span>
           </div>
           <div id="j-audio-preview"></div>
@@ -864,7 +892,7 @@
 
       <!-- Rappel J+ -->
       <div class="form-row">
-        <label class="form-label">📌 Rappel (optionnel)</label>
+        <label class="form-label">Rappel (optionnel)</label>
         <div class="rappel-form">
           <input type="text" id="j-rappel-texte" class="form-input"
             placeholder="Ex : Contrôle varroa, vérif reine…">
@@ -883,7 +911,7 @@
     </div>
     <div class="modal-footer">
       <button class="btn-cancel" onclick="closeModal('modal-journal');resetJournalForm()">Annuler</button>
-      <button class="btn-save" onclick="saveJournal()">✓ Enregistrer</button>
+      <button class="btn-save" onclick="saveJournal()">Enregistrer</button>
     </div>
   </div>
 </div>
@@ -895,7 +923,7 @@
 <div class="modal-overlay" id="modal-compte-rendu">
   <div class="modal">
     <div class="modal-handle"></div>
-    <div class="modal-title">📋 Compte rendu de visite</div>
+    <div class="modal-title">Compte rendu de visite</div>
     <div class="modal-body" id="cr-content"></div>
     <div class="modal-footer">
       <button class="btn-cancel" onclick="closeModal('modal-compte-rendu')">Fermer</button>
@@ -910,7 +938,7 @@
 <div class="modal-overlay" id="modal-sanitaire">
   <div class="modal">
     <div class="modal-handle"></div>
-    <div class="modal-title">💊 Nouveau traitement</div>
+    <div class="modal-title">Nouveau traitement</div>
     <div class="modal-body">
       <div class="form-row-2">
         <div>
@@ -925,10 +953,10 @@
       <div class="form-row">
         <label class="form-label">Type de traitement</label>
         <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:6px;">
-          <button type="button" class="type-chip" data-val="Varroa" onclick="selectTypeChip(this)">🪲 Varroa</button>
-          <button type="button" class="type-chip" data-val="Loque" onclick="selectTypeChip(this)">🦠 Loque</button>
-          <button type="button" class="type-chip" data-val="Nosémose" onclick="selectTypeChip(this)">🔬 Nosémose</button>
-          <button type="button" class="type-chip" data-val="Autre" onclick="selectTypeChip(this)">✏️ Autre</button>
+          <button type="button" class="type-chip" data-val="Varroa" onclick="selectTypeChip(this)">Varroa</button>
+          <button type="button" class="type-chip" data-val="Loque" onclick="selectTypeChip(this)">Loque</button>
+          <button type="button" class="type-chip" data-val="Nosémose" onclick="selectTypeChip(this)">Nosémose</button>
+          <button type="button" class="type-chip" data-val="Autre" onclick="selectTypeChip(this)">Autre</button>
         </div>
         <input type="text" class="form-input" id="s-type" placeholder="Préciser si besoin…" style="margin-top:4px;">
       </div>
@@ -964,7 +992,7 @@
         <label class="form-label">Document joint <span style="color:var(--soft);font-weight:400;">(ordonnance, analyse…)</span></label>
         <div style="display:flex;align-items:center;gap:10px;">
           <label style="display:inline-flex;align-items:center;gap:6px;padding:8px 14px;background:var(--honey-pale);border:1.5px dashed var(--honey);border-radius:10px;cursor:pointer;font-size:.85rem;color:var(--honey);font-weight:600;">
-            📎 Joindre
+            Joindre
             <input type="file" id="s-doc-file" accept=".pdf,image/*" style="display:none;" onchange="handleSanitaireDocSelect(this)">
           </label>
           <span id="s-doc-name" style="font-size:.8rem;color:var(--soft);">Aucun document joint</span>
@@ -977,7 +1005,7 @@
     </div>
     <div class="modal-footer">
       <button class="btn-cancel" onclick="closeModal('modal-sanitaire');resetSanitaireForm()">Annuler</button>
-      <button class="btn-save" onclick="saveSanitaire()">✓ Enregistrer</button>
+      <button class="btn-save" onclick="saveSanitaire()">Enregistrer</button>
     </div>
   </div>
 </div>
@@ -989,7 +1017,7 @@
 <div class="modal-overlay" id="modal-rucher">
   <div class="modal">
     <div class="modal-handle"></div>
-    <div class="modal-title">📍 Nouveau rucher</div>
+    <div class="modal-title">Nouveau rucher</div>
     <div class="modal-body">
       <div class="form-row-2">
         <div><label class="form-label">ID *</label>
@@ -1021,7 +1049,7 @@
         <label class="form-label">Position GPS</label>
         <button type="button" id="btn-gps-nr" onclick="grabGPSForRucher('nr')"
           style="width:100%;padding:10px 0;background:var(--accent);color:#fff;border:none;border-radius:10px;font-size:0.88rem;font-weight:600;cursor:pointer;letter-spacing:0.02em;">
-          📍 Ma position GPS actuelle
+          Ma position GPS actuelle
         </button>
         <div id="gps-hint-nr" style="font-size:0.72rem;color:var(--soft);margin-top:4px;display:none;"></div>
       </div>
@@ -1042,7 +1070,7 @@
     </div>
     <div class="modal-footer">
       <button class="btn-cancel" onclick="closeModal('modal-rucher')">Annuler</button>
-      <button class="btn-save" onclick="saveNewRucher()">✓ Ajouter</button>
+      <button class="btn-save" onclick="saveNewRucher()">Ajouter</button>
     </div>
   </div>
 </div>
@@ -1054,7 +1082,7 @@
 <div class="modal-overlay" id="modal-edit-rucher">
   <div class="modal">
     <div class="modal-handle"></div>
-    <div class="modal-title">✏️ Modifier le rucher</div>
+    <div class="modal-title">Modifier le rucher</div>
     <div class="modal-body">
       <div class="form-row-2">
         <div><label class="form-label">ID</label>
@@ -1087,7 +1115,7 @@
         <label class="form-label">Position GPS</label>
         <button type="button" id="btn-gps-er" onclick="grabGPSForRucher('er')"
           style="width:100%;padding:10px 0;background:var(--accent);color:#fff;border:none;border-radius:10px;font-size:0.88rem;font-weight:600;cursor:pointer;letter-spacing:0.02em;">
-          📍 Ma position GPS actuelle
+          Ma position GPS actuelle
         </button>
         <div id="gps-hint-er" style="font-size:0.72rem;color:var(--soft);margin-top:4px;display:none;"></div>
       </div>
@@ -1108,7 +1136,7 @@
     </div>
     <div class="modal-footer">
       <button class="btn-cancel" onclick="closeModal('modal-edit-rucher')">Annuler</button>
-      <button class="btn-save" onclick="saveEditRucher()">✓ Enregistrer</button>
+      <button class="btn-save" onclick="saveEditRucher()">Enregistrer</button>
     </div>
   </div>
 </div>
@@ -1394,6 +1422,7 @@
 
 <!-- SCRIPTS -->
 <script src="js/firebase-init.js"></script>
+<script src="js/icons.js"></script>
 <script src="js/data.js"></script>
 <script src="js/ui.js"></script>
 <script src="js/journal.js"></script>

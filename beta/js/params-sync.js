@@ -36,6 +36,7 @@ function saveParams() {
   };
   saveParamsToStorage();
   updateTopbar();
+  if (typeof updateProfileCard === 'function') updateProfileCard();
   updateDashboard();
   toast('✅ Paramètres sauvegardés !');
 }
