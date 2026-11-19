@@ -344,6 +344,10 @@
 
   <!-- JOURNAL -->
   <div id="tab-journal" class="section">
+    <div class="seg carnet-seg" role="tablist">
+      <button role="tab" class="seg-btn active" onclick="showCarnetView('journal')">Visites</button>
+      <button role="tab" class="seg-btn" onclick="showCarnetView('sanitaire')">Santé</button>
+    </div>
     <div class="filter-row">
       <select class="form-select filter-pill"
         id="flt-rucher" onchange="renderJournal()" aria-label="Filtrer par rucher">
@@ -363,6 +367,10 @@
 
   <!-- SANITAIRE -->
   <div id="tab-sanitaire" class="section">
+    <div class="seg carnet-seg" role="tablist">
+      <button role="tab" class="seg-btn" onclick="showCarnetView('journal')">Visites</button>
+      <button role="tab" class="seg-btn active" onclick="showCarnetView('sanitaire')">Santé</button>
+    </div>
     <div class="note-card">
       <span class="note-ico" data-icon="alert" data-size="20"></span>
       <div><strong>Le varroa est présent à La Réunion depuis 2017.</strong>
@@ -437,7 +445,7 @@
   <!-- PLUS — Menu principal -->
   <div id="tab-plus" class="section">
     <button class="profile-card" onclick="showTab('params',null);loadParamsUI()">
-      <span class="profile-avatar" id="profile-initials">RV</span>
+      <span class="profile-avatar" id="profile-initials">A</span>
       <span class="profile-text">
         <span class="profile-name" id="profile-name">Mon exploitation</span>
         <span class="profile-meta" id="profile-meta">Renseignez votre NAPI</span>
@@ -445,11 +453,12 @@
       <span class="profile-edit">Modifier</span>
     </button>
 
-    <div class="menu-group-title">Registre et conformité</div>
+    <div class="menu-group-title">Registre et réglementation</div>
     <div class="menu-group">
       <button class="menu-row" onclick="showTab('registre',null);renderRegistre()"><span class="menu-ico ico-honey" data-icon="book" data-size="18"></span><span class="menu-label">Registre d'élevage</span><span data-icon="chevron" data-size="18" class="menu-chev"></span></button>
-      <button class="menu-row" onclick="showTab('admin',null);initAdminConformite()"><span class="menu-ico ico-green" data-icon="shield" data-size="18"></span><span class="menu-label">Admin et conformité</span><span data-icon="chevron" data-size="18" class="menu-chev"></span></button>
+      <button class="menu-row" onclick="showTab('admin',null);initAdminConformite()"><span class="menu-ico ico-green" data-icon="reglementation" data-size="18"></span><span class="menu-label">Réglementation</span><span data-icon="chevron" data-size="18" class="menu-chev"></span></button>
       <button class="menu-row" onclick="showTab('documents',null);populateDocRucherSelect();renderDocuments()"><span class="menu-ico ico-blue" data-icon="file" data-size="18"></span><span class="menu-label">Documents réglementaires</span><span data-icon="chevron" data-size="18" class="menu-chev"></span></button>
+      <button class="menu-row" onclick="showRuchersView('transhumance')"><span class="menu-ico ico-honey" data-icon="transhumance" data-size="18"></span><span class="menu-label">Transhumance</span><span data-icon="chevron" data-size="18" class="menu-chev"></span></button>
     </div>
 
     <div class="menu-group-title">Outils</div>
@@ -667,21 +676,46 @@
 
 <nav class="bottom-nav" aria-label="Navigation principale">
   <button class="nav-item active" data-nav="dashboard" onclick="showTab('dashboard',this)">
-    <span class="nav-icon" data-icon="home"></span>Accueil
-  </button>
-  <button class="nav-item" data-nav="journal" onclick="showTab('journal',this)">
-    <span class="nav-icon" data-icon="visits"></span>Visites
-  </button>
-  <button class="nav-item" data-nav="sanitaire" onclick="showTab('sanitaire',this)">
-    <span class="nav-icon" data-icon="sante"></span>Sanitaire
+    <span class="nav-icon" data-icon="cheptel"></span>Mon cheptel
   </button>
   <button class="nav-item" data-nav="ruchers" onclick="showRuchersView('ruchers')">
-    <span class="nav-icon" data-icon="pin"></span>Ruchers
+    <span class="nav-icon" data-icon="ruchers"></span>Ruchers
+  </button>
+  <button class="nav-plus" id="nav-plus" onclick="openPlusMenu()" aria-label="Nouvelle saisie" aria-haspopup="dialog">
+    <svg viewBox="0 0 24 24" width="30" height="30" aria-hidden="true"><path d="M12 5v14M5 12h14" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg>
+  </button>
+  <button class="nav-item" data-nav="journal" onclick="showCarnetView('journal')">
+    <span class="nav-icon" data-icon="carnet"></span>Carnet
   </button>
   <button class="nav-item" data-nav="plus" onclick="showTab('plus',this)">
-    <span class="nav-icon" data-icon="menu"></span>Plus
+    <span class="nav-icon" data-icon="menu"></span>Menu
   </button>
 </nav>
+
+<!-- ============================================================
+     FEUILLE : BOUTON CENTRAL + (nouvelle saisie)
+     ============================================================ -->
+<div class="modal-overlay" id="modal-plus" onclick="if(event.target===this)closeModal('modal-plus')">
+  <div class="modal plus-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title">Que voulez-vous noter ?</div>
+    <div class="plus-choices">
+      <button class="plus-choice" onclick="closeModal('modal-plus');openNouvelleVisite()">
+        <span class="plus-ico" data-icon="inspection" data-size="28"></span>
+        <span class="plus-txt"><b>Visite du rucher</b><small>Le compte rendu de votre passage</small></span>
+      </button>
+      <button class="plus-choice" id="plus-grille" onclick="closeModal('modal-plus');if(typeof openGrilleRuches==='function')openGrilleRuches()" hidden>
+        <span class="plus-ico" data-icon="cadre" data-size="28"></span>
+        <span class="plus-txt"><b>Grille des ruches</b><small>Marquer les ruches une par une</small></span>
+      </button>
+      <button class="plus-choice" onclick="closeModal('modal-plus');openNouveauTraitement()">
+        <span class="plus-ico" data-icon="traitement" data-size="28"></span>
+        <span class="plus-txt"><b>Traitement</b><small>Varroa, nourrissement médicamenteux…</small></span>
+      </button>
+    </div>
+    <button class="btn-cancel plus-cancel" onclick="closeModal('modal-plus')">Annuler</button>
+  </div>
+</div>
 
 
 <!-- ============================================================
@@ -1707,7 +1741,7 @@
       <div class="tuto-slide" data-slide="3" style="display:none;">
         <div style="padding:28px 24px 16px;">
           <div style="text-align:center;font-size:2.8rem;margin-bottom:10px;"><span class="ico-inline" data-icon="traitement" data-size="16"></span></div>
-          <div style="text-align:center;font-size:1.1rem;font-weight:800;color:var(--honey);margin-bottom:6px;">Sanitaire & Varroa</div>
+          <div style="text-align:center;font-size:1.1rem;font-weight:800;color:var(--honey);margin-bottom:6px;">Santé & varroa</div>
           <div style="text-align:center;font-size:0.82rem;color:var(--soft);margin-bottom:18px;">Suivi légal de vos traitements</div>
 
           <div style="display:flex;flex-direction:column;gap:10px;">

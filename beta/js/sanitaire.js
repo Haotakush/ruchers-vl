@@ -155,7 +155,7 @@ function renderSanitaire() {
   const list = document.getElementById('sanitaire-list');
   if (!sanitaireData.length) {
     list.innerHTML = `<div class="empty"><div class="empty-icon">${icon('traitement', 36)}</div>
-      <p>Aucun traitement.<br>Touchez « Nouveau traitement » pour en ajouter un.</p></div>`;
+      <p>Aucun traitement pour l'instant.<br>Notez-le avec le bouton +.</p></div>`;
     return;
   }
   const lieu = id => { const r = getRucherById(id); return r ? r.lieu : id; };

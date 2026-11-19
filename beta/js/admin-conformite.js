@@ -119,7 +119,7 @@ function _renderAdminDashboard() {
 
       <!-- En-tête -->
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
-        <h2 style="margin:0;font-size:1.05rem;font-weight:700;color:var(--ink);">${icon('reglementation',16,'ico-inline')} Admin &amp; Conformité</h2>
+        <h2 style="margin:0;font-size:1.05rem;font-weight:700;color:var(--ink);">${icon('reglementation',16,'ico-inline')} Réglementation</h2>
         <button onclick="openConformiteForm()"
           style="background:var(--honey);color:#fff;border:none;border-radius:12px;
                  padding:6px 14px;font-size:0.78rem;font-weight:600;cursor:pointer;">

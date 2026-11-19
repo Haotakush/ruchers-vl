@@ -31,12 +31,13 @@ setInterval(updateSyncIndicator, 60000);
 /* ---- NAVIGATION ---- */
 /* Onglet de la barre du bas qui correspond à chaque page */
 const NAV_FOR_TAB = {
-  dashboard: 'dashboard', journal: 'journal', sanitaire: 'sanitaire',
+  dashboard: 'dashboard', journal: 'journal', sanitaire: 'journal',
   ruchers: 'ruchers', carte: 'ruchers', transhumance: 'ruchers',
   plus: 'plus', params: 'plus', calendrier: 'plus', registre: 'plus', admin: 'plus', documents: 'plus',
 };
 /* Libellé du bouton flottant selon la page */
-const FAB_LABEL = { dashboard: 'Nouvelle visite', journal: 'Nouvelle visite', sanitaire: 'Nouveau traitement', ruchers: 'Nouveau rucher' };
+/* Les saisies (visite, traitement) passent par le bouton central + de la barre du bas */
+const FAB_LABEL = { ruchers: 'Nouveau rucher' };
 
 function showTab(name, el) {
   document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
@@ -75,22 +76,40 @@ function showSubSection(id) {
   document.getElementById('scroll-area').scrollTop = 300;
 }
 
-/* ---- FAB ---- */
+/* ---- CARNET : Visites | Santé ---- */
+function showCarnetView(view) {
+  showTab(view, null);
+  document.querySelectorAll('.carnet-seg .seg-btn').forEach(b => {
+    b.classList.toggle('active', b.getAttribute('onclick').includes(`'${view}'`));
+  });
+}
+
+/* ---- BOUTON CENTRAL + ---- */
+function openPlusMenu() {
+  hydrateIcons(document.getElementById('modal-plus'));
+  openModal('modal-plus');
+}
+
+function openNouvelleVisite() {
+  editingJournalIdx = null;
+  resetJournalForm();
+  const modalTitle = document.querySelector('#modal-journal .modal-title');
+  if (modalTitle) modalTitle.textContent = 'Nouvelle visite';
+  openModal('modal-journal');
+}
+
+function openNouveauTraitement() {
+  editingSanitaireIdx = null;
+  resetSanitaireForm();
+  const modalTitle = document.querySelector('#modal-sanitaire .modal-title');
+  if (modalTitle) modalTitle.textContent = 'Nouveau traitement';
+  openModal('modal-sanitaire');
+}
+
+/* ---- FAB (bouton flottant contextuel : Nouveau rucher) ---- */
 function openFab() {
-  if (currentTab === 'journal' || currentTab === 'dashboard') {
-    editingJournalIdx = null;
-    resetJournalForm();
-    const modalTitle = document.querySelector('#modal-journal .modal-title');
-    if (modalTitle) modalTitle.textContent = 'Nouvelle visite';
-    openModal('modal-journal');
-  }
-  if (currentTab === 'sanitaire') {
-    editingSanitaireIdx = null;
-    resetSanitaireForm();
-    const modalTitle = document.querySelector('#modal-sanitaire .modal-title');
-    if (modalTitle) modalTitle.textContent = 'Nouveau traitement';
-    openModal('modal-sanitaire');
-  }
+  if (currentTab === 'journal' || currentTab === 'dashboard') openNouvelleVisite();
+  if (currentTab === 'sanitaire') openNouveauTraitement();
   if (currentTab === 'ruchers') openModal('modal-rucher');
 }
 

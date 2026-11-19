@@ -4,6 +4,14 @@
 
 ## Bêta — Charte Apicarnet
 
+### Lot 3 : navigation et intitulés (bêta uniquement)
+- Nouvelle barre du bas : **Mon cheptel · Ruchers · ( + ) · Carnet · Menu**.
+- Bouton central **+** toujours visible : il ouvre une feuille « Que voulez-vous noter ? » (Visite du rucher, Traitement ; la grille des ruches arrive au lot 6).
+- **Santé** rejoint le **Carnet** : onglets Visites | Santé en haut de la page.
+- Menu : « Admin et conformité » devient **Réglementation**, ajout d'un accès direct à la **Transhumance**.
+- Le bouton flottant ne reste que pour « Nouveau rucher ».
+- Service worker v4.3.0.
+
 ### Lot 2 : icônes sur mesure (bêta uniquement)
 - Nouveau jeu de 35 icônes Apicarnet, style duo (trait propolis + aplat miel ou couleur de l'intervention), tiré du matériel apicole : cadre, hausse, enfumoir, fiole de traitement, seau de nourrissement, pot de récolte…
 - Les emojis de l'interface sont remplacés par ces icônes, ou retirés quand ils n'apportaient rien.
