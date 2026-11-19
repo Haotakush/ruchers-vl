@@ -38,7 +38,7 @@ function saveParams() {
   updateTopbar();
   if (typeof updateProfileCard === 'function') updateProfileCard();
   updateDashboard();
-  toast(' Paramètres sauvegardés !');
+  toast('Paramètres sauvegardés.');
 }
 
 
@@ -54,5 +54,5 @@ function updateSyncBar() {}
 function sendToSheets() {}
 function flushQueue() {}
 function saveSheetsUrl() {
-  toast(' La sync Google Sheets a été remplacée par Firebase.');
+  toast('La sync Google Sheets a été remplacée par Firebase.');
 }

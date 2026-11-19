@@ -4,6 +4,13 @@
 
 ## Bêta — Charte Apicarnet
 
+### Lot 4 : composants et textes (bêta uniquement)
+- **Confirmations** : carte papier avec l'alvéole Apicarnet (miel pour une réussite, rouge quand il manque quelque chose) et petite vibration à la validation.
+- **Bandeau de connexion** : « Hors connexion, tout est gardé. » puis « Tout est envoyé. » au retour du réseau.
+- **Ton de voix** : messages plus courts, sans points d'exclamation, au vouvoiement ; les champs manquants sont nommés (« Ces champs manquent : la date et le rucher. »).
+- Le motif nid d'abeille du bandeau d'accueil est retiré (charte : l'alvéole reste seule).
+- Service worker v4.4.0.
+
 ### Lot 3 : navigation et intitulés (bêta uniquement)
 - Nouvelle barre du bas : **Mon cheptel · Ruchers · ( + ) · Carnet · Menu**.
 - Bouton central **+** toujours visible : il ouvre une feuille « Que voulez-vous noter ? » (Visite du rucher, Traitement ; la grille des ruches arrive au lot 6).

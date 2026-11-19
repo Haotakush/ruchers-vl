@@ -160,6 +160,12 @@ function toast(msg, onUndo) {
   // Les anciens messages commencent souvent par un emoji : on le retire
   const text = String(msg).replace(/^(?:[\u{1F300}-\u{1FAFF}\u2600-\u27BF\u2B05-\u2B07\u231A-\u23FA\uFE0F\u200D]+\s*)+/u, '');
   el.innerHTML = '';
+  const warn = /erreur|impossible|obligatoire|refus|non disponible|non support|existe déjà|trop lourd|manque/i.test(text);
+  el.classList.toggle('toast-warn', warn);
+  const cell = document.createElement('span');
+  cell.className = 'toast-cell';
+  cell.innerHTML = `<svg viewBox="0 0 24 26" width="22" height="24" aria-hidden="true"><defs><clipPath id="toast-hex"><path d="M12 1.5l9.5 5.5v12L12 24.5 2.5 19V7z"/></clipPath></defs><path d="M12 1.5l9.5 5.5v12L12 24.5 2.5 19V7z" fill="var(--papier)"/><rect class="toast-cell-fill" x="0" y="0" width="24" height="26" clip-path="url(#toast-hex)" fill="${warn ? 'var(--etat-alerte)' : 'var(--miel-vif)'}"/><path d="M12 1.5l9.5 5.5v12L12 24.5 2.5 19V7z" fill="none" stroke="var(--propolis)" stroke-width="1.8" stroke-linejoin="round"/></svg>`;
+  el.appendChild(cell);
   const span = document.createElement('span');
   span.className = 'toast-text';
   span.textContent = text;
@@ -174,6 +180,7 @@ function toast(msg, onUndo) {
   el.classList.add('show');
   if (toastTimer) clearTimeout(toastTimer);
   toastTimer = setTimeout(() => el.classList.remove('show'), onUndo ? 4500 : 2600);
+  if (!warn && navigator.vibrate) { try { navigator.vibrate(15); } catch (e) {} }
 }
 
 /* ---- FORMULAIRES ---- */
@@ -255,3 +262,25 @@ function showInstallBanner() {
       ">Compris ✓</button>
     </div>`;
 }
+
+
+/* ---- Bandeau de connexion (hors réseau / tout est envoyé) ---- */
+let _netBannerTimer = null;
+function showNetBanner(online) {
+  let el = document.getElementById('net-banner');
+  if (!el) {
+    el = document.createElement('div');
+    el.id = 'net-banner'; el.className = 'net-banner'; el.setAttribute('role', 'status');
+    document.body.appendChild(el);
+  }
+  el.className = 'net-banner ' + (online ? 'ok' : 'off');
+  el.innerHTML = online
+    ? `${icon('envoye', 22)}<span>Tout est envoyé.</span>`
+    : `${icon('hors_ligne', 22)}<span>Hors connexion, tout est gardé.</span>`;
+  requestAnimationFrame(() => el.classList.add('show'));
+  if (_netBannerTimer) clearTimeout(_netBannerTimer);
+  if (online) _netBannerTimer = setTimeout(() => el.classList.remove('show'), 3000);
+}
+window.addEventListener('offline', () => showNetBanner(false));
+window.addEventListener('online',  () => showNetBanner(true));
+document.addEventListener('DOMContentLoaded', () => { if (navigator.onLine === false) showNetBanner(false); });

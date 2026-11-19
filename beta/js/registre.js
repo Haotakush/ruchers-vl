@@ -273,7 +273,7 @@ tr:nth-child(even) td{background:#FBEBC4;}
   }
   w.document.write(printContent);
   w.document.close();
-  toast(' Registre ouvert — cliquez "Imprimer / PDF"');
+  toast('Registre ouvert. Touchez « Imprimer / PDF ».');
 }
 
 /* ============================================================
@@ -292,14 +292,14 @@ function _loadScript(src) {
    PARTAGER LE REGISTRE — jsPDF + Web Share API
    ============================================================ */
 async function partagerRegistre() {
-  const toastEl = toast('⏳ Génération du PDF…');
+  const toastEl = toast('Préparation du PDF…');
 
   // Chargement lazy de jsPDF + autoTable
   try {
     await _loadScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js');
     await _loadScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js');
   } catch (e) {
-    toast(' Impossible de charger jsPDF — vérifiez votre connexion');
+    toast('Impossible de charger jsPDF — vérifiez votre connexion');
     return;
   }
 
@@ -441,5 +441,5 @@ async function partagerRegistre() {
 
   // Fallback : téléchargement direct
   doc.save(filename);
-  toast(' PDF téléchargé');
+  toast('PDF téléchargé');
 }

@@ -172,7 +172,7 @@ function grabGPSForDestination() {
   const btn  = document.getElementById('btn-gps-dest');
   const hint = document.getElementById('gps-dest-hint');
   if (!navigator.geolocation) {
-    toast(' Géolocalisation non disponible sur cet appareil');
+    toast('Géolocalisation non disponible sur cet appareil');
     return;
   }
   if (btn) { btn.textContent = '⏳'; btn.disabled = true; }
@@ -185,11 +185,11 @@ function grabGPSForDestination() {
       if (destEl) destEl.value = `${lat}, ${lng}`;
       if (hint) hint.style.display = 'block';
       if (btn) { btn.textContent = ''; btn.disabled = false; }
-      toast(' Position GPS enregistrée');
+      toast('Position GPS enregistrée');
     },
     (err) => {
       console.warn('GPS error:', err);
-      toast(' Impossible d\'obtenir la position GPS');
+      toast('Impossible d\'obtenir la position GPS');
       if (btn) { btn.textContent = ' GPS'; btn.disabled = false; }
     },
     { enableHighAccuracy: true, timeout: 10000 }
@@ -277,8 +277,8 @@ async function saveMouvement() {
 async function _doSaveMouvement() {
   const date    = document.getElementById('mouv-date').value;
   const origine = document.getElementById('mouv-origine').value;
-  if (!date)    { toast(' Date obligatoire');              return; }
-  if (!origine) { toast(' Sélectionne un rucher d\'origine'); return; }
+  if (!date)    { toast('Ce champ manque : la date.');              return; }
+  if (!origine) { toast('Choisissez le rucher d\'origine'); return; }
 
   const destRucherId = document.getElementById('mouv-dest-rucher')?.value || '';
   const nbColonies   = parseInt(document.getElementById('mouv-nb').value) || 0;
@@ -306,12 +306,12 @@ async function _doSaveMouvement() {
     if (entry._docId) await updateMouvementInFirestore(entry._docId, entry);
     mouvementsData[editingMouvIdx] = entry;
     editingMouvIdx = null;
-    toast(' Mouvement mis à jour !');
+    toast('Mouvement mis à jour.');
   } else {
     const docRef = await addMouvementToFirestore(entry);
     if (docRef) entry._docId = docRef.id;
     mouvementsData.unshift(entry);
-    toast(' Mouvement enregistré !');
+    toast('Mouvement enregistré.');
   }
 
   // ---- Mise à jour automatique des effectifs ----
@@ -433,7 +433,7 @@ async function delMouvement(docId, i) {
   mouvementsData.splice(i, 1);
   localStorage.setItem('mouvements', JSON.stringify(mouvementsData));
   renderMouvements();
-  toast(' Supprimé');
+  toast('Supprimé');
 }
 
 /* ============================================================

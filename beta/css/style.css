@@ -2504,20 +2504,10 @@ body {
   position: relative;
   overflow: hidden;
   background-color: var(--honey-light);
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='97' viewBox='0 0 56 97'%3E%3Cpath d='M28 1 55 16.5v31L28 63 1 47.5v-31z M28 63v34 M1 16.5 0 16 M55 16.5 56 16' fill='none' stroke='%232B2118' stroke-opacity='.09' stroke-width='1.5'/%3E%3C/svg%3E");
-  background-size: 42px 73px;
-  background-position: right -6px top -10px;
   color: var(--ink);
   border-radius: 24px;
   padding: 20px 20px 18px;
   margin-bottom: 12px;
-}
-.herd::after {
-  /* fondu pour que le motif alvéolé reste discret sous les chiffres */
-  content: '';
-  position: absolute; inset: 0;
-  background: linear-gradient(100deg, var(--honey-light) 35%, rgba(242,169,22,0) 85%);
-  pointer-events: none;
 }
 .herd > * { position: relative; z-index: 1; }
 .herd-head { display: flex; flex-direction: column; gap: 2px; }
@@ -3029,3 +3019,38 @@ h2.card-title { margin-top: 0; }
 .carnet-seg { margin-bottom: 14px; }
 .carnet-seg { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 .plus-choice[hidden] { display: none; }
+
+/* ============================================================
+   Charte Apicarnet — lot 4 : composants
+   ============================================================ */
+/* Confirmation (toast) : carte papier + alvéole */
+.toast {
+  background: var(--papier); color: var(--propolis);
+  border: 1.5px solid var(--kraft);
+  box-shadow: 0 8px 24px rgba(43, 33, 24, 0.14);
+  font-weight: 500; font-size: 0.95rem;
+  justify-content: flex-start;
+}
+.toast-cell { flex: none; width: 22px; height: 24px; position: relative; }
+.toast-cell svg { display: block; }
+.toast.toast-warn { border-color: var(--etat-alerte); }
+.toast-undo { background: var(--miel-pale); color: var(--miel-fonce); }
+
+/* Bandeau de connexion */
+.net-banner {
+  position: fixed; left: 50%; top: calc(var(--safe-top) + 64px);
+  transform: translate(-50%, -12px); opacity: 0;
+  z-index: 950; display: flex; align-items: center; gap: 10px;
+  min-height: 44px; padding: 8px 14px; border-radius: 14px;
+  font: 500 0.92rem var(--font-body); color: var(--propolis);
+  max-width: calc(100vw - 32px); pointer-events: none; white-space: nowrap;
+  transition: transform 250ms ease, opacity 250ms ease;
+}
+.net-banner.show { transform: translate(-50%, 0); opacity: 1; }
+.net-banner.off { background: var(--kraft); }
+.net-banner.ok { background: var(--papier); border: 1.5px solid var(--etat-ras); }
+.net-banner .ico { width: 22px; height: 22px; }
+
+/* Écrans vides : centrés, ton Apicarnet */
+.empty { text-align: center; }
+.empty p { color: var(--brun); line-height: 1.5; }

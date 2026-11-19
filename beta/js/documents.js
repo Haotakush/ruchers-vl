@@ -131,9 +131,9 @@ async function saveNewDocument() {
   const fileInput = document.getElementById('doc-file');
   const file = fileInput?.files[0];
 
-  if (!label) { toast(' Donnez un nom au document'); return; }
-  if (!file)  { toast(' Sélectionnez un fichier'); return; }
-  if (file.size > 15 * 1024 * 1024) { toast(' Fichier trop lourd (max 15 Mo)'); return; }
+  if (!label) { toast('Donnez un nom au document'); return; }
+  if (!file)  { toast('Sélectionnez un fichier'); return; }
+  if (file.size > 15 * 1024 * 1024) { toast('Fichier trop lourd (max 15 Mo)'); return; }
 
   const btn = document.getElementById('doc-save-btn');
   btn.disabled = true;
@@ -145,10 +145,10 @@ async function saveNewDocument() {
     closeModal('modal-new-doc');
     resetDocForm();
     renderDocuments();
-    toast(' Document enregistré !');
+    toast('Document enregistré.');
   } catch (err) {
     console.error('Erreur upload document:', err);
-    toast(' Erreur lors de l\'upload');
+    toast('Erreur lors de l\'upload');
   } finally {
     btn.disabled = false;
     btn.textContent = '✓ Enregistrer';
@@ -177,7 +177,7 @@ function confirmDeleteDoc(docId, label) {
     await deleteDocumentFromFirestore(docId);
     documentsData = documentsData.filter(d => d._docId !== docId);
     renderDocuments();
-    toast(' Document supprimé');
+    toast('Document supprimé');
   });
 }
 
@@ -221,10 +221,10 @@ async function uploadPendingDoc(sanitaireDocId) {
     });
     documentsData.unshift(doc);
     _pendingDocFile = null;
-    toast(' Document joint au traitement');
+    toast('Document joint au traitement');
   } catch (err) {
     console.warn('Erreur upload doc sanitaire:', err);
-    toast(' Traitement enregistré mais échec du document');
+    toast('Traitement enregistré mais échec du document');
   }
 }
 
