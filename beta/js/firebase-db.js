@@ -50,14 +50,14 @@ async function loadAllDataFromFirestore() {
 
   } catch (err) {
     console.error('❌ Erreur chargement Firestore:', err);
-    toast('⚠️ Erreur de chargement — mode hors ligne');
+    toast(' Erreur de chargement — mode hors ligne');
   }
 }
 
 /* ---- Sync manuelle ---- */
 async function forceSyncFromFirestore() {
   if (!currentUser) return;
-  toast('🔄 Synchronisation en cours…');
+  toast(' Synchronisation en cours…');
   try {
     const paramsDoc = await userRef().collection('config').doc('params').get();
     if (paramsDoc.exists) PARAMS = paramsDoc.data();
@@ -81,10 +81,10 @@ async function forceSyncFromFirestore() {
     if (typeof renderDocuments  === 'function') renderDocuments();
     if (typeof renderMouvements === 'function') renderMouvements();
     setLastSyncNow();
-    toast('✅ Synchronisé !');
+    toast(' Synchronisé !');
   } catch (err) {
     console.error('Erreur sync:', err);
-    toast('⚠️ Erreur de synchronisation');
+    toast(' Erreur de synchronisation');
   }
 }
 

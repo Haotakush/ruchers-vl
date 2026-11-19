@@ -88,14 +88,14 @@ async function deleteRucher(idx) {
   saveRuchers();
   renderRuchers(); renderAllSelects(); updateDashboard();
   if (typeof mapInstance !== 'undefined' && mapInstance) initMap();
-  toast(`🗑 Rucher ${r.id} supprimé`);
+  toast(` Rucher ${r.id} supprimé`);
 }
 
 async function saveNewRucher() {
   const id   = document.getElementById('nr-id').value.trim().toUpperCase();
   const lieu = document.getElementById('nr-lieu').value.trim();
-  if (!id || !lieu)                   { toast('⚠️ ID et lieu-dit obligatoires'); return; }
-  if (RUCHERS.find(r => r.id === id)) { toast('⚠️ Cet ID existe déjà');          return; }
+  if (!id || !lieu)                   { toast(' ID et lieu-dit obligatoires'); return; }
+  if (RUCHERS.find(r => r.id === id)) { toast(' Cet ID existe déjà');          return; }
   const newRucher = buildRucherFromForm('nr');
   await saveRucherToFirestore(newRucher);
   RUCHERS.push(newRucher);
@@ -104,7 +104,7 @@ async function saveNewRucher() {
   clearRucherForm('nr');
   renderRuchers(); renderAllSelects(); updateDashboard();
   if (typeof mapInstance !== 'undefined' && mapInstance) initMap();
-  toast(`✅ Rucher ${id} ajouté !`);
+  toast(` Rucher ${id} ajouté !`);
 }
 
 function openEditRucher(idx) {
@@ -122,10 +122,10 @@ function openEditRucher(idx) {
   // Réinitialiser le bouton GPS et le hint
   const btn  = document.getElementById('btn-gps-er');
   const hint = document.getElementById('gps-hint-er');
-  if (btn)  { btn.innerHTML = '📍 Ma position GPS actuelle'; btn.disabled = false; }
+  if (btn)  { btn.innerHTML = ' Ma position GPS actuelle'; btn.disabled = false; }
   if (hint) {
     hint.style.display = (r.lat && r.lng) ? 'block' : 'none';
-    if (r.lat && r.lng) hint.textContent = `📍 Coordonnées enregistrées : ${r.lat.toFixed(4)}, ${r.lng.toFixed(4)}`;
+    if (r.lat && r.lng) hint.textContent = ` Coordonnées enregistrées : ${r.lat.toFixed(4)}, ${r.lng.toFixed(4)}`;
   }
   openModal('modal-edit-rucher');
 }
@@ -134,7 +134,7 @@ async function saveEditRucher() {
   if (editingRucherIdx === null) return;
   const oldId = RUCHERS[editingRucherIdx].id;
   const lieu  = document.getElementById('er-lieu').value.trim();
-  if (!lieu) { toast('⚠️ Le lieu-dit est obligatoire'); return; }
+  if (!lieu) { toast(' Le lieu-dit est obligatoire'); return; }
   const updated = buildRucherFromForm('er');
   updated.id = oldId;
   await saveRucherToFirestore(updated);
@@ -144,7 +144,7 @@ async function saveEditRucher() {
   editingRucherIdx = null;
   renderRuchers(); renderAllSelects(); updateDashboard();
   if (typeof mapInstance !== 'undefined' && mapInstance) initMap();
-  toast(`✅ Rucher ${oldId} mis à jour !`);
+  toast(` Rucher ${oldId} mis à jour !`);
 }
 
 function buildRucherFromForm(prefix) {
@@ -182,7 +182,7 @@ function grabGPSForRucher(prefix) {
   const btn = document.getElementById(`btn-gps-${prefix}`);
   const hint = document.getElementById(`gps-hint-${prefix}`);
   if (!navigator.geolocation) {
-    toast('⚠️ Géolocalisation non disponible sur cet appareil');
+    toast(' Géolocalisation non disponible sur cet appareil');
     return;
   }
   if (btn) { btn.innerHTML = '⏳ Localisation…'; btn.disabled = true; }
@@ -195,18 +195,18 @@ function grabGPSForRucher(prefix) {
       document.getElementById(`${prefix}-lat`).value = lat;
       document.getElementById(`${prefix}-lng`).value = lng;
       if (hint) {
-        hint.textContent = `📍 Position enregistrée — précision ±${acc}m`;
+        hint.textContent = ` Position enregistrée — précision ±${acc}m`;
         hint.style.color = acc <= 20 ? 'var(--green, #3D7A4F)' : 'var(--soft)';
         hint.style.display = 'block';
       }
-      if (btn) { btn.innerHTML = '✅ Position enregistrée'; btn.disabled = false; }
-      toast(`📍 GPS capturé — précision ±${acc}m`);
+      if (btn) { btn.innerHTML = ' Position enregistrée'; btn.disabled = false; }
+      toast(` GPS capturé — précision ±${acc}m`);
     },
     (err) => {
       console.warn('GPS error:', err);
       const msg = err.code === 1 ? 'Accès GPS refusé' : 'Position GPS indisponible';
-      toast(`⚠️ ${msg}`);
-      if (btn) { btn.innerHTML = '📍 Ma position GPS'; btn.disabled = false; }
+      toast(` ${msg}`);
+      if (btn) { btn.innerHTML = ' Ma position GPS'; btn.disabled = false; }
     },
     { enableHighAccuracy: true, timeout: 12000 }
   );
@@ -224,7 +224,7 @@ function renderAllSelects() {
 async function addPhoto(rid, input) {
   const files = Array.from(input.files);
   if (!files.length) return;
-  toast('📸 Compression en cours…');
+  toast(' Compression en cours…');
   if (!rucherPhotos[rid]) rucherPhotos[rid] = [];
   let processed = 0;
   for (const file of files) {
@@ -236,12 +236,12 @@ async function addPhoto(rid, input) {
       processed++;
     } catch (err) {
       console.error('Erreur upload photo:', err);
-      toast(`⚠️ Erreur photo : ${err.message}`);
+      toast(` Erreur photo : ${err.message}`);
     }
   }
   if (processed > 0) {
     renderRuchers();
-    toast(`✅ ${processed} photo(s) ajoutée(s) !`);
+    toast(` ${processed} photo(s) ajoutée(s) !`);
   }
   input.value = '';
 }
@@ -325,7 +325,7 @@ function openPlanteSheet(pi) {
   _editingPlante = { pi, isRef: plant.isRef, data: { ...plant } };
 
   const sheet = document.getElementById('plante-sheet');
-  document.getElementById('ps-title').textContent = plant.isRef ? '✏️ ' + plant.p : '✏️ ' + plant.p;
+  document.getElementById('ps-title').textContent = plant.isRef ? ' ' + plant.p : ' ' + plant.p;
   document.getElementById('ps-nom').value    = plant.p;
   document.getElementById('ps-nom').disabled = false;
   document.getElementById('ps-zone').value    = plant.zone || 'Bas';
@@ -352,7 +352,7 @@ function openPlanteSheet(pi) {
 
 function openNewPlanteSheet() {
   _editingPlante = null;
-  document.getElementById('ps-title').textContent = '🌸 Nouvelle plante';
+  document.getElementById('ps-title').textContent = ' Nouvelle plante';
   document.getElementById('ps-nom').value = '';
   document.getElementById('ps-nom').disabled = false;
   document.getElementById('ps-zone').value = 'Bas';
@@ -379,7 +379,7 @@ function togglePsMois(btn) {
 function savePlanteSheet() {
   const nom  = document.getElementById('ps-nom').value.trim();
   const zone = document.getElementById('ps-zone').value;
-  if (!nom) { toast('⚠️ Entrez un nom'); return; }
+  if (!nom) { toast(' Entrez un nom'); return; }
 
   const m = Array.from(document.querySelectorAll('.ps-mois-btn')).map(b => b.classList.contains('ps-mois-on') ? 1 : 0);
 
@@ -409,7 +409,7 @@ function savePlanteSheet() {
   closePlanteSheet();
   renderCalendrier();
   if (document.getElementById('cal-gantt')?.style.display !== 'none') renderGanttCalendrier();
-  toast('✅ Plante enregistrée');
+  toast(' Plante enregistrée');
 }
 
 function deletePlanteSheet() {
@@ -428,7 +428,7 @@ function deletePlanteSheet() {
     closePlanteSheet();
     renderCalendrier();
     if (document.getElementById('cal-gantt')?.style.display !== 'none') renderGanttCalendrier();
-    toast('🗑 Plante supprimée');
+    toast(' Plante supprimée');
   });
 }
 
@@ -471,9 +471,9 @@ function renderGanttCalendrier() {
   // Groupes par zone
   const ZONES = ['Bas', 'Mi-pente', 'Haut'];
   const ZONE_LABELS = {
-    'Bas':      '🌴 Bas · 0 – 400 m',
-    'Mi-pente': '🌿 Mi-pente · 400 – 800 m',
-    'Haut':     '⛰ Hauts · 800 m +',
+    'Bas':      ' Bas · 0 – 400 m',
+    'Mi-pente': ' Mi-pente · 400 – 800 m',
+    'Haut':     ' Hauts · 800 m +',
   };
   const ZONE_COLORS = { 'Bas': '#3D7A4F', 'Mi-pente': '#B4561A', 'Haut': '#3F6A9E' };
 
@@ -542,9 +542,9 @@ function renderGanttCalendrier() {
 
 function renderTranshumance() {
   const types = [
-    { key:'A', label:'🔺 Arrivée' },
-    { key:'D', label:'🔻 Départ'  },
-    { key:'R', label:'🍯 Récolte' },
+    { key:'A', label:' Arrivée' },
+    { key:'D', label:' Départ'  },
+    { key:'R', label:' Récolte' },
   ];
   document.getElementById('trans-list').innerHTML = RUCHERS.map(r => `
     <div class="trans-rucher">

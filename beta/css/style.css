@@ -2977,3 +2977,7 @@ h2.card-title { margin-top: 0; }
 #tab-carte.active { display: flex; flex-direction: column; }
 #tab-carte .seg-floating { position: static; margin: 12px 12px 8px; background: #EFE6D4; box-shadow: none; flex: none; }
 #tab-carte #map { flex: 1; height: auto !important; min-height: 0; }
+
+/* Icônes Apicarnet en ligne dans le texte (remplacent les emojis) */
+.ico-inline { display: inline-flex; vertical-align: -0.2em; }
+.ico-inline .ico, svg.ico-inline { display: inline-block; width: 1.1em; height: 1.1em; }

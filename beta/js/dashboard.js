@@ -66,10 +66,10 @@ function marquerRappelFait(idx) {
 }
 
 function requestNotifPermission() {
-  if (!('Notification' in window)) { toast('⚠️ Notifications non supportées'); return; }
+  if (!('Notification' in window)) { toast(' Notifications non supportées'); return; }
   Notification.requestPermission().then(p => {
-    if (p === 'granted') { toast('🔔 Notifications activées !'); updateRappels(); }
-    else toast('⚠️ Permission refusée');
+    if (p === 'granted') { toast(' Notifications activées !'); updateRappels(); }
+    else toast(' Permission refusée');
   });
 }
 
@@ -166,7 +166,7 @@ function updateTimeline() {
   el.innerHTML = all.length
     ? all.map(e => `
         <div class="list-row">
-          <span class="row-ico ${e.kind === 'visit' ? 'ico-honey' : 'ico-blue'}">${icon(e.kind === 'visit' ? 'visits' : 'shield', 18)}</span>
+          <span class="row-ico ${e.kind === 'visit' ? 'ico-honey' : 'ico-blue'}">${icon(e.kind === 'visit' ? 'inspection' : 'traitement', 18)}</span>
           <div class="list-main">
             <div class="list-title">${esc(e.title)}</div>
             ${e.meta ? `<div class="list-meta">${esc(e.meta)}</div>` : ''}

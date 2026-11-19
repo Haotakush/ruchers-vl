@@ -48,7 +48,7 @@ function buildSection2_Ruchers() {
   if (!RUCHERS.length) {
     return `<div class="registre-section">
       <div class="registre-section-title">2. Inventaire des ruchers</div>
-      <div class="empty"><div class="empty-icon">📍</div><p>Aucun rucher enregistré.</p></div>
+      <div class="empty"><div class="empty-icon">${icon('ruchers',16,'ico-inline')}</div><p>Aucun rucher enregistré.</p></div>
     </div>`;
   }
 
@@ -94,7 +94,7 @@ function buildSection3_Visites() {
   if (!journalData.length) {
     return `<div class="registre-section">
       <div class="registre-section-title">3. Comptes-rendus des visites (0 entrées)</div>
-      <div class="empty"><div class="empty-icon">📋</div><p>Aucune visite enregistrée.</p></div>
+      <div class="empty"><div class="empty-icon">${icon('carnet',16,'ico-inline')}</div><p>Aucune visite enregistrée.</p></div>
     </div>`;
   }
 
@@ -128,7 +128,7 @@ function buildSection4_Traitements() {
   if (!sanitaireData.length) {
     return `<div class="registre-section">
       <div class="registre-section-title">4. Registre Sanitaire (0 entrées)</div>
-      <div class="empty"><div class="empty-icon">💊</div><p>Aucun traitement enregistré.</p></div>
+      <div class="empty"><div class="empty-icon">${icon('traitement',16,'ico-inline')}</div><p>Aucun traitement enregistré.</p></div>
     </div>`;
   }
 
@@ -167,7 +167,7 @@ function buildSection5_Mouvements() {
   if (typeof mouvementsData === 'undefined' || !mouvementsData.length) {
     return `<div class="registre-section">
       <div class="registre-section-title">5. Mouvements de colonies (0 entrées)</div>
-      <div class="empty"><div class="empty-icon">🚛</div><p>Aucun mouvement enregistré.</p></div>
+      <div class="empty"><div class="empty-icon">${icon('transhumance',16,'ico-inline')}</div><p>Aucun mouvement enregistré.</p></div>
     </div>`;
   }
 
@@ -216,7 +216,7 @@ function exportPDF() {
 
   const header = `
     <div class="header-block">
-      <h1>📖 Registre d'Élevage Apicole</h1>
+      <h1>${icon('registre',16,'ico-inline')} Registre d'Élevage Apicole</h1>
       <p><strong style="color:#F2A916;">${PARAMS.nom||'—'}</strong>
          · NAPI ${PARAMS.napi||'—'}
          · SIRET ${PARAMS.siret||'—'}</p>
@@ -256,8 +256,8 @@ tr:nth-child(even) td{background:#FBEBC4;}
 </style></head><body>
 <div class="pdf-topbar">
   <button class="pdf-back-btn" onclick="window.close()">← Retour</button>
-  <span class="pdf-title">📖 Registre d'Élevage Apicole</span>
-  <button class="pdf-print-btn" onclick="window.print()">🖨️ Imprimer / PDF</button>
+  <span class="pdf-title">${icon('registre',16,'ico-inline')} Registre d'Élevage Apicole</span>
+  <button class="pdf-print-btn" onclick="window.print()"> Imprimer / PDF</button>
 </div>
 <div class="pdf-content">
   ${header}
@@ -273,7 +273,7 @@ tr:nth-child(even) td{background:#FBEBC4;}
   }
   w.document.write(printContent);
   w.document.close();
-  toast('📄 Registre ouvert — cliquez "Imprimer / PDF"');
+  toast(' Registre ouvert — cliquez "Imprimer / PDF"');
 }
 
 /* ============================================================
@@ -299,7 +299,7 @@ async function partagerRegistre() {
     await _loadScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js');
     await _loadScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js');
   } catch (e) {
-    toast('❌ Impossible de charger jsPDF — vérifiez votre connexion');
+    toast(' Impossible de charger jsPDF — vérifiez votre connexion');
     return;
   }
 
@@ -441,5 +441,5 @@ async function partagerRegistre() {
 
   // Fallback : téléchargement direct
   doc.save(filename);
-  toast('📥 PDF téléchargé');
+  toast(' PDF téléchargé');
 }

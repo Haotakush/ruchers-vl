@@ -69,15 +69,15 @@ function _updateDistance() {
     ? `${Math.round(metres)} m`
     : `${(metres / 1000).toFixed(1)} km`;
   const badge = conforme
-    ? `<span style="color:#3D7A4F;font-weight:700;">✅ Conforme</span>`
-    : `<span style="color:#B3362B;font-weight:700;">⚠️ Trop proches !</span>`;
+    ? `<span style="color:#3D7A4F;font-weight:700;">${icon('ras',16,'ico-inline')} Conforme</span>`
+    : `<span style="color:#B3362B;font-weight:700;">${icon('alerte',16,'ico-inline')} Trop proches !</span>`;
 
   // Panneau flottant au-dessus de la carte
   const div = document.createElement('div');
   div.id = 'map-dist-panel';
   div.innerHTML = `
     <span style="font-size:0.75rem;color:var(--soft);">${a.r.id} → ${b.r.id}</span>
-    <span style="font-size:1.05rem;font-weight:700;margin-left:8px;">📏 ${distLabel}</span>
+    <span style="font-size:1.05rem;font-weight:700;margin-left:8px;"> ${distLabel}</span>
     <span style="font-size:0.82rem;margin-left:8px;">${badge}</span>
     <button onclick="_clearDistSelection()" style="margin-left:10px;background:none;border:none;color:var(--soft);font-size:1rem;cursor:pointer;line-height:1;">✕</button>`;
   div.style.cssText = `
@@ -125,13 +125,13 @@ function initMap() {
     let alertColor, alertLabel;
 
     if (days === null) {
-      alertColor = '#B3362B'; alertLabel = '🔴 Jamais visité';
+      alertColor = '#B3362B'; alertLabel = ' Jamais visité';
     } else if (days > 30) {
-      alertColor = '#B3362B'; alertLabel = `🔴 ${days}j sans visite`;
+      alertColor = '#B3362B'; alertLabel = ` ${days}j sans visite`;
     } else if (days > 14) {
-      alertColor = '#B4561A'; alertLabel = `🟡 ${days}j sans visite`;
+      alertColor = '#B4561A'; alertLabel = ` ${days}j sans visite`;
     } else {
-      alertColor = zoneColors[r.zone] || '#9A5B00'; alertLabel = `🟢 ${days}j`;
+      alertColor = zoneColors[r.zone] || '#9A5B00'; alertLabel = ` ${days}j`;
     }
 
     // Cercle rayon mellifère 1km
@@ -145,8 +145,8 @@ function initMap() {
       .bindPopup(`
         <div style="font-family:var(--font-body);min-width:180px;">
           <div style="font-weight:700;font-size:0.95rem;margin-bottom:4px;">${r.id} — ${r.lieu}</div>
-          <div style="font-size:0.78rem;color:#666;margin-bottom:6px;">⛰ ${r.alt || 0}m · ${r.cp || ''}</div>
-          <div style="font-size:0.78rem;">🐝 <strong>${r.nb || '?'}</strong> ruches</div>
+          <div style="font-size:0.78rem;color:#666;margin-bottom:6px;"> ${r.alt || 0}m · ${r.cp || ''}</div>
+          <div style="font-size:0.78rem;">${icon('cheptel',16,'ico-inline')} <strong>${r.nb || '?'}</strong> ruches</div>
           <div style="font-size:0.78rem;font-weight:600;color:${alertColor};margin-top:4px;">${alertLabel}</div>
         </div>`);
 
@@ -180,7 +180,7 @@ function initMap() {
         background:rgba(26,18,8,0.75);color:#ccc;font-size:0.68rem;
         padding:5px 9px;border-radius:8px;backdrop-filter:blur(4px);
         font-family:var(--font-body);line-height:1.4;">
-        📏 Sélectionne 2 ruchers<br>pour mesurer la distance
+         Sélectionne 2 ruchers<br>pour mesurer la distance
       </div>`;
       return d;
     };

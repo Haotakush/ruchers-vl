@@ -223,7 +223,7 @@ function showInstallBanner() {
   if (!isIOS || isStandalone || wasDismissed) return;
   document.getElementById('install-banner-wrap').innerHTML = `
     <div class="install-banner">
-      <strong>📲 Ajouter à l'écran d'accueil</strong><br>
+      <strong> Ajouter à l'écran d'accueil</strong><br>
       Pour utiliser comme une vraie app iPhone :
       <div class="install-steps">
         <span>1. Appuyez sur <strong>⎋ Partager</strong> en bas de Safari</span>

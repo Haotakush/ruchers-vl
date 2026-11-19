@@ -504,7 +504,7 @@
       <!-- Sous-onglets -->
       <div class="cal-subtabs">
         <button id="cal-tab-plantes" class="cal-subtab active" onclick="switchCalView('plantes')">Plantes</button>
-        <button id="cal-tab-gantt"   class="cal-subtab"        onclick="switchCalView('gantt')">📅 Calendrier</button>
+        <button id="cal-tab-gantt"   class="cal-subtab"        onclick="switchCalView('gantt')"><span class="ico-inline" data-icon="calendar" data-size="16"></span> Calendrier</button>
       </div>
       <!-- Vue registre -->
       <div id="cal-container"></div>
@@ -673,7 +673,7 @@
     <span class="nav-icon" data-icon="visits"></span>Visites
   </button>
   <button class="nav-item" data-nav="sanitaire" onclick="showTab('sanitaire',this)">
-    <span class="nav-icon" data-icon="shield"></span>Sanitaire
+    <span class="nav-icon" data-icon="sante"></span>Sanitaire
   </button>
   <button class="nav-item" data-nav="ruchers" onclick="showRuchersView('ruchers')">
     <span class="nav-icon" data-icon="pin"></span>Ruchers
@@ -1096,13 +1096,13 @@
 <div class="modal-overlay" id="modal-confirm">
   <div class="modal modal-confirm-inner">
     <div class="modal-handle"></div>
-    <div class="modal-title">⚠️ Confirmation</div>
+    <div class="modal-title"><span class="ico-inline" data-icon="alerte" data-size="16"></span> Confirmation</div>
     <div class="modal-body">
       <p id="confirm-message" style="font-size:0.9rem;color:var(--ink);text-align:center;padding:8px 0;"></p>
     </div>
     <div class="modal-footer">
       <button class="btn-cancel" onclick="confirmNo()">Annuler</button>
-      <button class="btn-save" style="background:linear-gradient(135deg,#B3362B,#B3362B);" onclick="confirmYes()">🗑 Supprimer</button>
+      <button class="btn-save" style="background:linear-gradient(135deg,#B3362B,#B3362B);" onclick="confirmYes()"><span class="ico-inline" data-icon="supprimer" data-size="16"></span> Supprimer</button>
     </div>
   </div>
 </div>
@@ -1118,7 +1118,7 @@
     <!-- En-tête -->
     <div style="padding:20px 20px 0;flex-shrink:0;">
       <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px;">
-        <span style="font-size:1.6rem;">🍯</span>
+        <span style="font-size:1.6rem;"><span class="ico-inline" data-icon="recolte" data-size="16"></span></span>
         <div>
           <div style="font-family:var(--font-display);font-size:1.15rem;font-weight:700;color:var(--ink);">
             Nouveautés
@@ -1128,7 +1128,7 @@
       </div>
     </div>
 
-    <!-- Contenu scrollable — ✏️ MODIFIER ICI À CHAQUE MAJ -->
+    <!-- Contenu scrollable —  MODIFIER ICI À CHAQUE MAJ -->
     <div class="modal-body" id="wn-content" style="overflow-y:auto;padding:16px 20px;flex:1;">
 
       <!-- === V2.0 === -->
@@ -1136,7 +1136,7 @@
         <div class="wn-badge" style="background:#9A5B00;">V2.0</div>
 
         <div class="wn-item">
-          <span class="wn-icon">🗺️</span>
+          <span class="wn-icon"><span class="ico-inline" data-icon="ruchers" data-size="16"></span></span>
           <div>
             <div class="wn-title">Carte des transhumances</div>
             <div class="wn-desc">Chaque mouvement de rucher s'affiche sur une mini-carte Leaflet. Les destinations GPS sont reliées par une flèche pointillée depuis l'origine.</div>
@@ -1144,7 +1144,7 @@
         </div>
 
         <div class="wn-item">
-          <span class="wn-icon">📍</span>
+          <span class="wn-icon"><span class="ico-inline" data-icon="ruchers" data-size="16"></span></span>
           <div>
             <div class="wn-title">GPS en un tap dans les ruchers</div>
             <div class="wn-desc">Bouton "Ma position GPS actuelle" dans les fiches rucher — capturez vos coordonnées exactes sur le terrain sans saisie manuelle.</div>
@@ -1152,7 +1152,7 @@
         </div>
 
         <div class="wn-item">
-          <span class="wn-icon">🚛</span>
+          <span class="wn-icon"><span class="ico-inline" data-icon="transhumance" data-size="16"></span></span>
           <div>
             <div class="wn-title">GPS destination de mouvement</div>
             <div class="wn-desc">Lors d'un mouvement de colonies, capturez les coordonnées GPS de votre destination directement depuis le formulaire.</div>
@@ -1168,7 +1168,7 @@
         </div>
 
         <div class="wn-item">
-          <span class="wn-icon">🔄</span>
+          <span class="wn-icon"><span class="ico-inline" data-icon="sync" data-size="16"></span></span>
           <div>
             <div class="wn-title">Cache offline amélioré</div>
             <div class="wn-desc">Tous les modules (mouvements, documents, conformité) sont désormais disponibles hors connexion grâce au Service Worker mis à jour.</div>
@@ -1182,7 +1182,7 @@
         <div class="wn-badge" style="background:#888;font-size:0.7rem;">V1.3</div>
 
         <div class="wn-item">
-          <span class="wn-icon">📸</span>
+          <span class="wn-icon"><span class="ico-inline" data-icon="camera" data-size="16"></span></span>
           <div>
             <div class="wn-title">Photos dans les visites</div>
             <div class="wn-desc">Ajoutez des photos directement lors d'une visite, sauvegardées dans le cloud.</div>
@@ -1190,7 +1190,7 @@
         </div>
 
         <div class="wn-item">
-          <span class="wn-icon">🎙</span>
+          <span class="wn-icon"><span class="ico-inline" data-icon="mic" data-size="16"></span></span>
           <div>
             <div class="wn-title">Mémo vocal</div>
             <div class="wn-desc">Enregistrez une note vocale pendant vos observations. Réécoutez-la depuis le compte rendu.</div>
@@ -1198,7 +1198,7 @@
         </div>
 
         <div class="wn-item">
-          <span class="wn-icon">☁️</span>
+          <span class="wn-icon"><span class="ico-inline" data-icon="envoye" data-size="16"></span></span>
           <div>
             <div class="wn-title">Synchronisation multi-appareils</div>
             <div class="wn-desc">Vos données se synchronisent automatiquement entre tous vos appareils connectés.</div>
@@ -1211,7 +1211,7 @@
 
     <!-- Pied -->
     <div class="modal-footer" style="flex-shrink:0;">
-      <button class="btn-save" style="width:100%;" onclick="dismissWhatsNew()">C'est parti ! 🐝</button>
+      <button class="btn-save" style="width:100%;" onclick="dismissWhatsNew()">C'est parti ! <span class="ico-inline" data-icon="cheptel" data-size="16"></span></button>
     </div>
   </div>
 </div>
@@ -1275,19 +1275,19 @@
 <div class="modal-overlay" id="modal-recap">
   <div class="modal">
     <div class="modal-handle"></div>
-    <div class="modal-title">📋 Récapitulatif déclaration</div>
+    <div class="modal-title"><span class="ico-inline" data-icon="carnet" data-size="16"></span> Récapitulatif déclaration</div>
     <div class="modal-body" style="padding-bottom:8px;">
 
       <!-- Bandeau info -->
       <div style="background:#E3EAF3;border:1px solid #C9D6E6;border-radius:10px;padding:10px 14px;
                   font-size:0.75rem;color:var(--mid);line-height:1.6;margin-bottom:16px;">
-        ℹ️ Récapitulatif à utiliser pour remplir le formulaire en ligne sur
+        <span class="ico-inline" data-icon="info" data-size="16"></span> Récapitulatif à utiliser pour remplir le formulaire en ligne sur
         <strong style="color:#3F6A9E;">MesDémarches</strong> ou à envoyer par email à la DDPP.
       </div>
 
       <!-- Apiculteur -->
       <div style="font-size:0.7rem;font-weight:700;
-                  color:var(--honey);margin-bottom:8px;">👤 Apiculteur</div>
+                  color:var(--honey);margin-bottom:8px;"><span class="ico-inline" data-icon="user" data-size="16"></span> Apiculteur</div>
       <div style="background:var(--card);border-radius:12px;padding:12px 14px;margin-bottom:14px;
                   display:flex;flex-direction:column;gap:7px;">
         <div style="display:flex;justify-content:space-between;font-size:0.82rem;">
@@ -1310,7 +1310,7 @@
 
       <!-- Rucher d'origine -->
       <div style="font-size:0.7rem;font-weight:700;
-                  color:var(--honey);margin-bottom:8px;">📍 Rucher d'origine</div>
+                  color:var(--honey);margin-bottom:8px;"><span class="ico-inline" data-icon="ruchers" data-size="16"></span> Rucher d'origine</div>
       <div style="background:var(--card);border-radius:12px;padding:12px 14px;margin-bottom:14px;
                   display:flex;flex-direction:column;gap:7px;">
         <div style="display:flex;justify-content:space-between;font-size:0.82rem;">
@@ -1329,7 +1329,7 @@
 
       <!-- Mouvement -->
       <div style="font-size:0.7rem;font-weight:700;
-                  color:var(--honey);margin-bottom:8px;">🚛 Mouvement</div>
+                  color:var(--honey);margin-bottom:8px;"><span class="ico-inline" data-icon="transhumance" data-size="16"></span> Mouvement</div>
       <div style="background:var(--card);border-radius:12px;padding:12px 14px;margin-bottom:14px;
                   display:flex;flex-direction:column;gap:7px;">
         <div style="display:flex;justify-content:space-between;font-size:0.82rem;">
@@ -1359,7 +1359,7 @@
       <button class="btn-cancel" onclick="closeModal('modal-recap')">Fermer</button>
       <button class="btn-save" onclick="partagerRecap()"
         style="display:flex;align-items:center;gap:6px;justify-content:center;">
-        <span>📤</span> Partager
+        <span><span class="ico-inline" data-icon="exporter" data-size="16"></span></span> Partager
       </button>
     </div>
   </div>
@@ -1387,7 +1387,7 @@
 <script src="js/firebase-auth.js"></script>
 <script src="js/admin-conformite.js"></script>
 
-<!-- ✏️ Changer WHATS_NEW_VERSION à chaque mise à jour -->
+<!--  Changer WHATS_NEW_VERSION à chaque mise à jour -->
 <script>
   const WHATS_NEW_VERSION = '2.0';
 
@@ -1467,19 +1467,19 @@
 <div class="modal-overlay" id="modal-varroa-guide" onclick="if(event.target===this)closeModal('modal-varroa-guide')">
   <div class="modal" style="max-height:90vh;overflow-y:auto;">
     <div class="modal-handle"></div>
-    <div class="modal-title">🪲 Guide Varroa — GDS Réunion</div>
+    <div class="modal-title"><span class="ico-inline" data-icon="surveiller" data-size="16"></span> Guide Varroa — GDS Réunion</div>
     <div class="modal-body" style="padding-bottom:24px;">
 
       <!-- COMMENT COMPTER — nouveau -->
       <div style="margin-bottom:20px;padding:14px;border-radius:12px;background:#E3EAF3;border:1px solid #C9D6E6;">
-        <div style="font-weight:700;font-size:0.9rem;margin-bottom:12px;color:#3F6A9E;">🧪 Comment effectuer un comptage ?</div>
+        <div style="font-weight:700;font-size:0.9rem;margin-bottom:12px;color:#3F6A9E;"><span class="ico-inline" data-icon="traitement" data-size="16"></span> Comment effectuer un comptage ?</div>
 
         <!-- Méthode -->
         <div style="font-size:0.75rem;font-weight:600;color:#3F6A9E;margin-bottom:8px;">Méthode : lavage au sucre glace</div>
 
         <!-- Matériel -->
         <div style="padding:10px;border-radius:8px;background:#E3EAF3;margin-bottom:12px;">
-          <div style="font-size:0.76rem;font-weight:600;color:var(--mid);margin-bottom:6px;">🛠 Matériel nécessaire</div>
+          <div style="font-size:0.76rem;font-weight:600;color:var(--mid);margin-bottom:6px;"><span class="ico-inline" data-icon="parametres" data-size="16"></span> Matériel nécessaire</div>
           <div style="display:flex;flex-wrap:wrap;gap:5px;">
             <span style="background:#E3EAF3;border-radius:6px;padding:3px 8px;font-size:0.73rem;color:#3F6A9E;">Bocal 500ml avec couvercle grillage maille 3mm</span>
             <span style="background:#E3EAF3;border-radius:6px;padding:3px 8px;font-size:0.73rem;color:#3F6A9E;">Sucre glace (~2 cuillères à soupe)</span>
@@ -1521,18 +1521,18 @@
 
         <!-- Libérer les abeilles -->
         <div style="margin-top:10px;padding:8px 10px;border-radius:8px;background:#E4EEE6;font-size:0.76rem;color:#3D7A4F;">
-          🐝 <strong>Libérer les abeilles</strong> après comptage — ouvrir le bocal devant la ruche, les abeilles encore vivantes retrouveront la colonie.
+          <span class="ico-inline" data-icon="cheptel" data-size="16"></span> <strong>Libérer les abeilles</strong> après comptage — ouvrir le bocal devant la ruche, les abeilles encore vivantes retrouveront la colonie.
         </div>
 
         <!-- Variante alcool -->
         <div style="margin-top:10px;padding:8px 10px;border-radius:8px;background:#EEE4EE;font-size:0.76rem;color:#7A4E7E;">
-          🧴 <strong>Variante alcool</strong> (plus précise, abeilles non récupérables) — remplacer le sucre par de l'alcool à 70°. Agiter 30 sec, tamiser. Même calcul VP100.
+          <span class="ico-inline" data-icon="traitement" data-size="16"></span> <strong>Variante alcool</strong> (plus précise, abeilles non récupérables) — remplacer le sucre par de l'alcool à 70°. Agiter 30 sec, tamiser. Même calcul VP100.
         </div>
       </div>
 
       <!-- Comptages -->
       <div style="margin-bottom:18px;">
-        <div style="font-weight:700;font-size:0.9rem;margin-bottom:10px;color:var(--accent);">🔬 Quand faire des comptages ?</div>
+        <div style="font-weight:700;font-size:0.9rem;margin-bottom:10px;color:var(--accent);"><span class="ico-inline" data-icon="surveiller" data-size="16"></span> Quand faire des comptages ?</div>
         <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;">
           <span style="padding:4px 12px;border-radius:20px;background:#E3EAF3;color:#3F6A9E;font-size:0.78rem;font-weight:600;">Décembre</span>
           <span style="padding:4px 12px;border-radius:20px;background:#E3EAF3;color:#3F6A9E;font-size:0.78rem;font-weight:600;">Mars</span>
@@ -1544,22 +1544,22 @@
 
       <!-- Seuils VP100 -->
       <div style="margin-bottom:18px;">
-        <div style="font-weight:700;font-size:0.9rem;margin-bottom:10px;color:var(--accent);">📊 Interpréter les seuils VP100</div>
+        <div style="font-weight:700;font-size:0.9rem;margin-bottom:10px;color:var(--accent);"><span class="ico-inline" data-icon="documents" data-size="16"></span> Interpréter les seuils VP100</div>
         <div style="display:flex;flex-direction:column;gap:8px;">
           <div style="display:flex;align-items:flex-start;gap:10px;padding:10px;border-radius:10px;background:#E4EEE6;">
-            <span style="font-size:1.1rem;">🟢</span>
+            <span style="font-size:1.1rem;"><span class="ico-inline" data-icon="ras" data-size="16"></span></span>
             <div style="font-size:0.82rem;line-height:1.5;"><strong style="color:#3D7A4F;">VP100 ≤ 3</strong><br><span style="color:var(--mid);">Renouveler le comptage dans 1 mois</span></div>
           </div>
           <div style="display:flex;align-items:flex-start;gap:10px;padding:10px;border-radius:10px;background:#FBEBC4;">
-            <span style="font-size:1.1rem;">🟡</span>
+            <span style="font-size:1.1rem;"><span class="ico-inline" data-icon="surveiller" data-size="16"></span></span>
             <div style="font-size:0.82rem;line-height:1.5;"><strong style="color:#9A5B00;">3 &lt; VP100 ≤ 10</strong><br><span style="color:var(--mid);">Respecter le calendrier de traitement prévu</span></div>
           </div>
           <div style="display:flex;align-items:flex-start;gap:10px;padding:10px;border-radius:10px;background:#2B2118;">
-            <span style="font-size:1.1rem;">🔴</span>
+            <span style="font-size:1.1rem;"><span class="ico-inline" data-icon="alerte" data-size="16"></span></span>
             <div style="font-size:0.82rem;line-height:1.5;"><strong style="color:#B3362B;">VP100 &gt; 10</strong><br><span style="color:var(--mid);">Appliquer dès maintenant le traitement prévu</span></div>
           </div>
           <div style="display:flex;align-items:flex-start;gap:10px;padding:10px;border-radius:10px;background:#2B2118;border:1px solid #EBC9C4;">
-            <span style="font-size:1.1rem;">🚨</span>
+            <span style="font-size:1.1rem;"><span class="ico-inline" data-icon="alerte" data-size="16"></span></span>
             <div style="font-size:0.82rem;line-height:1.5;"><strong style="color:#B3362B;">VP100 &gt; 15</strong><br><span style="color:var(--mid);">Retirer le couvain fermé + traitement flash + recompter</span></div>
           </div>
         </div>
@@ -1567,7 +1567,7 @@
 
       <!-- Produits -->
       <div style="margin-bottom:18px;">
-        <div style="font-weight:700;font-size:0.9rem;margin-bottom:10px;color:var(--accent);">💊 Produits autorisés</div>
+        <div style="font-weight:700;font-size:0.9rem;margin-bottom:10px;color:var(--accent);"><span class="ico-inline" data-icon="traitement" data-size="16"></span> Produits autorisés</div>
         <div style="font-size:0.8rem;line-height:2;color:var(--soft);">
           <div><span style="color:#9A5B00;font-weight:600;">Conventionnel longue durée :</span> Apivar®, Apistan®</div>
           <div><span style="color:#3D7A4F;font-weight:600;">Naturel sans encagement :</span> Apilife Var®, Formic Pro®, Varromed®, Calistrip Biox®</div>
@@ -1577,7 +1577,7 @@
 
       <!-- Protocoles -->
       <div style="margin-bottom:10px;">
-        <div style="font-weight:700;font-size:0.9rem;margin-bottom:10px;color:var(--accent);">📋 Protocoles disponibles</div>
+        <div style="font-weight:700;font-size:0.9rem;margin-bottom:10px;color:var(--accent);"><span class="ico-inline" data-icon="carnet" data-size="16"></span> Protocoles disponibles</div>
         <div style="display:flex;flex-direction:column;gap:8px;">
           <div style="padding:10px;border-radius:10px;background:var(--card);border:1px solid var(--border);">
             <div style="font-weight:600;font-size:0.82rem;margin-bottom:4px;">Classique</div>
@@ -1604,7 +1604,7 @@
 
       <!-- Règles -->
       <div style="padding:12px;border-radius:10px;background:#FBEBC4;border:1px solid #EBCF8A;font-size:0.78rem;color:var(--mid);line-height:1.8;">
-        <div style="font-weight:700;color:#9A5B00;margin-bottom:6px;">⚠️ Règles de base</div>
+        <div style="font-weight:700;color:#9A5B00;margin-bottom:6px;"><span class="ico-inline" data-icon="alerte" data-size="16"></span> Règles de base</div>
         Ne pas traiter en présence de hausse · Ne pas extraire de miel du corps de ruche · Traiter toutes les ruches du rucher en même temps · Max 2 traitements longue durée par an · Alterner les molécules d'une miellée à l'autre
       </div>
 
@@ -1627,21 +1627,21 @@
       <!-- SLIDE 1 — Bienvenue -->
       <div class="tuto-slide" data-slide="0" style="display:flex;">
         <div style="text-align:center;padding:32px 24px 16px;">
-          <div style="font-size:3.5rem;margin-bottom:12px;">🐝</div>
+          <div style="font-size:3.5rem;margin-bottom:12px;"><span class="ico-inline" data-icon="cheptel" data-size="16"></span></div>
           <div style="font-size:1.3rem;font-weight:800;color:var(--honey);margin-bottom:8px;">Bienvenue sur Apicarnet</div>
           <div style="font-size:0.88rem;color:var(--soft);line-height:1.6;margin-bottom:20px;">Votre carnet de bord apicole numérique — remplissez votre compte-rendu <strong style="color:var(--fg);">en quelques secondes juste après chaque visite</strong>, pendant que tout est encore frais.</div>
           <div style="background:#E4EEE6;border-radius:12px;padding:14px 16px;text-align:left;margin-bottom:16px;">
-            <div style="font-size:0.78rem;font-weight:700;color:#3D7A4F;margin-bottom:8px;">✅ Ce que l'app fait pour vous</div>
+            <div style="font-size:0.78rem;font-weight:700;color:#3D7A4F;margin-bottom:8px;"><span class="ico-inline" data-icon="ras" data-size="16"></span> Ce que l'app fait pour vous</div>
             <div style="font-size:0.8rem;color:var(--mid);line-height:2;">
-              📖 Génère votre registre d'élevage légal automatiquement<br>
-              📊 Suit l'état de toutes vos colonies en un coup d'œil<br>
-              💊 Trace vos traitements sanitaires<br>
-              🚛 Gère vos mouvements de transhumance<br>
-              📶 Fonctionne <strong style="color:var(--fg);">hors ligne</strong> sur le terrain
+              <span class="ico-inline" data-icon="registre" data-size="16"></span> Génère votre registre d'élevage légal automatiquement<br>
+              <span class="ico-inline" data-icon="documents" data-size="16"></span> Suit l'état de toutes vos colonies en un coup d'œil<br>
+              <span class="ico-inline" data-icon="traitement" data-size="16"></span> Trace vos traitements sanitaires<br>
+              <span class="ico-inline" data-icon="transhumance" data-size="16"></span> Gère vos mouvements de transhumance<br>
+              <span class="ico-inline" data-icon="envoye" data-size="16"></span> Fonctionne <strong style="color:var(--fg);">hors ligne</strong> sur le terrain
             </div>
           </div>
           <div style="background:#FBEBC4;border-radius:10px;padding:12px 14px;border:1px solid #EBCF8A;text-align:left;">
-            <div style="font-size:0.78rem;font-weight:700;color:#9A5B00;margin-bottom:4px;">⚙️ Première étape importante</div>
+            <div style="font-size:0.78rem;font-weight:700;color:#9A5B00;margin-bottom:4px;"><span class="ico-inline" data-icon="parametres" data-size="16"></span> Première étape importante</div>
             <div style="font-size:0.78rem;color:var(--mid);line-height:1.6;">Renseignez votre <strong style="color:var(--fg);">NAPI, nom et adresse</strong> dans Paramètres — ces infos apparaissent dans votre registre légal.</div>
           </div>
         </div>
@@ -1650,21 +1650,21 @@
       <!-- SLIDE 2 — Ruchers & colonies -->
       <div class="tuto-slide" data-slide="1" style="display:none;">
         <div style="padding:28px 24px 16px;">
-          <div style="text-align:center;font-size:2.8rem;margin-bottom:10px;">📍</div>
+          <div style="text-align:center;font-size:2.8rem;margin-bottom:10px;"><span class="ico-inline" data-icon="ruchers" data-size="16"></span></div>
           <div style="text-align:center;font-size:1.1rem;font-weight:800;color:var(--honey);margin-bottom:6px;">Ruchers & Colonies</div>
           <div style="text-align:center;font-size:0.82rem;color:var(--soft);margin-bottom:18px;">La base de toutes vos données</div>
 
           <div style="display:flex;flex-direction:column;gap:10px;">
             <div style="background:var(--card);border-radius:10px;padding:12px 14px;border:1px solid var(--border);">
-              <div style="font-size:0.82rem;font-weight:700;color:var(--fg);margin-bottom:4px;">📍 Créer un rucher</div>
+              <div style="font-size:0.82rem;font-weight:700;color:var(--fg);margin-bottom:4px;"><span class="ico-inline" data-icon="ruchers" data-size="16"></span> Créer un rucher</div>
               <div style="font-size:0.78rem;color:var(--soft);line-height:1.6;">Donnez-lui un nom, une zone (Bas / Mi-pentes / Hauts), et ajoutez sa position GPS. Chaque rucher regroupe toutes ses visites, traitements et mouvements.</div>
             </div>
             <div style="background:var(--card);border-radius:10px;padding:12px 14px;border:1px solid var(--border);">
-              <div style="font-size:0.82rem;font-weight:700;color:var(--fg);margin-bottom:4px;">🐝 Ruches & ruchettes</div>
+              <div style="font-size:0.82rem;font-weight:700;color:var(--fg);margin-bottom:4px;"><span class="ico-inline" data-icon="cheptel" data-size="16"></span> Ruches & ruchettes</div>
               <div style="font-size:0.78rem;color:var(--soft);line-height:1.6;">Indiquez le nombre de ruches et ruchettes par rucher. Ces chiffres alimentent automatiquement votre registre d'élevage et votre déclaration annuelle.</div>
             </div>
             <div style="background:#E3EAF3;border-radius:10px;padding:10px 14px;border:1px solid #C9D6E6;">
-              <div style="font-size:0.76rem;color:#3F6A9E;line-height:1.6;">💡 <strong>Plus votre rucher est bien renseigné, plus votre registre légal sera complet.</strong> Le GPS permet aussi de valider vos mouvements de transhumance.</div>
+              <div style="font-size:0.76rem;color:#3F6A9E;line-height:1.6;"><span class="ico-inline" data-icon="info" data-size="16"></span> <strong>Plus votre rucher est bien renseigné, plus votre registre légal sera complet.</strong> Le GPS permet aussi de valider vos mouvements de transhumance.</div>
             </div>
           </div>
         </div>
@@ -1673,23 +1673,23 @@
       <!-- SLIDE 3 — Journal de visites -->
       <div class="tuto-slide" data-slide="2" style="display:none;">
         <div style="padding:28px 24px 16px;">
-          <div style="text-align:center;font-size:2.8rem;margin-bottom:10px;">📋</div>
+          <div style="text-align:center;font-size:2.8rem;margin-bottom:10px;"><span class="ico-inline" data-icon="carnet" data-size="16"></span></div>
           <div style="text-align:center;font-size:1.1rem;font-weight:800;color:var(--honey);margin-bottom:6px;">Journal de visites</div>
           <div style="text-align:center;font-size:0.82rem;color:var(--soft);margin-bottom:18px;">Enregistrez une visite en moins de 5 minutes</div>
 
           <div style="display:flex;flex-direction:column;gap:10px;">
             <div style="background:var(--card);border-radius:10px;padding:12px 14px;border:1px solid var(--border);">
-              <div style="font-size:0.82rem;font-weight:700;color:var(--fg);margin-bottom:6px;">🏷 Saisie par tap à la fin de la visite</div>
+              <div style="font-size:0.82rem;font-weight:700;color:var(--fg);margin-bottom:6px;"> Saisie par tap à la fin de la visite</div>
               <div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:6px;">
-                <span style="background:#E4EEE6;border-radius:6px;padding:3px 9px;font-size:0.73rem;color:#3D7A4F;">💪 État du rucher</span>
-                <span style="background:#EEE4EE;border-radius:6px;padding:3px 9px;font-size:0.73rem;color:#7A4E7E;">👑 État reine</span>
-                <span style="background:#FBEBC4;border-radius:6px;padding:3px 9px;font-size:0.73rem;color:#9A5B00;">🔧 Interventions</span>
-                <span style="background:#E3EAF3;border-radius:6px;padding:3px 9px;font-size:0.73rem;color:#3F6A9E;">💬 Observations</span>
+                <span style="background:#E4EEE6;border-radius:6px;padding:3px 9px;font-size:0.73rem;color:#3D7A4F;"> État du rucher</span>
+                <span style="background:#EEE4EE;border-radius:6px;padding:3px 9px;font-size:0.73rem;color:#7A4E7E;"><span class="ico-inline" data-icon="reine" data-size="16"></span> État reine</span>
+                <span style="background:#FBEBC4;border-radius:6px;padding:3px 9px;font-size:0.73rem;color:#9A5B00;"><span class="ico-inline" data-icon="parametres" data-size="16"></span> Interventions</span>
+                <span style="background:#E3EAF3;border-radius:6px;padding:3px 9px;font-size:0.73rem;color:#3F6A9E;"><span class="ico-inline" data-icon="note" data-size="16"></span> Observations</span>
               </div>
               <div style="font-size:0.76rem;color:var(--soft);line-height:1.5;">Tout par tap, en quelques secondes, juste après avoir fermé la ruche.</div>
             </div>
             <div style="background:#E3EAF3;border-radius:10px;padding:12px 14px;border:1px solid #C9D6E6;">
-              <div style="font-size:0.82rem;font-weight:700;color:#3F6A9E;margin-bottom:4px;">🔄 Le bon workflow terrain</div>
+              <div style="font-size:0.82rem;font-weight:700;color:#3F6A9E;margin-bottom:4px;"><span class="ico-inline" data-icon="sync" data-size="16"></span> Le bon workflow terrain</div>
               <div style="font-size:0.76rem;color:var(--mid);line-height:1.8;">
                 1️⃣ Vous visitez le rucher<br>
                 2️⃣ <strong style="color:var(--fg);">Fin de visite</strong> → vous ouvrez l'app et saisissez le compte-rendu<br>
@@ -1697,7 +1697,7 @@
               </div>
             </div>
             <div style="background:#E4EEE6;border-radius:10px;padding:10px 14px;border:1px solid #C9DDCD;">
-              <div style="font-size:0.76rem;color:#3D7A4F;line-height:1.6;">📖 Chaque visite alimente automatiquement votre registre d'élevage légal. <strong style="color:var(--fg);">Zéro ressaisie.</strong></div>
+              <div style="font-size:0.76rem;color:#3D7A4F;line-height:1.6;"><span class="ico-inline" data-icon="registre" data-size="16"></span> Chaque visite alimente automatiquement votre registre d'élevage légal. <strong style="color:var(--fg);">Zéro ressaisie.</strong></div>
             </div>
           </div>
         </div>
@@ -1706,21 +1706,21 @@
       <!-- SLIDE 4 — Sanitaire & varroa -->
       <div class="tuto-slide" data-slide="3" style="display:none;">
         <div style="padding:28px 24px 16px;">
-          <div style="text-align:center;font-size:2.8rem;margin-bottom:10px;">💊</div>
+          <div style="text-align:center;font-size:2.8rem;margin-bottom:10px;"><span class="ico-inline" data-icon="traitement" data-size="16"></span></div>
           <div style="text-align:center;font-size:1.1rem;font-weight:800;color:var(--honey);margin-bottom:6px;">Sanitaire & Varroa</div>
           <div style="text-align:center;font-size:0.82rem;color:var(--soft);margin-bottom:18px;">Suivi légal de vos traitements</div>
 
           <div style="display:flex;flex-direction:column;gap:10px;">
             <div style="background:var(--card);border-radius:10px;padding:12px 14px;border:1px solid var(--border);">
-              <div style="font-size:0.82rem;font-weight:700;color:var(--fg);margin-bottom:4px;">💉 Enregistrer un traitement</div>
+              <div style="font-size:0.82rem;font-weight:700;color:var(--fg);margin-bottom:4px;"><span class="ico-inline" data-icon="traitement" data-size="16"></span> Enregistrer un traitement</div>
               <div style="font-size:0.76rem;color:var(--soft);line-height:1.6;">Produit (Apivar®, Oxybee®…), date de pose, durée, motif. Le traitement apparaît dans la Section 4 de votre registre sanitaire — <strong style="color:var(--fg);">obligatoire légalement.</strong></div>
             </div>
             <div style="background:#FBEBC4;border-radius:10px;padding:12px 14px;border:1px solid #EBCF8A;">
-              <div style="font-size:0.82rem;font-weight:700;color:#9A5B00;margin-bottom:4px;">🔬 Guide Varroa intégré</div>
-              <div style="font-size:0.76rem;color:var(--mid);line-height:1.6;">Appuyez sur <em>"ℹ️ Guide varroa"</em> pour accéder au protocole de comptage étape par étape, aux seuils VP100 et aux produits autorisés — directement depuis le terrain.</div>
+              <div style="font-size:0.82rem;font-weight:700;color:#9A5B00;margin-bottom:4px;"><span class="ico-inline" data-icon="surveiller" data-size="16"></span> Guide Varroa intégré</div>
+              <div style="font-size:0.76rem;color:var(--mid);line-height:1.6;">Appuyez sur <em>"<span class="ico-inline" data-icon="info" data-size="16"></span> Guide varroa"</em> pour accéder au protocole de comptage étape par étape, aux seuils VP100 et aux produits autorisés — directement depuis le terrain.</div>
             </div>
             <div style="background:#E3EAF3;border-radius:10px;padding:10px 14px;border:1px solid #C9D6E6;">
-              <div style="font-size:0.76rem;color:#3F6A9E;line-height:1.6;">📅 L'app vous rappelle automatiquement les périodes de comptage : Décembre, Mars, Mai, Juillet.</div>
+              <div style="font-size:0.76rem;color:#3F6A9E;line-height:1.6;"><span class="ico-inline" data-icon="calendar" data-size="16"></span> L'app vous rappelle automatiquement les périodes de comptage : Décembre, Mars, Mai, Juillet.</div>
             </div>
           </div>
         </div>
@@ -1729,21 +1729,21 @@
       <!-- SLIDE 5 — Transhumance -->
       <div class="tuto-slide" data-slide="4" style="display:none;">
         <div style="padding:28px 24px 16px;">
-          <div style="text-align:center;font-size:2.8rem;margin-bottom:10px;">🚛</div>
+          <div style="text-align:center;font-size:2.8rem;margin-bottom:10px;"><span class="ico-inline" data-icon="transhumance" data-size="16"></span></div>
           <div style="text-align:center;font-size:1.1rem;font-weight:800;color:var(--honey);margin-bottom:6px;">Mouvements de colonies</div>
           <div style="text-align:center;font-size:0.82rem;color:var(--soft);margin-bottom;18px;">Transhumance tracée et conforme</div>
 
           <div style="display:flex;flex-direction:column;gap:10px;margin-top:8px;">
             <div style="background:var(--card);border-radius:10px;padding:12px 14px;border:1px solid var(--border);">
-              <div style="font-size:0.82rem;font-weight:700;color:var(--fg);margin-bottom:4px;">📍 GPS automatique</div>
+              <div style="font-size:0.82rem;font-weight:700;color:var(--fg);margin-bottom:4px;"><span class="ico-inline" data-icon="ruchers" data-size="16"></span> GPS automatique</div>
               <div style="font-size:0.76rem;color:var(--soft);line-height:1.6;">L'origine et la destination sont pré-remplies depuis vos ruchers. Les coordonnées GPS sont capturées automatiquement — utile pour justifier vos déplacements.</div>
             </div>
             <div style="background:var(--card);border-radius:10px;padding:12px 14px;border:1px solid var(--border);">
-              <div style="font-size:0.82rem;font-weight:700;color:var(--fg);margin-bottom:4px;">📋 Récapitulatif déclaration</div>
+              <div style="font-size:0.82rem;font-weight:700;color:var(--fg);margin-bottom:4px;"><span class="ico-inline" data-icon="carnet" data-size="16"></span> Récapitulatif déclaration</div>
               <div style="font-size:0.76rem;color:var(--soft);line-height:1.6;">Chaque mouvement génère un récapitulatif que vous pouvez <strong style="color:var(--fg);">partager directement</strong> depuis votre téléphone — par email, WhatsApp ou impression.</div>
             </div>
             <div style="background:#E4EEE6;border-radius:10px;padding:10px 14px;border:1px solid #C9DDCD;">
-              <div style="font-size:0.76rem;color:#3D7A4F;line-height:1.6;">📖 Tous les mouvements apparaissent en Section 5 de votre registre d'élevage. <strong style="color:var(--fg);">Aucune ressaisie nécessaire.</strong></div>
+              <div style="font-size:0.76rem;color:#3D7A4F;line-height:1.6;"><span class="ico-inline" data-icon="registre" data-size="16"></span> Tous les mouvements apparaissent en Section 5 de votre registre d'élevage. <strong style="color:var(--fg);">Aucune ressaisie nécessaire.</strong></div>
             </div>
           </div>
         </div>
@@ -1752,12 +1752,12 @@
       <!-- SLIDE 6 — Registre & export -->
       <div class="tuto-slide" data-slide="5" style="display:none;">
         <div style="text-align:center;padding:28px 24px 16px;">
-          <div style="font-size:3rem;margin-bottom:10px;">📖</div>
+          <div style="font-size:3rem;margin-bottom:10px;"><span class="ico-inline" data-icon="registre" data-size="16"></span></div>
           <div style="font-size:1.1rem;font-weight:800;color:var(--honey);margin-bottom:6px;">Registre d'élevage en 1 clic</div>
           <div style="font-size:0.82rem;color:var(--soft);margin-bottom:18px;">Toutes vos données → PDF légal conforme</div>
 
           <div style="background:#E4EEE6;border-radius:12px;padding:14px 16px;text-align:left;margin-bottom:12px;">
-            <div style="font-size:0.78rem;font-weight:700;color:#3D7A4F;margin-bottom:8px;">📄 5 sections générées automatiquement</div>
+            <div style="font-size:0.78rem;font-weight:700;color:#3D7A4F;margin-bottom:8px;"><span class="ico-inline" data-icon="documents" data-size="16"></span> 5 sections générées automatiquement</div>
             <div style="font-size:0.78rem;color:var(--mid);line-height:2;">
               1️⃣ Identification de l'apiculteur (NAPI, adresse)<br>
               2️⃣ Inventaire de vos ruchers<br>
@@ -1767,15 +1767,15 @@
             </div>
           </div>
           <div style="background:#FBEBC4;border-radius:10px;padding:10px 14px;border:1px solid #EBCF8A;text-align:left;margin-bottom:16px;">
-            <div style="font-size:0.76rem;color:#9A5B00;line-height:1.6;">⚖️ Conforme à l'arrêté ministériel du 11 août 1994 · Exportable en PDF · Partageable directement depuis votre téléphone</div>
+            <div style="font-size:0.76rem;color:#9A5B00;line-height:1.6;"><span class="ico-inline" data-icon="reglementation" data-size="16"></span> Conforme à l'arrêté ministériel du 11 août 1994 · Exportable en PDF · Partageable directement depuis votre téléphone</div>
           </div>
 
-          <div style="font-size:1.6rem;margin-bottom:8px;">🎉</div>
+          <div style="font-size:1.6rem;margin-bottom:8px;"></div>
           <div style="font-size:0.88rem;font-weight:700;color:var(--fg);margin-bottom:4px;">Vous êtes prêt !</div>
           <div style="font-size:0.78rem;color:var(--soft);margin-bottom:20px;">Commencez par renseigner vos paramètres, puis créez votre premier rucher.</div>
 
           <button onclick="closeTutoriel(true)" style="width:100%;padding:14px;border-radius:12px;background:var(--honey);color:#fff;font-weight:800;font-size:0.95rem;border:none;cursor:pointer;">
-            ⚙️ Configurer mon profil →
+            <span class="ico-inline" data-icon="parametres" data-size="16"></span> Configurer mon profil →
           </button>
         </div>
       </div>
@@ -1831,7 +1831,7 @@
 <div class="modal-overlay" id="modal-cgu" onclick="if(event.target===this)closeModal('modal-cgu')">
   <div class="modal" style="max-height:90vh;overflow-y:auto;">
     <div class="modal-handle"></div>
-    <div class="modal-title">📄 CGU &amp; Confidentialité</div>
+    <div class="modal-title"><span class="ico-inline" data-icon="documents" data-size="16"></span> CGU &amp; Confidentialité</div>
     <div class="modal-body" style="font-size:0.82rem;line-height:1.7;color:var(--soft);padding-bottom:24px;">
 
       <div style="font-weight:700;color:var(--text);margin-bottom:6px;">1. Éditeur</div>
@@ -1888,9 +1888,9 @@
   <div class="form-row" style="margin-top:10px;">
     <label class="form-label">Zone</label>
     <select class="form-select" id="ps-zone">
-      <option value="Bas">🏖 Bas (0–400m)</option>
-      <option value="Mi-pente">⛰ Mi-pente (400–800m)</option>
-      <option value="Haut">🏔 Haut – Cilaos (800m+)</option>
+      <option value="Bas"> Bas (0–400m)</option>
+      <option value="Mi-pente"> Mi-pente (400–800m)</option>
+      <option value="Haut"> Haut – Cilaos (800m+)</option>
     </select>
   </div>
   <div class="form-row" style="margin-top:10px;">
@@ -1912,7 +1912,7 @@
   </div>
   <div class="ps-actions">
     <button class="ps-btn-save" id="ps-save-btn" onclick="savePlanteSheet()">✓ Enregistrer</button>
-    <button class="ps-btn-delete" onclick="deletePlanteSheet()">🗑</button>
+    <button class="ps-btn-delete" onclick="deletePlanteSheet()"><span class="ico-inline" data-icon="supprimer" data-size="16"></span></button>
   </div>
 </div>
 </body>
