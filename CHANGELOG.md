@@ -4,6 +4,15 @@
 
 ## Bêta — Charte Apicarnet
 
+### Lot 5 : animations (bêta uniquement)
+- À l'enregistrement, **l'alvéole se remplit de miel**, puis le message apparaît.
+- Boutons : léger enfoncement à l'appui. Onglets : fondu rapide. Fiches : montée depuis le bas.
+- Bouton + : les choix se déplient. Alertes : léger battement, une seule fois.
+- Mon cheptel : les **chiffres clés défilent** jusqu'à leur valeur à l'ouverture.
+- Premier lancement : le logotype s'écrit, une seule fois.
+- Le réglage « réduire les animations » du téléphone est respecté.
+- Service worker v4.5.0.
+
 ### Lot 4 : composants et textes (bêta uniquement)
 - **Confirmations** : carte papier avec l'alvéole Apicarnet (miel pour une réussite, rouge quand il manque quelque chose) et petite vibration à la validation.
 - **Bandeau de connexion** : « Hors connexion, tout est gardé. » puis « Tout est envoyé. » au retour du réseau.

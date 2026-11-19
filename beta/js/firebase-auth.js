@@ -16,6 +16,7 @@ const _LS_MESSAGES = [
 let _lsInterval = null;
 
 function showLoadingScreen(firstMsg) {
+  _logoIntro();
   const el = document.getElementById('loading-screen');
   if (!el) return;
   el.classList.remove('ls-fade-out');
@@ -222,3 +223,15 @@ auth.onAuthStateChanged(async (user) => {
     showLoginScreen();
   }
 });
+
+
+/* Premier lancement : le logotype s'écrit une seule fois */
+function _logoIntro() {
+  try {
+    if (localStorage.getItem('apicarnet-intro')) return;
+    const logo = document.querySelector('.ls-logo');
+    if (logo) logo.classList.add('ls-intro');
+    localStorage.setItem('apicarnet-intro', '1');
+  } catch (e) {}
+}
+document.addEventListener('DOMContentLoaded', _logoIntro);
