@@ -2,6 +2,17 @@
 
 ---
 
+## Bêta — Charte Apicarnet
+
+### Lot 1 : couleurs, polices, nom (bêta uniquement)
+- **Nouveau nom : Apicarnet**, « Le carnet de rucher des apiculteurs ». Logotype « apicarnet. » sur l'écran de chargement et de connexion, nouvelle marque « a. » dans la barre du haut, nouvelles icônes d'appli (192, 512, maskable, Apple).
+- **Palette Apicarnet** : fond cire, cartes papier, kraft pour les bordures, miel foncé assombri pour la lisibilité au soleil (4,86:1), couleurs d'état et d'intervention unifiées dans tout le code (CSS, écrans, PDF du registre).
+- **Polices auto-hébergées** (Bricolage Grotesque, Lexend) : elles s'affichent aussi hors réseau, plus d'appel à Google Fonts.
+- Service worker v4.1.0 : nouveaux fichiers mis en cache.
+- Les données et identifiants internes ne changent pas.
+
+---
+
 ## V2.0 — Roadmap (en cours)
 
 ### ✅ Livré

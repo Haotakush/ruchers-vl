@@ -114,15 +114,15 @@ async function doForgotPassword() {
   const msgEl = document.getElementById('forgot-msg');
   const btn   = document.getElementById('forgot-btn');
   msgEl.textContent = '';
-  if (!email) { msgEl.style.color = '#EF5350'; msgEl.textContent = 'Veuillez saisir votre adresse email.'; return; }
+  if (!email) { msgEl.style.color = '#B3362B'; msgEl.textContent = 'Veuillez saisir votre adresse email.'; return; }
   btn.disabled = true; btn.textContent = 'Envoi…';
   try {
     await auth.sendPasswordResetEmail(email);
-    msgEl.style.color = '#4CAF50';
+    msgEl.style.color = '#3D7A4F';
     msgEl.textContent = '✅ Email envoyé ! Vérifiez votre boîte mail.';
     btn.textContent   = 'Email envoyé ✓';
   } catch (err) {
-    msgEl.style.color = '#EF5350';
+    msgEl.style.color = '#B3362B';
     const messages = {
       'auth/user-not-found': 'Aucun compte avec cet email.',
       'auth/invalid-email':  'Adresse email invalide.',

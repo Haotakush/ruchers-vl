@@ -4,15 +4,16 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="Ruchers VL">
-  <meta name="theme-color" content="#FFFFFF">
-  <title>Ruchers VL</title>
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Apicarnet">
+  <meta name="theme-color" content="#F7F2E8">
+  <title>Apicarnet</title>
+  <meta name="description" content="Apicarnet, le carnet de rucher des apiculteurs.">
   <link rel="manifest" href="manifest.json">
-  <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%231A1208'/><text y='.9em' font-size='72' x='12'>🐝</text></svg>">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600;700&family=Bricolage+Grotesque:opsz,wght@12..96,500..800&display=swap" rel="stylesheet">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <link rel="icon" type="image/png" href="icons/icon-192.png">
+  <link rel="preload" href="fonts/lexend.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="fonts/bricolage-grotesque.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
@@ -27,7 +28,7 @@
     #loading-screen {
       position: fixed;
       inset: 0;
-      background: #F4F3EF;
+      background: #F7F2E8;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -46,57 +47,11 @@
       gap: 10px;
       padding: 0 24px;
     }
-    /* Conteneur de l'orbite */
-    .ls-bee-wrap {
-      position: relative;
-      width: 96px;
-      height: 96px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-bottom: 6px;
-    }
-    /* Pot de miel au centre qui pulse */
-    .ls-center {
-      font-size: 2.2rem;
-      animation: ls-center-pulse 2s ease-in-out infinite;
-      line-height: 1;
-    }
-    /* Bras qui tourne */
-    .ls-orbit {
-      position: absolute;
-      inset: 0;
-      animation: ls-spin 2.2s linear infinite;
-    }
-    /* L'abeille, en haut du bras, qui contre-tourne pour rester droite */
-    .ls-bee {
-      position: absolute;
-      top: 2px;
-      left: 50%;
-      font-size: 1.6rem;
-      line-height: 1;
-      transform: translateX(-50%);
-      animation: ls-counter 2.2s linear infinite;
-      filter: drop-shadow(0 2px 6px rgba(212,137,42,0.5));
-    }
-    @keyframes ls-spin {
-      to { transform: rotate(360deg); }
-    }
-    @keyframes ls-counter {
-      to { transform: translateX(-50%) rotate(-360deg); }
-    }
-    @keyframes ls-center-pulse {
-      0%, 100% { transform: scale(1);    opacity: 0.85; }
-      50%       { transform: scale(1.12); opacity: 1;    }
-    }
-    /* Titre */
-    .ls-title {
-      font-family: var(--font-display);
-      font-size: 1.9rem;
-      font-weight: 700;
-      color: #2B2118;
-      letter-spacing: 0.02em;
-      margin-top: 4px;
+    /* Logotype Apicarnet */
+    .ls-logo {
+      width: 220px;
+      height: auto;
+      margin-bottom: 8px;
     }
     /* Message animé */
     .ls-msg {
@@ -135,11 +90,11 @@
       align-items: center;
       justify-content: space-between;
       padding: 10px 8px;
-      border-bottom: 1px solid var(--border, #E8DCC8);
+      border-bottom: 1px solid var(--border, #EFE6D4);
       cursor: pointer;
       transition: background .15s;
     }
-    .cal-plant-row:active { background: var(--honey-pale, #FFF8E7); }
+    .cal-plant-row:active { background: var(--honey-pale, #FBEBC4); }
     .cal-plant-info { display: flex; flex-direction: column; gap: 2px; min-width: 0; flex: 1; }
     .cal-plant-name { font-size: .85rem; font-weight: 500; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .cal-plant-zone { font-size: .65rem; color: var(--mid); }
@@ -177,7 +132,7 @@
     }
     .gantt-row { cursor: pointer; }
     .gantt-row:active .gantt-cell,
-    .gantt-row:active .gantt-plant-name { background: var(--honey-pale, #FFF8E7) !important; }
+    .gantt-row:active .gantt-plant-name { background: var(--honey-pale, #FBEBC4) !important; }
     .gantt-plant-name {
       padding: 5px 8px; font-size: 0.72rem; color: var(--text);
       position: sticky; left: 0; background: var(--card); z-index: 1;
@@ -189,21 +144,21 @@
       vertical-align: middle; position: relative;
     }
     .gantt-cell-fill { display: block; height: 14px; margin: 0 2px; border-radius: 3px; }
-    .gantt-cur-col { box-shadow: inset 0 0 0 1px rgba(212,130,10,0.3); }
+    .gantt-cur-col { box-shadow: inset 0 0 0 1px rgba(154, 91, 0,0.3); }
 
     /* Bottom sheet plante */
     #plante-sheet-overlay {
       display: none;
       position: fixed;
       inset: 0;
-      background: rgba(0,0,0,.4);
+      background: rgba(43, 33, 24,.4);
       z-index: 1000;
     }
     #plante-sheet {
       position: fixed;
       bottom: -100%;
       left: 0; right: 0;
-      background: var(--bg, #FAF6EF);
+      background: var(--bg, #F7F2E8);
       border-radius: 20px 20px 0 0;
       padding: 20px 20px 40px;
       z-index: 1001;
@@ -218,7 +173,7 @@
       padding: 12px 4px;
       border: 2px solid var(--border);
       border-radius: 10px;
-      background: var(--cream, #F5F0E5);
+      background: var(--cream, #F7F2E8);
       color: var(--mid);
       font-size: .82rem;
       font-weight: 600;
@@ -243,13 +198,7 @@
      ============================================================ -->
 <div id="loading-screen">
   <div class="ls-content">
-    <div class="ls-bee-wrap">
-      <span class="ls-center">🍯</span>
-      <div class="ls-orbit">
-        <span class="ls-bee">🐝</span>
-      </div>
-    </div>
-    <div class="ls-title">Ruchers VL</div>
+    <img class="ls-logo" src="icons/logotype.svg" alt="Apicarnet" width="220" height="64">
     <div class="ls-msg" id="ls-msg">Chargement…</div>
     <div class="ls-dots">
       <span></span><span></span><span></span>
@@ -263,9 +212,8 @@
      ============================================================ -->
 <div id="login-screen" style="display:none;">
   <div class="login-card">
-    <div class="login-emoji">🐝</div>
-    <h1>Ruchers VL</h1>
-    <p class="login-subtitle">Votre carnet d'apiculteur numérique</p>
+    <h1 class="login-logo"><img src="icons/logotype.svg" alt="Apicarnet" width="200" height="58"></h1>
+    <p class="login-subtitle">Le carnet de rucher des apiculteurs</p>
 
     <!-- Formulaire connexion -->
     <div id="login-form">
@@ -329,7 +277,7 @@
   <div class="topbar-brand">
     <span class="topbar-mark" data-brand data-size="40"></span>
     <div>
-      <h1 id="topbar-title">Ruchers VL</h1>
+      <h1 id="topbar-title">Apicarnet</h1>
       <p  id="topbar-sub">Chargement…</p>
     </div>
   </div>
@@ -422,13 +370,13 @@
     </div>
 
     <!-- Bannière rappel comptage (affichée dynamiquement) -->
-    <div id="comptage-reminder" style="display:none;background:#EAF1F9;border:1px solid #D5E1EF;border-radius:12px;padding:12px 14px;margin-bottom:12px;display:none;align-items:center;gap:10px;">
-      <span style="color:#1F5D99;" data-icon="flask" data-size="22"></span>
+    <div id="comptage-reminder" style="display:none;background:#E3EAF3;border:1px solid #C9D6E6;border-radius:12px;padding:12px 14px;margin-bottom:12px;display:none;align-items:center;gap:10px;">
+      <span style="color:#3F6A9E;" data-icon="flask" data-size="22"></span>
       <div style="flex:1;font-size:0.82rem;line-height:1.5;">
-        <strong style="color:#1F5D99;" id="comptage-reminder-title">Période de comptage varroa</strong><br>
+        <strong style="color:#3F6A9E;" id="comptage-reminder-title">Période de comptage varroa</strong><br>
         <span style="color:var(--mid);" id="comptage-reminder-text">Pensez à effectuer un comptage ce mois-ci.</span>
       </div>
-      <button onclick="openVarroaGuide()" style="flex-shrink:0;padding:5px 10px;border-radius:8px;border:none;background:#D5E1EF;color:#1F5D99;font-size:0.75rem;font-weight:600;cursor:pointer;">Guide</button>
+      <button onclick="openVarroaGuide()" style="flex-shrink:0;padding:5px 10px;border-radius:8px;border:none;background:#C9D6E6;color:#3F6A9E;font-size:0.75rem;font-weight:600;cursor:pointer;">Guide</button>
     </div>
 
     <!-- Bouton guide varroa -->
@@ -477,11 +425,11 @@
 
     <div id="map" style="width:100%; height:100%;"></div>
     <div class="map-legend" id="map-legend">
-      <div class="legend-item"><div class="legend-dot" style="background:#4CAF50"></div>Bas — OK</div>
-      <div class="legend-item"><div class="legend-dot" style="background:#8F5500"></div>Mi-pentes — OK</div>
-      <div class="legend-item"><div class="legend-dot" style="background:#1E88E5"></div>Hauts — OK</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#3D7A4F"></div>Bas — OK</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#9A5B00"></div>Mi-pentes — OK</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#3F6A9E"></div>Hauts — OK</div>
       <div class="legend-item"><div class="legend-dot" style="background:#B3362B"></div>Urgent &gt;30j</div>
-      <div class="legend-item"><div class="legend-dot" style="background:#FF9800"></div>Attention &gt;14j</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#B4561A"></div>Attention &gt;14j</div>
     </div>
   </div>
 
@@ -520,7 +468,7 @@
     <div class="menu-group" style="margin-top:22px;">
       <button class="menu-row menu-danger" onclick="confirmDeleteAccount()"><span class="menu-ico ico-red" data-icon="trash" data-size="18"></span><span class="menu-label">Supprimer mon compte</span></button>
     </div>
-    <div class="app-version">Ruchers VL · bêta</div>
+    <div class="app-version">Apicarnet · bêta</div>
   </div>
 
   <!-- PARAMÈTRES -->
@@ -574,7 +522,7 @@
     </div>
 
     <!-- Carte des mouvements -->
-    <div id="mouv-map-container" style="display:none;margin:0 0 16px;border-radius:14px;overflow:hidden;border:1px solid rgba(212,130,10,0.2);">
+    <div id="mouv-map-container" style="display:none;margin:0 0 16px;border-radius:14px;overflow:hidden;border:1px solid rgba(154, 91, 0,0.2);">
       <div id="mouv-map" style="height:220px;width:100%;"></div>
     </div>
     <!-- Journal des mouvements (registre légal) -->
@@ -1154,7 +1102,7 @@
     </div>
     <div class="modal-footer">
       <button class="btn-cancel" onclick="confirmNo()">Annuler</button>
-      <button class="btn-save" style="background:linear-gradient(135deg,#E53935,#C62828);" onclick="confirmYes()">🗑 Supprimer</button>
+      <button class="btn-save" style="background:linear-gradient(135deg,#B3362B,#B3362B);" onclick="confirmYes()">🗑 Supprimer</button>
     </div>
   </div>
 </div>
@@ -1185,7 +1133,7 @@
 
       <!-- === V2.0 === -->
       <div class="wn-section">
-        <div class="wn-badge" style="background:#D4892A;">V2.0</div>
+        <div class="wn-badge" style="background:#9A5B00;">V2.0</div>
 
         <div class="wn-item">
           <span class="wn-icon">🗺️</span>
@@ -1286,10 +1234,10 @@
   left:50%;
   transform:translateX(-50%);
   background:#2B2118;
-  color:#FFFFFF;
+  color:#FFFDF8;
   padding:12px 16px;
   border-radius:16px;
-  box-shadow:0 4px 24px rgba(0,0,0,0.45);
+  box-shadow:0 4px 24px rgba(43, 33, 24,0.45);
   z-index:9999;
   align-items:center;
   gap:12px;
@@ -1331,10 +1279,10 @@
     <div class="modal-body" style="padding-bottom:8px;">
 
       <!-- Bandeau info -->
-      <div style="background:#EAF1F9;border:1px solid #D5E1EF;border-radius:10px;padding:10px 14px;
+      <div style="background:#E3EAF3;border:1px solid #C9D6E6;border-radius:10px;padding:10px 14px;
                   font-size:0.75rem;color:var(--mid);line-height:1.6;margin-bottom:16px;">
         ℹ️ Récapitulatif à utiliser pour remplir le formulaire en ligne sur
-        <strong style="color:#1F5D99;">MesDémarches</strong> ou à envoyer par email à la DDPP.
+        <strong style="color:#3F6A9E;">MesDémarches</strong> ou à envoyer par email à la DDPP.
       </div>
 
       <!-- Apiculteur -->
@@ -1523,21 +1471,21 @@
     <div class="modal-body" style="padding-bottom:24px;">
 
       <!-- COMMENT COMPTER — nouveau -->
-      <div style="margin-bottom:20px;padding:14px;border-radius:12px;background:#EAF1F9;border:1px solid #D5E1EF;">
-        <div style="font-weight:700;font-size:0.9rem;margin-bottom:12px;color:#1F5D99;">🧪 Comment effectuer un comptage ?</div>
+      <div style="margin-bottom:20px;padding:14px;border-radius:12px;background:#E3EAF3;border:1px solid #C9D6E6;">
+        <div style="font-weight:700;font-size:0.9rem;margin-bottom:12px;color:#3F6A9E;">🧪 Comment effectuer un comptage ?</div>
 
         <!-- Méthode -->
-        <div style="font-size:0.75rem;font-weight:600;color:#1F5D99;margin-bottom:8px;">Méthode : lavage au sucre glace</div>
+        <div style="font-size:0.75rem;font-weight:600;color:#3F6A9E;margin-bottom:8px;">Méthode : lavage au sucre glace</div>
 
         <!-- Matériel -->
-        <div style="padding:10px;border-radius:8px;background:#EAF1F9;margin-bottom:12px;">
+        <div style="padding:10px;border-radius:8px;background:#E3EAF3;margin-bottom:12px;">
           <div style="font-size:0.76rem;font-weight:600;color:var(--mid);margin-bottom:6px;">🛠 Matériel nécessaire</div>
           <div style="display:flex;flex-wrap:wrap;gap:5px;">
-            <span style="background:#EAF1F9;border-radius:6px;padding:3px 8px;font-size:0.73rem;color:#1F5D99;">Bocal 500ml avec couvercle grillage maille 3mm</span>
-            <span style="background:#EAF1F9;border-radius:6px;padding:3px 8px;font-size:0.73rem;color:#1F5D99;">Sucre glace (~2 cuillères à soupe)</span>
-            <span style="background:#EAF1F9;border-radius:6px;padding:3px 8px;font-size:0.73rem;color:#1F5D99;">Assiette blanche ou bac blanc</span>
-            <span style="background:#EAF1F9;border-radius:6px;padding:3px 8px;font-size:0.73rem;color:#1F5D99;">Cuillère doseuse (environ 1/2 tasse)</span>
-            <span style="background:#EAF1F9;border-radius:6px;padding:3px 8px;font-size:0.73rem;color:#1F5D99;">Eau (pour rinçage)</span>
+            <span style="background:#E3EAF3;border-radius:6px;padding:3px 8px;font-size:0.73rem;color:#3F6A9E;">Bocal 500ml avec couvercle grillage maille 3mm</span>
+            <span style="background:#E3EAF3;border-radius:6px;padding:3px 8px;font-size:0.73rem;color:#3F6A9E;">Sucre glace (~2 cuillères à soupe)</span>
+            <span style="background:#E3EAF3;border-radius:6px;padding:3px 8px;font-size:0.73rem;color:#3F6A9E;">Assiette blanche ou bac blanc</span>
+            <span style="background:#E3EAF3;border-radius:6px;padding:3px 8px;font-size:0.73rem;color:#3F6A9E;">Cuillère doseuse (environ 1/2 tasse)</span>
+            <span style="background:#E3EAF3;border-radius:6px;padding:3px 8px;font-size:0.73rem;color:#3F6A9E;">Eau (pour rinçage)</span>
           </div>
         </div>
 
@@ -1545,39 +1493,39 @@
         <div style="display:flex;flex-direction:column;gap:7px;">
 
           <div style="display:flex;gap:10px;align-items:flex-start;">
-            <div style="min-width:22px;height:22px;border-radius:50%;background:#1565C0;color:#fff;font-size:0.72rem;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;">1</div>
-            <div style="font-size:0.78rem;color:#ccc;line-height:1.5;"><strong style="color:#1F5D99;">Prélever 300 abeilles</strong> — Placer le bocal ouvert sur un cadre de couvain et laisser les abeilles tomber dedans, ou cuillèrer directement sur un cadre ouvert. <span style="color:#8F5500;">Éviter la reine !</span> 300 abeilles ≈ une demi-tasse, ≈ 30g.</div>
+            <div style="min-width:22px;height:22px;border-radius:50%;background:#3F6A9E;color:#fff;font-size:0.72rem;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;">1</div>
+            <div style="font-size:0.78rem;color:#ccc;line-height:1.5;"><strong style="color:#3F6A9E;">Prélever 300 abeilles</strong> — Placer le bocal ouvert sur un cadre de couvain et laisser les abeilles tomber dedans, ou cuillèrer directement sur un cadre ouvert. <span style="color:#9A5B00;">Éviter la reine !</span> 300 abeilles ≈ une demi-tasse, ≈ 30g.</div>
           </div>
 
           <div style="display:flex;gap:10px;align-items:flex-start;">
-            <div style="min-width:22px;height:22px;border-radius:50%;background:#1565C0;color:#fff;font-size:0.72rem;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;">2</div>
-            <div style="font-size:0.78rem;color:#ccc;line-height:1.5;"><strong style="color:#1F5D99;">Ajouter le sucre glace</strong> — Verser 2 bonnes cuillères à soupe de sucre glace dans le bocal. Fermer avec le couvercle grillagé.</div>
+            <div style="min-width:22px;height:22px;border-radius:50%;background:#3F6A9E;color:#fff;font-size:0.72rem;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;">2</div>
+            <div style="font-size:0.78rem;color:#ccc;line-height:1.5;"><strong style="color:#3F6A9E;">Ajouter le sucre glace</strong> — Verser 2 bonnes cuillères à soupe de sucre glace dans le bocal. Fermer avec le couvercle grillagé.</div>
           </div>
 
           <div style="display:flex;gap:10px;align-items:flex-start;">
-            <div style="min-width:22px;height:22px;border-radius:50%;background:#1565C0;color:#fff;font-size:0.72rem;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;">3</div>
-            <div style="font-size:0.78rem;color:#ccc;line-height:1.5;"><strong style="color:#1F5D99;">Agiter 1 minute</strong> — Secouer le bocal doucement pendant 60 secondes pour bien enrober les abeilles. Le sucre décolle les varroas des abeilles.</div>
+            <div style="min-width:22px;height:22px;border-radius:50%;background:#3F6A9E;color:#fff;font-size:0.72rem;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;">3</div>
+            <div style="font-size:0.78rem;color:#ccc;line-height:1.5;"><strong style="color:#3F6A9E;">Agiter 1 minute</strong> — Secouer le bocal doucement pendant 60 secondes pour bien enrober les abeilles. Le sucre décolle les varroas des abeilles.</div>
           </div>
 
           <div style="display:flex;gap:10px;align-items:flex-start;">
-            <div style="min-width:22px;height:22px;border-radius:50%;background:#1565C0;color:#fff;font-size:0.72rem;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;">4</div>
-            <div style="font-size:0.78rem;color:#ccc;line-height:1.5;"><strong style="color:#1F5D99;">Tamiser sur assiette blanche</strong> — Retourner le bocal grillagé au-dessus de l'assiette, secouer pour faire passer le sucre + varroas. Ajouter un peu d'eau pour dissoudre le sucre et faire apparaître les varroas rouges/bruns.</div>
+            <div style="min-width:22px;height:22px;border-radius:50%;background:#3F6A9E;color:#fff;font-size:0.72rem;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;">4</div>
+            <div style="font-size:0.78rem;color:#ccc;line-height:1.5;"><strong style="color:#3F6A9E;">Tamiser sur assiette blanche</strong> — Retourner le bocal grillagé au-dessus de l'assiette, secouer pour faire passer le sucre + varroas. Ajouter un peu d'eau pour dissoudre le sucre et faire apparaître les varroas rouges/bruns.</div>
           </div>
 
           <div style="display:flex;gap:10px;align-items:flex-start;">
-            <div style="min-width:22px;height:22px;border-radius:50%;background:#1565C0;color:#fff;font-size:0.72rem;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;">5</div>
-            <div style="font-size:0.78rem;color:#ccc;line-height:1.5;"><strong style="color:#1F5D99;">Compter les varroas</strong> — Dénombrer les petits points rouges/bruns ovales (~1,5mm) visibles dans le sucre. Calculer : <strong style="color:#8F5500;">VP100 = nb varroas × 100 ÷ 300</strong></div>
+            <div style="min-width:22px;height:22px;border-radius:50%;background:#3F6A9E;color:#fff;font-size:0.72rem;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;">5</div>
+            <div style="font-size:0.78rem;color:#ccc;line-height:1.5;"><strong style="color:#3F6A9E;">Compter les varroas</strong> — Dénombrer les petits points rouges/bruns ovales (~1,5mm) visibles dans le sucre. Calculer : <strong style="color:#9A5B00;">VP100 = nb varroas × 100 ÷ 300</strong></div>
           </div>
 
         </div>
 
         <!-- Libérer les abeilles -->
-        <div style="margin-top:10px;padding:8px 10px;border-radius:8px;background:#EEF5EF;font-size:0.76rem;color:#2F6B3F;">
+        <div style="margin-top:10px;padding:8px 10px;border-radius:8px;background:#E4EEE6;font-size:0.76rem;color:#3D7A4F;">
           🐝 <strong>Libérer les abeilles</strong> après comptage — ouvrir le bocal devant la ruche, les abeilles encore vivantes retrouveront la colonie.
         </div>
 
         <!-- Variante alcool -->
-        <div style="margin-top:10px;padding:8px 10px;border-radius:8px;background:#F5EEF7;font-size:0.76rem;color:#7B3F8C;">
+        <div style="margin-top:10px;padding:8px 10px;border-radius:8px;background:#EEE4EE;font-size:0.76rem;color:#7A4E7E;">
           🧴 <strong>Variante alcool</strong> (plus précise, abeilles non récupérables) — remplacer le sucre par de l'alcool à 70°. Agiter 30 sec, tamiser. Même calcul VP100.
         </div>
       </div>
@@ -1586,10 +1534,10 @@
       <div style="margin-bottom:18px;">
         <div style="font-weight:700;font-size:0.9rem;margin-bottom:10px;color:var(--accent);">🔬 Quand faire des comptages ?</div>
         <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;">
-          <span style="padding:4px 12px;border-radius:20px;background:#EAF1F9;color:#1F5D99;font-size:0.78rem;font-weight:600;">Décembre</span>
-          <span style="padding:4px 12px;border-radius:20px;background:#EAF1F9;color:#1F5D99;font-size:0.78rem;font-weight:600;">Mars</span>
-          <span style="padding:4px 12px;border-radius:20px;background:#EAF1F9;color:#1F5D99;font-size:0.78rem;font-weight:600;">Mai</span>
-          <span style="padding:4px 12px;border-radius:20px;background:#EAF1F9;color:#1F5D99;font-size:0.78rem;font-weight:600;">Juillet</span>
+          <span style="padding:4px 12px;border-radius:20px;background:#E3EAF3;color:#3F6A9E;font-size:0.78rem;font-weight:600;">Décembre</span>
+          <span style="padding:4px 12px;border-radius:20px;background:#E3EAF3;color:#3F6A9E;font-size:0.78rem;font-weight:600;">Mars</span>
+          <span style="padding:4px 12px;border-radius:20px;background:#E3EAF3;color:#3F6A9E;font-size:0.78rem;font-weight:600;">Mai</span>
+          <span style="padding:4px 12px;border-radius:20px;background:#E3EAF3;color:#3F6A9E;font-size:0.78rem;font-weight:600;">Juillet</span>
         </div>
         <div style="font-size:0.78rem;color:var(--soft);line-height:1.6;">En sortie de miellée pour choisir le traitement adapté · En fin de traitement pour vérifier son efficacité</div>
       </div>
@@ -1598,21 +1546,21 @@
       <div style="margin-bottom:18px;">
         <div style="font-weight:700;font-size:0.9rem;margin-bottom:10px;color:var(--accent);">📊 Interpréter les seuils VP100</div>
         <div style="display:flex;flex-direction:column;gap:8px;">
-          <div style="display:flex;align-items:flex-start;gap:10px;padding:10px;border-radius:10px;background:#EEF5EF;">
+          <div style="display:flex;align-items:flex-start;gap:10px;padding:10px;border-radius:10px;background:#E4EEE6;">
             <span style="font-size:1.1rem;">🟢</span>
-            <div style="font-size:0.82rem;line-height:1.5;"><strong style="color:#4CAF50;">VP100 ≤ 3</strong><br><span style="color:var(--mid);">Renouveler le comptage dans 1 mois</span></div>
+            <div style="font-size:0.82rem;line-height:1.5;"><strong style="color:#3D7A4F;">VP100 ≤ 3</strong><br><span style="color:var(--mid);">Renouveler le comptage dans 1 mois</span></div>
           </div>
-          <div style="display:flex;align-items:flex-start;gap:10px;padding:10px;border-radius:10px;background:#FFF3D6;">
+          <div style="display:flex;align-items:flex-start;gap:10px;padding:10px;border-radius:10px;background:#FBEBC4;">
             <span style="font-size:1.1rem;">🟡</span>
-            <div style="font-size:0.82rem;line-height:1.5;"><strong style="color:#8F5500;">3 &lt; VP100 ≤ 10</strong><br><span style="color:var(--mid);">Respecter le calendrier de traitement prévu</span></div>
+            <div style="font-size:0.82rem;line-height:1.5;"><strong style="color:#9A5B00;">3 &lt; VP100 ≤ 10</strong><br><span style="color:var(--mid);">Respecter le calendrier de traitement prévu</span></div>
           </div>
-          <div style="display:flex;align-items:flex-start;gap:10px;padding:10px;border-radius:10px;background:#2d1a1a;">
+          <div style="display:flex;align-items:flex-start;gap:10px;padding:10px;border-radius:10px;background:#2B2118;">
             <span style="font-size:1.1rem;">🔴</span>
             <div style="font-size:0.82rem;line-height:1.5;"><strong style="color:#B3362B;">VP100 &gt; 10</strong><br><span style="color:var(--mid);">Appliquer dès maintenant le traitement prévu</span></div>
           </div>
-          <div style="display:flex;align-items:flex-start;gap:10px;padding:10px;border-radius:10px;background:#3a1a1a;border:1px solid #F1CFCB;">
+          <div style="display:flex;align-items:flex-start;gap:10px;padding:10px;border-radius:10px;background:#2B2118;border:1px solid #EBC9C4;">
             <span style="font-size:1.1rem;">🚨</span>
-            <div style="font-size:0.82rem;line-height:1.5;"><strong style="color:#FF5252;">VP100 &gt; 15</strong><br><span style="color:var(--mid);">Retirer le couvain fermé + traitement flash + recompter</span></div>
+            <div style="font-size:0.82rem;line-height:1.5;"><strong style="color:#B3362B;">VP100 &gt; 15</strong><br><span style="color:var(--mid);">Retirer le couvain fermé + traitement flash + recompter</span></div>
           </div>
         </div>
       </div>
@@ -1621,9 +1569,9 @@
       <div style="margin-bottom:18px;">
         <div style="font-weight:700;font-size:0.9rem;margin-bottom:10px;color:var(--accent);">💊 Produits autorisés</div>
         <div style="font-size:0.8rem;line-height:2;color:var(--soft);">
-          <div><span style="color:#8F5500;font-weight:600;">Conventionnel longue durée :</span> Apivar®, Apistan®</div>
-          <div><span style="color:#4CAF50;font-weight:600;">Naturel sans encagement :</span> Apilife Var®, Formic Pro®, Varromed®, Calistrip Biox®</div>
-          <div><span style="color:#1F5D99;font-weight:600;">Naturel avec encagement :</span> Oxybee®, Calistrip Biox®</div>
+          <div><span style="color:#9A5B00;font-weight:600;">Conventionnel longue durée :</span> Apivar®, Apistan®</div>
+          <div><span style="color:#3D7A4F;font-weight:600;">Naturel sans encagement :</span> Apilife Var®, Formic Pro®, Varromed®, Calistrip Biox®</div>
+          <div><span style="color:#3F6A9E;font-weight:600;">Naturel avec encagement :</span> Oxybee®, Calistrip Biox®</div>
         </div>
       </div>
 
@@ -1655,8 +1603,8 @@
       </div>
 
       <!-- Règles -->
-      <div style="padding:12px;border-radius:10px;background:#FFF3D6;border:1px solid #F2D58E;font-size:0.78rem;color:var(--mid);line-height:1.8;">
-        <div style="font-weight:700;color:#8F5500;margin-bottom:6px;">⚠️ Règles de base</div>
+      <div style="padding:12px;border-radius:10px;background:#FBEBC4;border:1px solid #EBCF8A;font-size:0.78rem;color:var(--mid);line-height:1.8;">
+        <div style="font-weight:700;color:#9A5B00;margin-bottom:6px;">⚠️ Règles de base</div>
         Ne pas traiter en présence de hausse · Ne pas extraire de miel du corps de ruche · Traiter toutes les ruches du rucher en même temps · Max 2 traitements longue durée par an · Alterner les molécules d'une miellée à l'autre
       </div>
 
@@ -1680,10 +1628,10 @@
       <div class="tuto-slide" data-slide="0" style="display:flex;">
         <div style="text-align:center;padding:32px 24px 16px;">
           <div style="font-size:3.5rem;margin-bottom:12px;">🐝</div>
-          <div style="font-size:1.3rem;font-weight:800;color:var(--honey);margin-bottom:8px;">Bienvenue sur Ruchers VL</div>
+          <div style="font-size:1.3rem;font-weight:800;color:var(--honey);margin-bottom:8px;">Bienvenue sur Apicarnet</div>
           <div style="font-size:0.88rem;color:var(--soft);line-height:1.6;margin-bottom:20px;">Votre carnet de bord apicole numérique — remplissez votre compte-rendu <strong style="color:var(--fg);">en quelques secondes juste après chaque visite</strong>, pendant que tout est encore frais.</div>
-          <div style="background:#EEF5EF;border-radius:12px;padding:14px 16px;text-align:left;margin-bottom:16px;">
-            <div style="font-size:0.78rem;font-weight:700;color:#2F6B3F;margin-bottom:8px;">✅ Ce que l'app fait pour vous</div>
+          <div style="background:#E4EEE6;border-radius:12px;padding:14px 16px;text-align:left;margin-bottom:16px;">
+            <div style="font-size:0.78rem;font-weight:700;color:#3D7A4F;margin-bottom:8px;">✅ Ce que l'app fait pour vous</div>
             <div style="font-size:0.8rem;color:var(--mid);line-height:2;">
               📖 Génère votre registre d'élevage légal automatiquement<br>
               📊 Suit l'état de toutes vos colonies en un coup d'œil<br>
@@ -1692,8 +1640,8 @@
               📶 Fonctionne <strong style="color:var(--fg);">hors ligne</strong> sur le terrain
             </div>
           </div>
-          <div style="background:#FFF3D6;border-radius:10px;padding:12px 14px;border:1px solid #F2D58E;text-align:left;">
-            <div style="font-size:0.78rem;font-weight:700;color:#8F5500;margin-bottom:4px;">⚙️ Première étape importante</div>
+          <div style="background:#FBEBC4;border-radius:10px;padding:12px 14px;border:1px solid #EBCF8A;text-align:left;">
+            <div style="font-size:0.78rem;font-weight:700;color:#9A5B00;margin-bottom:4px;">⚙️ Première étape importante</div>
             <div style="font-size:0.78rem;color:var(--mid);line-height:1.6;">Renseignez votre <strong style="color:var(--fg);">NAPI, nom et adresse</strong> dans Paramètres — ces infos apparaissent dans votre registre légal.</div>
           </div>
         </div>
@@ -1715,8 +1663,8 @@
               <div style="font-size:0.82rem;font-weight:700;color:var(--fg);margin-bottom:4px;">🐝 Ruches & ruchettes</div>
               <div style="font-size:0.78rem;color:var(--soft);line-height:1.6;">Indiquez le nombre de ruches et ruchettes par rucher. Ces chiffres alimentent automatiquement votre registre d'élevage et votre déclaration annuelle.</div>
             </div>
-            <div style="background:#EAF1F9;border-radius:10px;padding:10px 14px;border:1px solid #D5E1EF;">
-              <div style="font-size:0.76rem;color:#1F5D99;line-height:1.6;">💡 <strong>Plus votre rucher est bien renseigné, plus votre registre légal sera complet.</strong> Le GPS permet aussi de valider vos mouvements de transhumance.</div>
+            <div style="background:#E3EAF3;border-radius:10px;padding:10px 14px;border:1px solid #C9D6E6;">
+              <div style="font-size:0.76rem;color:#3F6A9E;line-height:1.6;">💡 <strong>Plus votre rucher est bien renseigné, plus votre registre légal sera complet.</strong> Le GPS permet aussi de valider vos mouvements de transhumance.</div>
             </div>
           </div>
         </div>
@@ -1733,23 +1681,23 @@
             <div style="background:var(--card);border-radius:10px;padding:12px 14px;border:1px solid var(--border);">
               <div style="font-size:0.82rem;font-weight:700;color:var(--fg);margin-bottom:6px;">🏷 Saisie par tap à la fin de la visite</div>
               <div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:6px;">
-                <span style="background:#EEF5EF;border-radius:6px;padding:3px 9px;font-size:0.73rem;color:#2F6B3F;">💪 État du rucher</span>
-                <span style="background:#F5EEF7;border-radius:6px;padding:3px 9px;font-size:0.73rem;color:#7B3F8C;">👑 État reine</span>
-                <span style="background:#FFF3D6;border-radius:6px;padding:3px 9px;font-size:0.73rem;color:#8F5500;">🔧 Interventions</span>
-                <span style="background:#EAF1F9;border-radius:6px;padding:3px 9px;font-size:0.73rem;color:#1F5D99;">💬 Observations</span>
+                <span style="background:#E4EEE6;border-radius:6px;padding:3px 9px;font-size:0.73rem;color:#3D7A4F;">💪 État du rucher</span>
+                <span style="background:#EEE4EE;border-radius:6px;padding:3px 9px;font-size:0.73rem;color:#7A4E7E;">👑 État reine</span>
+                <span style="background:#FBEBC4;border-radius:6px;padding:3px 9px;font-size:0.73rem;color:#9A5B00;">🔧 Interventions</span>
+                <span style="background:#E3EAF3;border-radius:6px;padding:3px 9px;font-size:0.73rem;color:#3F6A9E;">💬 Observations</span>
               </div>
               <div style="font-size:0.76rem;color:var(--soft);line-height:1.5;">Tout par tap, en quelques secondes, juste après avoir fermé la ruche.</div>
             </div>
-            <div style="background:#EAF1F9;border-radius:10px;padding:12px 14px;border:1px solid #D5E1EF;">
-              <div style="font-size:0.82rem;font-weight:700;color:#1F5D99;margin-bottom:4px;">🔄 Le bon workflow terrain</div>
+            <div style="background:#E3EAF3;border-radius:10px;padding:12px 14px;border:1px solid #C9D6E6;">
+              <div style="font-size:0.82rem;font-weight:700;color:#3F6A9E;margin-bottom:4px;">🔄 Le bon workflow terrain</div>
               <div style="font-size:0.76rem;color:var(--mid);line-height:1.8;">
                 1️⃣ Vous visitez le rucher<br>
                 2️⃣ <strong style="color:var(--fg);">Fin de visite</strong> → vous ouvrez l'app et saisissez le compte-rendu<br>
                 3️⃣ <strong style="color:var(--fg);">Avant la prochaine visite</strong> → vous relisez le dernier compte-rendu pour savoir où vous en étiez
               </div>
             </div>
-            <div style="background:#EEF5EF;border-radius:10px;padding:10px 14px;border:1px solid #CFE3D3;">
-              <div style="font-size:0.76rem;color:#2F6B3F;line-height:1.6;">📖 Chaque visite alimente automatiquement votre registre d'élevage légal. <strong style="color:var(--fg);">Zéro ressaisie.</strong></div>
+            <div style="background:#E4EEE6;border-radius:10px;padding:10px 14px;border:1px solid #C9DDCD;">
+              <div style="font-size:0.76rem;color:#3D7A4F;line-height:1.6;">📖 Chaque visite alimente automatiquement votre registre d'élevage légal. <strong style="color:var(--fg);">Zéro ressaisie.</strong></div>
             </div>
           </div>
         </div>
@@ -1767,12 +1715,12 @@
               <div style="font-size:0.82rem;font-weight:700;color:var(--fg);margin-bottom:4px;">💉 Enregistrer un traitement</div>
               <div style="font-size:0.76rem;color:var(--soft);line-height:1.6;">Produit (Apivar®, Oxybee®…), date de pose, durée, motif. Le traitement apparaît dans la Section 4 de votre registre sanitaire — <strong style="color:var(--fg);">obligatoire légalement.</strong></div>
             </div>
-            <div style="background:#FFF3D6;border-radius:10px;padding:12px 14px;border:1px solid #F2D58E;">
-              <div style="font-size:0.82rem;font-weight:700;color:#8F5500;margin-bottom:4px;">🔬 Guide Varroa intégré</div>
+            <div style="background:#FBEBC4;border-radius:10px;padding:12px 14px;border:1px solid #EBCF8A;">
+              <div style="font-size:0.82rem;font-weight:700;color:#9A5B00;margin-bottom:4px;">🔬 Guide Varroa intégré</div>
               <div style="font-size:0.76rem;color:var(--mid);line-height:1.6;">Appuyez sur <em>"ℹ️ Guide varroa"</em> pour accéder au protocole de comptage étape par étape, aux seuils VP100 et aux produits autorisés — directement depuis le terrain.</div>
             </div>
-            <div style="background:#EAF1F9;border-radius:10px;padding:10px 14px;border:1px solid #D5E1EF;">
-              <div style="font-size:0.76rem;color:#1F5D99;line-height:1.6;">📅 L'app vous rappelle automatiquement les périodes de comptage : Décembre, Mars, Mai, Juillet.</div>
+            <div style="background:#E3EAF3;border-radius:10px;padding:10px 14px;border:1px solid #C9D6E6;">
+              <div style="font-size:0.76rem;color:#3F6A9E;line-height:1.6;">📅 L'app vous rappelle automatiquement les périodes de comptage : Décembre, Mars, Mai, Juillet.</div>
             </div>
           </div>
         </div>
@@ -1794,8 +1742,8 @@
               <div style="font-size:0.82rem;font-weight:700;color:var(--fg);margin-bottom:4px;">📋 Récapitulatif déclaration</div>
               <div style="font-size:0.76rem;color:var(--soft);line-height:1.6;">Chaque mouvement génère un récapitulatif que vous pouvez <strong style="color:var(--fg);">partager directement</strong> depuis votre téléphone — par email, WhatsApp ou impression.</div>
             </div>
-            <div style="background:#EEF5EF;border-radius:10px;padding:10px 14px;border:1px solid #CFE3D3;">
-              <div style="font-size:0.76rem;color:#2F6B3F;line-height:1.6;">📖 Tous les mouvements apparaissent en Section 5 de votre registre d'élevage. <strong style="color:var(--fg);">Aucune ressaisie nécessaire.</strong></div>
+            <div style="background:#E4EEE6;border-radius:10px;padding:10px 14px;border:1px solid #C9DDCD;">
+              <div style="font-size:0.76rem;color:#3D7A4F;line-height:1.6;">📖 Tous les mouvements apparaissent en Section 5 de votre registre d'élevage. <strong style="color:var(--fg);">Aucune ressaisie nécessaire.</strong></div>
             </div>
           </div>
         </div>
@@ -1808,8 +1756,8 @@
           <div style="font-size:1.1rem;font-weight:800;color:var(--honey);margin-bottom:6px;">Registre d'élevage en 1 clic</div>
           <div style="font-size:0.82rem;color:var(--soft);margin-bottom:18px;">Toutes vos données → PDF légal conforme</div>
 
-          <div style="background:#EEF5EF;border-radius:12px;padding:14px 16px;text-align:left;margin-bottom:12px;">
-            <div style="font-size:0.78rem;font-weight:700;color:#2F6B3F;margin-bottom:8px;">📄 5 sections générées automatiquement</div>
+          <div style="background:#E4EEE6;border-radius:12px;padding:14px 16px;text-align:left;margin-bottom:12px;">
+            <div style="font-size:0.78rem;font-weight:700;color:#3D7A4F;margin-bottom:8px;">📄 5 sections générées automatiquement</div>
             <div style="font-size:0.78rem;color:var(--mid);line-height:2;">
               1️⃣ Identification de l'apiculteur (NAPI, adresse)<br>
               2️⃣ Inventaire de vos ruchers<br>
@@ -1818,8 +1766,8 @@
               5️⃣ Mouvements de colonies
             </div>
           </div>
-          <div style="background:#FFF3D6;border-radius:10px;padding:10px 14px;border:1px solid #F2D58E;text-align:left;margin-bottom:16px;">
-            <div style="font-size:0.76rem;color:#8F5500;line-height:1.6;">⚖️ Conforme à l'arrêté ministériel du 11 août 1994 · Exportable en PDF · Partageable directement depuis votre téléphone</div>
+          <div style="background:#FBEBC4;border-radius:10px;padding:10px 14px;border:1px solid #EBCF8A;text-align:left;margin-bottom:16px;">
+            <div style="font-size:0.76rem;color:#9A5B00;line-height:1.6;">⚖️ Conforme à l'arrêté ministériel du 11 août 1994 · Exportable en PDF · Partageable directement depuis votre téléphone</div>
           </div>
 
           <div style="font-size:1.6rem;margin-bottom:8px;">🎉</div>
@@ -1887,10 +1835,10 @@
     <div class="modal-body" style="font-size:0.82rem;line-height:1.7;color:var(--soft);padding-bottom:24px;">
 
       <div style="font-weight:700;color:var(--text);margin-bottom:6px;">1. Éditeur</div>
-      <p>Ruchers VL est une application développée et exploitée par un apiculteur indépendant à La Réunion. Contact : <strong>eric.valencourt@gmail.com</strong></p>
+      <p>Apicarnet est une application développée et exploitée par un apiculteur indépendant à La Réunion. Contact : <strong>eric.valencourt@gmail.com</strong></p>
 
       <div style="font-weight:700;color:var(--text);margin:14px 0 6px;">2. Objet</div>
-      <p>Ruchers VL est un carnet numérique destiné aux apiculteurs. Il permet de gérer les visites, les traitements sanitaires, les ruchers et de générer un registre d'élevage conforme à la réglementation française (arrêté du 5 juin 2000).</p>
+      <p>Apicarnet est un carnet numérique destiné aux apiculteurs. Il permet de gérer les visites, les traitements sanitaires, les ruchers et de générer un registre d'élevage conforme à la réglementation française (arrêté du 5 juin 2000).</p>
 
       <div style="font-weight:700;color:var(--text);margin:14px 0 6px;">3. Données collectées</div>
       <p>L'application collecte uniquement les données que vous saisissez : informations sur vos ruchers, visites, traitements, photos et enregistrements audio. Ces données sont stockées sur Firebase (Google) et accessibles uniquement depuis votre compte.</p>
@@ -1912,7 +1860,7 @@
       <p>Ces CGU peuvent être mises à jour. En continuant à utiliser l'application, vous acceptez les nouvelles conditions.</p>
 
       <div style="margin-top:18px;padding:10px;background:var(--card);border-radius:8px;font-size:0.75rem;color:var(--soft);">
-        Dernière mise à jour : avril 2026 · Ruchers VL
+        Dernière mise à jour : novembre 2026 · Apicarnet
       </div>
     </div>
     <div class="modal-footer">

@@ -169,7 +169,7 @@ function showICSPrompt(rappel, rucherLabel, idx) {
       <div style="display:flex;gap:8px;align-items:center;">
         <span style="font-size:0.78rem;opacity:0.85;">Rappel le ${rappel.echeance}</span>
         <button onclick="exportRappelByIdx(${idx});this.closest('#toast').classList.remove('show');"
-          style="background:#fff;color:#8B4513;border:none;border-radius:10px;padding:4px 10px;font-size:0.78rem;font-weight:700;cursor:pointer;white-space:nowrap;">
+          style="background:#fff;color:#9A5B00;border:none;border-radius:10px;padding:4px 10px;font-size:0.78rem;font-weight:700;cursor:pointer;white-space:nowrap;">
           📅 Calendrier
         </button>
       </div>
@@ -200,7 +200,7 @@ function exportRappelICS(rappel, rucherLabel) {
   const ics = [
     'BEGIN:VCALENDAR',
     'VERSION:2.0',
-    'PRODID:-//Ruchers VL//FR',
+    'PRODID:-//Apicarnet//FR',
     'CALSCALE:GREGORIAN',
     'METHOD:PUBLISH',
     'BEGIN:VEVENT',
@@ -209,7 +209,7 @@ function exportRappelICS(rappel, rucherLabel) {
     `DTSTART;VALUE=DATE:${dateICS}`,
     `DTEND;VALUE=DATE:${dateICS}`,
     `SUMMARY:🍯 ${rappel.texte} — ${rucherLabel}`,
-    `DESCRIPTION:Rappel créé depuis Ruchers VL${rappel.jours ? ` (J+${rappel.jours})` : ''}`,
+    `DESCRIPTION:Rappel créé depuis Apicarnet${rappel.jours ? ` (J+${rappel.jours})` : ''}`,
     'BEGIN:VALARM',
     'TRIGGER:-PT0M',
     'ACTION:DISPLAY',
@@ -667,7 +667,7 @@ function openCompteRendu(idx) {
     <div style="margin-bottom:12px;">
       <div class="cr-label">Rappel</div>
       <div style="display:flex;align-items:center;justify-content:space-between;
-        background:#FFF8E1;border-radius:10px;padding:10px 12px;">
+        background:#FBEBC4;border-radius:10px;padding:10px 12px;">
         <div>
           <div style="font-size:0.88rem;font-weight:600;color:var(--ink);">${v.rappel.texte}</div>
           <div style="font-size:0.72rem;color:var(--mid);margin-top:2px;">📅 ${v.rappel.echeance}${v.rappel.jours ? ` (J+${v.rappel.jours})` : ''}</div>

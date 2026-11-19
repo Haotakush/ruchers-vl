@@ -26,7 +26,7 @@ async function initAdminConformite() {
   } catch (err) {
     console.error('[Admin] Erreur chargement:', err);
     el.innerHTML = `
-      <div style="background:#FBECEA;border-left:3px solid var(--danger);border-radius:0 10px 10px 0;
+      <div style="background:#F6E1DE;border-left:3px solid var(--danger);border-radius:0 10px 10px 0;
            padding:14px 16px;margin:16px 0;">
         <div style="color:#B3362B;font-weight:600;">⚠️ Erreur de chargement</div>
         <div style="color:var(--soft);font-size:0.8rem;margin-top:4px;">Vérifiez votre connexion et réessayez.</div>
@@ -146,7 +146,7 @@ function _renderAdminDashboard() {
 function _renderScoreRing(score, d) {
   const C     = 251.3;
   const dash  = Math.round(score / 100 * C);
-  const color = score >= 80 ? '#4A7C59' : score >= 50 ? '#C4813A' : '#C0392B';
+  const color = score >= 80 ? '#3D7A4F' : score >= 50 ? '#9A5B00' : '#B3362B';
   const label = score >= 80 ? 'Conforme' : score >= 50 ? 'Partiel' : 'Non conforme';
   const napi  = _conformiteData?.napi ? `NAPI : ${_conformiteData.napi}` : '';
 
@@ -167,7 +167,7 @@ function _renderScoreRing(score, d) {
         return `
           <div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:10px;">
             <div style="width:22px;height:22px;border-radius:50%;background:rgba(192,57,43,0.15);
-                 border:1.5px solid #C0392B;display:flex;align-items:center;justify-content:center;
+                 border:1.5px solid #B3362B;display:flex;align-items:center;justify-content:center;
                  flex-shrink:0;font-size:0.7rem;color:#B3362B;margin-top:1px;">✕</div>
             <div style="flex:1;min-width:0;">
               <div style="font-size:0.8rem;font-weight:600;color:var(--ink);">
@@ -182,7 +182,7 @@ function _renderScoreRing(score, d) {
           </div>`;
       }).join('')}
     </div>` : `
-    <div style="margin-top:12px;font-size:0.78rem;color:#2F6B3F;">
+    <div style="margin-top:12px;font-size:0.78rem;color:#3D7A4F;">
       🎉 Tout est en règle — registre et déclarations conformes.
     </div>`;
 
@@ -190,7 +190,7 @@ function _renderScoreRing(score, d) {
     <div class="card" style="text-align:center;padding:20px 16px 16px;margin-bottom:16px;">
       <svg viewBox="0 0 100 100" width="120" height="120"
            style="transform:rotate(-90deg);display:block;margin:0 auto 8px;">
-        <circle cx="50" cy="50" r="40" fill="none" stroke="#ECE8DF" stroke-width="10"/>
+        <circle cx="50" cy="50" r="40" fill="none" stroke="#EFE6D4" stroke-width="10"/>
         <circle cx="50" cy="50" r="40" fill="none" stroke="${color}" stroke-width="10"
           stroke-dasharray="${dash} ${C}" stroke-linecap="round"/>
       </svg>
@@ -206,7 +206,7 @@ function _renderMetricCards(d, lastSanitaire) {
   const anneeDecl  = _conformiteData?.annee || '—';
   const colDecl    = d.coloniesDeclarees || '—';
   const regStatus  = d.registre ? '✅ À jour' : '⚠️ En retard';
-  const regColor   = d.registre ? '#4A7C59'  : '#C4813A';
+  const regColor   = d.registre ? '#3D7A4F'  : '#9A5B00';
 
   return `
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;">
@@ -239,10 +239,10 @@ function _renderAlertes(d) {
   const alertes = [];
 
   const STYLES = {
-    danger:  { bg: '#FBECEA', border: '#C0392B', text: '#B3362B' },
-    warning: { bg: '#FFF3D6', border: '#C4813A', text: '#8F5500' },
-    info:    { bg: '#EAF1F9', border: '#42A5F5', text: '#1F5D99' },
-    success: { bg: '#EEF5EF', border: '#4A7C59', text: '#2F6B3F' },
+    danger:  { bg: '#F6E1DE', border: '#B3362B', text: '#B3362B' },
+    warning: { bg: '#FBEBC4', border: '#9A5B00', text: '#9A5B00' },
+    info:    { bg: '#E3EAF3', border: '#C9D6E6', text: '#3F6A9E' },
+    success: { bg: '#E4EEE6', border: '#3D7A4F', text: '#3D7A4F' },
   };
 
   /* DANGER : Déclaration manquante en période d'obligation */
@@ -342,7 +342,7 @@ function _renderMouvements() {
            </div>`
         : _mouvementsData.slice(0, 6).map(m => `
           <div style="display:flex;align-items:center;gap:10px;padding:9px 0;
-               border-bottom:1px solid #ECE8DF;">
+               border-bottom:1px solid #EFE6D4;">
             <div style="flex:1;min-width:0;">
               <div style="font-size:0.8rem;color:var(--ink);white-space:nowrap;
                    overflow:hidden;text-overflow:ellipsis;">
@@ -354,11 +354,11 @@ function _renderMouvements() {
             </div>
             ${m.ddppDeclaree === false
               ? `<button onclick="markDDPPDeclare('${m._docId}')"
-                   style="background:#4A7C59;color:#fff;border:none;border-radius:8px;
+                   style="background:#3D7A4F;color:#fff;border:none;border-radius:8px;
                           padding:5px 10px;font-size:0.7rem;cursor:pointer;white-space:nowrap;flex-shrink:0;">
                    ✓ Marquer déclaré
                  </button>`
-              : `<span style="font-size:0.72rem;color:#2F6B3F;font-weight:600;flex-shrink:0;">✅ Déclaré</span>`
+              : `<span style="font-size:0.72rem;color:#3D7A4F;font-weight:600;flex-shrink:0;">✅ Déclaré</span>`
             }
           </div>`).join('')
       }
@@ -408,20 +408,20 @@ function _renderCalendrier(coloniesActuelles) {
       </div>
       <div style="position:relative;padding-left:28px;">
         <div style="position:absolute;left:8px;top:6px;bottom:6px;width:2px;
-             background:#ECE8DF;border-radius:2px;"></div>
+             background:#EFE6D4;border-radius:2px;"></div>
         ${echeances.map(e => {
           const isPast  = e.date < today;
-          const dotCol  = e.done ? '#4A7C59' : isPast ? '#C0392B' : 'var(--honey)';
+          const dotCol  = e.done ? '#3D7A4F' : isPast ? '#B3362B' : 'var(--honey)';
           const click   = e.url ? `onclick="window.open('${e.url}','_blank')"` : '';
           const opacity = e.faded ? 'opacity:0.45;' : '';
           return `
             <div ${click}
               style="position:relative;margin-bottom:16px;${e.url ? 'cursor:pointer;' : ''}${opacity}">
               <div style="position:absolute;left:-24px;top:4px;width:10px;height:10px;
-                background:${dotCol};border-radius:50%;border:2px solid #FFFFFF;"></div>
-              <div style="font-size:0.82rem;font-weight:600;color:${e.done ? '#2F6B3F' : 'var(--ink)'};">
+                background:${dotCol};border-radius:50%;border:2px solid #FFFDF8;"></div>
+              <div style="font-size:0.82rem;font-weight:600;color:${e.done ? '#3D7A4F' : 'var(--ink)'};">
                 ${e.icon} ${e.label}
-                ${e.done ? '<span style="font-size:0.7rem;color:#2F6B3F;"> ✓</span>' : ''}
+                ${e.done ? '<span style="font-size:0.7rem;color:#3D7A4F;"> ✓</span>' : ''}
               </div>
               <div style="font-size:0.72rem;color:var(--soft);margin-top:2px;">${e.sub}</div>
               ${e.url && !e.faded
@@ -442,7 +442,7 @@ function _renderRegistreConsolide() {
     icon:  '💊',
     label: `${s.produit && s.produit !== '—' ? s.produit : s.type || 'Traitement'} — ${getRucherLabel(s.rucher)}`,
     type:  'traitement',
-    color: '#2F6B3F',
+    color: '#3D7A4F',
   }));
 
   journalData.slice(0, 30).forEach(v => entries.push({
@@ -458,7 +458,7 @@ function _renderRegistreConsolide() {
     icon:  '🚛',
     label: `Mouvement — ${getRucherLabel(m.rucher)}${m.ddppDeclaree === false ? ' ⚠️' : ''}`,
     type:  'mouvement',
-    color: m.ddppDeclaree === false ? '#F5A623' : '#1F5D99',
+    color: m.ddppDeclaree === false ? '#F2A916' : '#3F6A9E',
   }));
 
   entries.sort((a, b) => b.date.localeCompare(a.date));
@@ -469,7 +469,7 @@ function _renderRegistreConsolide() {
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
         <div style="font-size:0.88rem;font-weight:700;color:var(--ink);">📖 Registre d'élevage</div>
         <button onclick="alert('Export PDF — à implémenter')"
-          style="background:#ECE8DF;color:var(--soft);border:none;border-radius:8px;
+          style="background:#EFE6D4;color:var(--soft);border:none;border-radius:8px;
                  padding:4px 10px;font-size:0.72rem;cursor:pointer;">📄 PDF</button>
       </div>
       ${last10.length === 0
@@ -478,14 +478,14 @@ function _renderRegistreConsolide() {
            </div>`
         : last10.map(e => `
           <div style="display:flex;align-items:center;gap:10px;padding:9px 0;
-               border-bottom:1px solid #ECE8DF;">
+               border-bottom:1px solid #EFE6D4;">
             <span style="font-size:1rem;flex-shrink:0;">${e.icon}</span>
             <div style="flex:1;min-width:0;">
               <div style="font-size:0.8rem;color:${e.color};
                    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${e.label}</div>
               <div style="font-size:0.7rem;color:var(--soft);">${e.date}</div>
             </div>
-            <span style="font-size:0.65rem;background:#ECE8DF;color:var(--soft);
+            <span style="font-size:0.65rem;background:#EFE6D4;color:var(--soft);
               padding:2px 7px;border-radius:6px;white-space:nowrap;flex-shrink:0;">${e.type}</span>
           </div>`).join('')
       }
@@ -507,7 +507,7 @@ function _renderLiensOfficiels() {
       ${links.map((l, i) => `
         <a href="${l.url}" target="_blank" rel="noopener noreferrer"
           style="display:flex;align-items:center;gap:12px;padding:11px 0;
-                 ${i < links.length - 1 ? 'border-bottom:1px solid #ECE8DF;' : ''}
+                 ${i < links.length - 1 ? 'border-bottom:1px solid #EFE6D4;' : ''}
                  text-decoration:none;">
           <span style="font-size:1.2rem;flex-shrink:0;">${l.icon}</span>
           <div>
@@ -531,10 +531,10 @@ function openConformiteForm() {
   overlay.id    = 'conformite-overlay';
   overlay.style.cssText = `
     position:fixed;top:0;left:0;right:0;bottom:0;
-    background:rgba(0,0,0,0.75);z-index:600;
+    background:rgba(43, 33, 24,0.75);z-index:600;
     display:flex;align-items:flex-end;justify-content:center;`;
   overlay.innerHTML = `
-    <div style="background:#FFFFFF;border-radius:26px 26px 0 0;width:100%;max-width:480px;
+    <div style="background:#FFFDF8;border-radius:26px 26px 0 0;width:100%;max-width:480px;
                 padding:20px;padding-bottom:calc(20px + env(safe-area-inset-bottom));">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
         <h3 style="margin:0;font-size:1rem;color:var(--ink);">✏️ Déclaration annuelle</h3>
@@ -565,7 +565,7 @@ function openConformiteForm() {
 
       <div style="display:flex;gap:10px;">
         <button onclick="document.getElementById('conformite-overlay').remove()"
-          style="flex:1;padding:13px;background:#ECE8DF;border:none;border-radius:12px;
+          style="flex:1;padding:13px;background:#EFE6D4;border:none;border-radius:12px;
                  color:var(--soft);font-weight:600;cursor:pointer;">Annuler</button>
         <button onclick="saveConformiteData()"
           style="flex:2;padding:13px;background:var(--honey);border:none;border-radius:12px;
@@ -612,10 +612,10 @@ function openAddMouvement() {
   overlay.id    = 'mouvement-overlay';
   overlay.style.cssText = `
     position:fixed;top:0;left:0;right:0;bottom:0;
-    background:rgba(0,0,0,0.75);z-index:600;
+    background:rgba(43, 33, 24,0.75);z-index:600;
     display:flex;align-items:flex-end;justify-content:center;`;
   overlay.innerHTML = `
-    <div style="background:#FFFFFF;border-radius:26px 26px 0 0;width:100%;max-width:480px;
+    <div style="background:#FFFDF8;border-radius:26px 26px 0 0;width:100%;max-width:480px;
                 padding:20px;padding-bottom:calc(20px + env(safe-area-inset-bottom));">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
         <h3 style="margin:0;font-size:1rem;color:var(--ink);">🚛 Nouveau mouvement</h3>
@@ -657,7 +657,7 @@ function openAddMouvement() {
 
       <div style="display:flex;gap:10px;">
         <button onclick="document.getElementById('mouvement-overlay').remove()"
-          style="flex:1;padding:13px;background:#ECE8DF;border:none;border-radius:12px;
+          style="flex:1;padding:13px;background:#EFE6D4;border:none;border-radius:12px;
                  color:var(--soft);font-weight:600;cursor:pointer;">Annuler</button>
         <button onclick="saveAdminMouvement()"
           style="flex:2;padding:13px;background:var(--honey);border:none;border-radius:12px;
