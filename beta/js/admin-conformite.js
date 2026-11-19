@@ -595,7 +595,7 @@ async function saveConformiteData() {
   _conformiteData = data;
 
   document.getElementById('conformite-overlay')?.remove();
-  if (typeof toast === 'function') toast(' Déclaration enregistrée');
+  if (typeof toast === 'function') toast('Déclaration enregistrée');
   _renderAdminDashboard();
 }
 
@@ -682,7 +682,7 @@ async function saveAdminMouvement() {
   const deptDestination = (document.getElementById('mouv-dept')?.value || '').trim();
 
   if (!date || !rucher) {
-    if (typeof toast === 'function') toast(' Date et rucher obligatoires');
+    if (typeof toast === 'function') toast('Ces champs manquent : la date et le rucher.');
     return;
   }
 
@@ -695,7 +695,7 @@ async function saveAdminMouvement() {
   _mouvementsData.unshift(entry);
 
   document.getElementById('mouvement-overlay')?.remove();
-  if (typeof toast === 'function') toast(' Mouvement enregistré');
+  if (typeof toast === 'function') toast('Mouvement enregistré');
   _renderAdminDashboard();
 }
 
@@ -713,10 +713,10 @@ async function markDDPPDeclare(docId) {
     const m = _mouvementsData.find(m => m._docId === docId);
     if (m) m.ddppDeclaree = true;
 
-    if (typeof toast === 'function') toast(' Mouvement marqué déclaré DDPP');
+    if (typeof toast === 'function') toast('Mouvement marqué déclaré DDPP');
     _renderAdminDashboard();
   } catch (err) {
     console.error('[Admin] Erreur markDDPP:', err);
-    if (typeof toast === 'function') toast(' Erreur, réessayez');
+    if (typeof toast === 'function') toast('Erreur, réessayez');
   }
 }

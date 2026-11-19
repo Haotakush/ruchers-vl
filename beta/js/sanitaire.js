@@ -25,7 +25,7 @@ async function saveSanitaire() {
 async function _doSaveSanitaire() {
   const date   = document.getElementById('s-date').value;
   const rucher = document.getElementById('s-rucher').value;
-  if (!date || !rucher) { toast(' Date et rucher obligatoires'); return; }
+  if (!date || !rucher) { toast('Ces champs manquent : la date et le rucher.'); return; }
 
   const entry = {
     date, rucher,
@@ -45,13 +45,13 @@ async function _doSaveSanitaire() {
     sanitaireData[editingSanitaireIdx] = entry;
     editingSanitaireIdx = null;
     if (typeof uploadPendingDoc === 'function') await uploadPendingDoc(entry._docId || '');
-    toast(' Traitement mis à jour !');
+    toast('Traitement mis à jour.');
   } else {
     const docRef = await addSanitaireToFirestore(entry);
     if (docRef) entry._docId = docRef.id;
     sanitaireData.unshift(entry);
     if (typeof uploadPendingDoc === 'function') await uploadPendingDoc(entry._docId || '');
-    toast(' Traitement enregistré !');
+    toast('Traitement enregistré.');
   }
 
   localStorage.setItem('sanitaire', JSON.stringify(sanitaireData));
@@ -214,5 +214,5 @@ async function delSanitaire(docId, i) {
   sanitaireData.splice(i, 1);
   localStorage.setItem('sanitaire', JSON.stringify(sanitaireData));
   renderSanitaire(); updateDashboard();
-  toast(' Supprimé');
+  toast('Supprimé');
 }

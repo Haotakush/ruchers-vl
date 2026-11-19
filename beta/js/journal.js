@@ -35,7 +35,7 @@ function formatDuree(totalMinutes) {
 async function addVisitPhoto(input) {
   const files = Array.from(input.files);
   if (!files.length) return;
-  toast(' Compression…');
+  toast('Compression…');
   for (const file of files) {
     try {
       const blob = await compressImage(file);
@@ -47,7 +47,7 @@ async function addVisitPhoto(input) {
       });
       currentVisitPhotos.push({ dataUrl, blob, isNew: true });
       renderVisitPhotoPreviews();
-    } catch (err) { toast(' Erreur photo'); }
+    } catch (err) { toast('Erreur photo'); }
   }
   input.value = '';
 }
@@ -76,7 +76,7 @@ function renderVisitPhotoPreviews() {
 /* ---- AUDIO ---- */
 async function startRecording() {
   if (!navigator.mediaDevices?.getUserMedia) {
-    toast(' Micro non disponible sur ce navigateur'); return;
+    toast('Micro non disponible sur ce navigateur'); return;
   }
   try {
     const stream   = await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -106,7 +106,7 @@ async function startRecording() {
       if (recordingSeconds >= MAX_RECORDING) stopRecording();
     }, 1000);
   } catch (err) {
-    toast(' Accès micro refusé ou indisponible');
+    toast('Accès micro refusé ou indisponible');
   }
 }
 
@@ -260,7 +260,7 @@ async function saveJournal() {
 async function _doSaveJournal() {
   const date   = document.getElementById('j-date').value;
   const rucher = document.getElementById('j-rucher').value;
-  if (!date || !rucher) { toast(' Date et rucher obligatoires'); return; }
+  if (!date || !rucher) { toast('Ces champs manquent : la date et le rucher.'); return; }
 
   const interventions = Array.from(
     document.querySelectorAll('#j-interventions-grid .check-item.checked')
@@ -317,7 +317,7 @@ async function _doSaveJournal() {
     const last = JSON.parse(localStorage.getItem('_lastJournalSave') || '{}');
     const now  = Date.now();
     if (last.fp === fp && (now - last.ts) < 45000) {
-      toast(' Cette visite vient d\'être enregistrée !');
+      toast('Cette visite est déjà enregistrée.');
       return;
     }
     localStorage.setItem('_lastJournalSave', JSON.stringify({ fp, ts: now }));
@@ -577,7 +577,7 @@ async function delJournal(docId, i) {
   journalData.splice(i, 1);
   localStorage.setItem('journal', JSON.stringify(journalData));
   renderJournal(); updateDashboard(); drawChartVisites();
-  toast(' Visite supprimée');
+  toast('Visite supprimée');
 }
 
 /* ---- COMPTE RENDU ---- */

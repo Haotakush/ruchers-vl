@@ -143,18 +143,18 @@ function confirmDeleteAccount() {
 async function doDeleteAccount() {
   if (!currentUser) return;
   try {
-    toast(' Suppression en cours…');
+    toast('Suppression en cours…');
     // Supprimer les données Firestore de l'utilisateur
     if (typeof deleteAllUserData === 'function') await deleteAllUserData();
     // Supprimer le compte Firebase Auth
     await currentUser.delete();
-    toast(' Compte supprimé.');
+    toast('Compte supprimé.');
   } catch (err) {
     if (err.code === 'auth/requires-recent-login') {
-      toast(' Reconnectez-vous puis réessayez.');
+      toast('Reconnectez-vous puis réessayez.');
       await auth.signOut();
     } else {
-      toast(' Erreur : ' + err.message);
+      toast('Erreur : ' + err.message);
     }
   }
 }
@@ -191,7 +191,7 @@ function handleCreateKeypress(e) { if (e.key === 'Enter') doCreateAccount(); }
 /* ---- Déconnexion ---- */
 async function doLogout() {
   try { await auth.signOut(); }
-  catch (err) { toast(' Erreur de déconnexion'); }
+  catch (err) { toast('Erreur de déconnexion'); }
 }
 
 /* ---- Listener Auth ---- */
