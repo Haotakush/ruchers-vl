@@ -3097,3 +3097,25 @@ h2.card-title { margin-top: 0; }
   .toast .toast-cell-fill { transform: none; }
 }
 .plus-sheet { padding-left: 16px; padding-right: 16px; }
+
+/* ============================================================
+   Charte Apicarnet — lot 6 : grille des ruches
+   ============================================================ */
+.g-marques { display: flex; flex-wrap: wrap; gap: 8px; margin: 4px 0 10px; }
+.g-mk { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 0 12px 0 8px; border-radius: 10px; background: var(--papier); border: 1.5px solid var(--kraft); font: 500 0.82rem var(--font-body); color: var(--propolis); cursor: pointer; }
+.g-mk .ico { width: 22px; height: 22px; }
+.g-mk.on { border-color: var(--c); background: var(--miel-pale); box-shadow: inset 0 0 0 1px var(--c); }
+.g-info { font-size: 0.85rem; color: var(--brun); margin: 2px 0 10px; }
+.g-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(56px, 1fr)); gap: 8px; touch-action: none; user-select: none; -webkit-user-select: none; }
+.g-cell { position: relative; aspect-ratio: 1; min-height: 56px; border-radius: 10px; background: var(--papier); border: 1.5px solid var(--kraft-fonce); color: var(--propolis); font: 800 1.1rem var(--font-display); display: grid; place-items: center; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+.g-cell.set { border-color: var(--c); box-shadow: inset 0 0 0 3px var(--c); }
+.g-badge { position: absolute; top: 3px; right: 3px; width: 18px; height: 18px; border-radius: 6px; background: var(--papier); display: grid; place-items: center; }
+.g-badge .ico { width: 16px; height: 16px; }
+.g-cell.pop { animation: gPop 200ms ease-out; }
+@keyframes gPop { 0% { transform: scale(.88); } 60% { transform: scale(1.06); } 100% { transform: scale(1); } }
+.g-valider { width: 100%; min-height: 56px; margin-top: 14px; }
+.g-resume { display: flex; flex-direction: column; gap: 2px; margin: 12px 0 4px; font-size: 0.88rem; color: var(--brun); }
+.g-resume b { color: var(--propolis); font-weight: 500; }
+.g-resume:empty { display: none; }
+.g-nb { max-width: 120px; }
+.g-nb-row[hidden] { display: none; }

@@ -7,7 +7,7 @@
        pour invalider l'ancien cache et déclencher la mise à jour.
    ============================================================ */
 
-const CACHE_VERSION = 'ruchers-vl-beta-v4.5.0';
+const CACHE_VERSION = 'ruchers-vl-beta-v4.6.0';
 const CACHE_PREFIX  = 'ruchers-vl-beta-';  // la bêta ne touche jamais aux caches de /app/
 
 // Bibliothèques externes (versions figées dans leur adresse) : gardées d'une version à l'autre
@@ -34,6 +34,7 @@ const STATIC_ASSETS = [
   './js/data.js',
   './js/ui.js',
   './js/journal.js',
+  './js/grille.js',
   './js/sanitaire.js',
   './js/ruchers.js',
   './js/dashboard.js',

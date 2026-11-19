@@ -4,6 +4,13 @@
 
 ## Bêta — Charte Apicarnet
 
+### Lot 6 : grille des ruches (bêta uniquement)
+- Nouveau choix **Grille des ruches** dans le bouton + : une case par ruche du rucher, on tapote pour « poser un caillou » (À surveiller, Nourrie, À traiter, RAS), ou on glisse le doigt sur plusieurs cases.
+- **Valider les autres ruches** passe d'un coup les ruches non marquées en RAS.
+- La saisie s'enregistre comme une visite du Carnet : résumé lisible dans les marquages (« À surveiller : ruches 4, 7 », « Nourrie : ruche 12 »), détail par ruche conservé (`ruchesMarques`), intervention « Nourrissement » ajoutée quand une ruche est nourrie, note pour la prochaine visite.
+- Le nombre de ruches vient de la fiche du rucher et peut être ajusté dans la grille.
+- Service worker v4.6.0.
+
 ### Lot 5 : animations (bêta uniquement)
 - À l'enregistrement, **l'alvéole se remplit de miel**, puis le message apparaît.
 - Boutons : léger enfoncement à l'appui. Onglets : fondu rapide. Fiches : montée depuis le bas.
