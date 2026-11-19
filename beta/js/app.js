@@ -25,7 +25,7 @@ function initApp() {
   drawChartVisites();
   updateTopbar();
   hydrateIcons();
-  showTab('dashboard', null);   // affiche le bouton « Nouvelle visite » dès l'ouverture
+  showTab('dashboard', null);
 
   const today = new Date().toISOString().split('T')[0];
   document.getElementById('j-date').value = today;

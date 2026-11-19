@@ -2981,3 +2981,51 @@ h2.card-title { margin-top: 0; }
 /* Icônes Apicarnet en ligne dans le texte (remplacent les emojis) */
 .ico-inline { display: inline-flex; vertical-align: -0.2em; }
 .ico-inline .ico, svg.ico-inline { display: inline-block; width: 1.1em; height: 1.1em; }
+
+/* ============================================================
+   Charte Apicarnet — lot 3 : navigation
+   Mon cheptel · Ruchers · ( + ) · Carnet · Menu
+   ============================================================ */
+.bottom-nav { grid-template-columns: repeat(2, minmax(0, 1fr)) 76px repeat(2, minmax(0, 1fr)); align-items: center; }
+.nav-item { min-height: 56px; }
+.nav-plus {
+  justify-self: center;
+  width: 64px; height: 64px;
+  margin-top: -28px;
+  border-radius: 999px;
+  border: 4px solid var(--papier);
+  background: var(--miel-vif);
+  color: var(--propolis);
+  display: grid; place-items: center;
+  box-shadow: 0 4px 14px rgba(43, 33, 24, 0.18);
+  cursor: pointer;
+  transition: transform 100ms ease;
+  -webkit-tap-highlight-color: transparent;
+}
+.nav-plus:active { transform: scale(0.94); }
+.nav-plus:focus-visible { outline: 3px solid var(--propolis); outline-offset: 2px; }
+
+/* Feuille du bouton + */
+.plus-sheet .modal-title { font-family: var(--font-display); }
+.plus-choices { display: flex; flex-direction: column; gap: 10px; padding: 4px 0 12px; }
+.plus-choice {
+  display: flex; align-items: center; gap: 14px;
+  min-height: 64px; padding: 10px 14px;
+  border-radius: var(--r-md);
+  border: 1.5px solid var(--kraft);
+  background: var(--papier);
+  color: var(--propolis);
+  text-align: left; font: inherit; cursor: pointer;
+}
+.plus-choice:active { transform: scale(0.98); background: var(--miel-pale); }
+.plus-ico { width: 44px; height: 44px; border-radius: 12px; background: var(--cire); display: grid; place-items: center; flex: none; }
+.plus-ico .ico { width: 28px; height: 28px; }
+.plus-txt { display: flex; flex-direction: column; gap: 2px; }
+.plus-txt b { font-weight: 500; font-size: 1.02rem; }
+.plus-txt small { color: var(--brun); font-size: 0.85rem; }
+.plus-cancel { width: 100%; min-height: 52px; }
+
+/* Onglets du Carnet : Visites | Santé */
+.carnet-seg { margin-bottom: 14px; }
+.carnet-seg { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.plus-choice[hidden] { display: none; }

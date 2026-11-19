@@ -500,7 +500,7 @@ function renderJournal() {
 
   if (!data.length) {
     list.innerHTML = `<div class="empty"><div class="empty-icon">${icon('visits', 36)}</div>
-      <p>Aucune visite.<br>Touchez « Nouvelle visite » pour en ajouter une.</p></div>`;
+      <p>Aucune visite pour l'instant.<br>Votre première commence avec le bouton +.</p></div>`;
     return;
   }
 
