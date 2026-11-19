@@ -6,7 +6,7 @@
 /* ---- TOPBAR ---- */
 function updateTopbar() {
   const totalRuches = getTotalRuches();
-  document.getElementById('topbar-title').textContent = 'Ruchers VL';
+  document.getElementById('topbar-title').textContent = 'Apicarnet';
   const totalRuchettes = getTotalRuchettes();
   document.getElementById('topbar-sub').textContent   = `${RUCHERS.length} sites · ${totalRuches} ruches` + (totalRuchettes ? ` · ${totalRuchettes} ruchettes` : '');
   const regInfo = document.getElementById('reg-header-info');
@@ -228,7 +228,7 @@ function showInstallBanner() {
       <div class="install-steps">
         <span>1. Appuyez sur <strong>⎋ Partager</strong> en bas de Safari</span>
         <span>2. Choisissez <strong>« Sur l'écran d'accueil »</strong></span>
-        <span>3. L'app apparaîtra comme <strong>Ruchers VL</strong> ✓</span>
+        <span>3. L'app apparaîtra comme <strong>Apicarnet</strong> ✓</span>
       </div>
       <button onclick="
         document.getElementById('install-banner-wrap').innerHTML='';

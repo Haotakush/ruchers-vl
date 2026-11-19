@@ -5,12 +5,12 @@
    ============================================================ */
 
 const DOC_TYPES = {
-  ordonnance:  { label: 'Ordonnance',   emoji: '📋', color: '#6A1B9A', bg: '#F3E5F5' },
-  analyse:     { label: 'Analyse',      emoji: '🔬', color: '#1565C0', bg: '#E3F2FD' },
-  declaration: { label: 'Déclaration',  emoji: '📄', color: '#2E7D32', bg: '#E8F5E9' },
-  controle:    { label: 'Contrôle vét.', emoji: '🛡', color: '#E65100', bg: '#FBE9E7' },
-  facture:     { label: 'Facture',      emoji: '🧾', color: '#5C4A2A', bg: '#FFF8EE' },
-  autre:       { label: 'Autre',        emoji: '📎', color: '#546E7A', bg: '#ECEFF1' },
+  ordonnance:  { label: 'Ordonnance',   emoji: '📋', color: '#7A4E7E', bg: '#EEE4EE' },
+  analyse:     { label: 'Analyse',      emoji: '🔬', color: '#3F6A9E', bg: '#E3EAF3' },
+  declaration: { label: 'Déclaration',  emoji: '📄', color: '#3D7A4F', bg: '#E4EEE6' },
+  controle:    { label: 'Contrôle vét.', emoji: '🛡', color: '#B4561A', bg: '#F6E6DA' },
+  facture:     { label: 'Facture',      emoji: '🧾', color: '#6A5D4F', bg: '#FBEBC4' },
+  autre:       { label: 'Autre',        emoji: '📎', color: '#6A5D4F', bg: '#EFE6D4' },
 };
 
 /* Fichier en attente d'upload (sélectionné dans le formulaire sanitaire) */
@@ -99,7 +99,7 @@ function docCard(d) {
             style="display:flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:8px;background:var(--honey-pale);color:var(--honey);text-decoration:none;font-size:1rem;"
             title="Ouvrir / télécharger">👁</a>
           <button onclick="confirmDeleteDoc('${d._docId}','${escAttr(d.label || d.originalName || 'ce document')}')"
-            style="width:34px;height:34px;border-radius:8px;background:#FFEBEE;border:none;color:#C62828;font-size:1rem;cursor:pointer;"
+            style="width:34px;height:34px;border-radius:8px;background:#F6E1DE;border:none;color:#B3362B;font-size:1rem;cursor:pointer;"
             title="Supprimer">🗑</button>
         </div>
       </div>

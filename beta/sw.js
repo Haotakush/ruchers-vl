@@ -1,5 +1,5 @@
 /* ============================================================
-   Service Worker — Ruchers VL
+   Service Worker — Apicarnet (bêta)
    Cache-first pour les assets statiques.
    Notification de mise à jour quand une nouvelle version est dispo.
 
@@ -7,7 +7,7 @@
        pour invalider l'ancien cache et déclencher la mise à jour.
    ============================================================ */
 
-const CACHE_VERSION = 'ruchers-vl-beta-v4.0.0';
+const CACHE_VERSION = 'ruchers-vl-beta-v4.1.0';
 const CACHE_PREFIX  = 'ruchers-vl-beta-';  // la bêta ne touche jamais aux caches de /app/
 
 // Bibliothèques externes (versions figées dans leur adresse) : gardées d'une version à l'autre
@@ -15,8 +15,6 @@ const LIB_CACHE = 'ruchers-vl-beta-libs-v1';
 const LIB_HOSTS = [
   'https://www.gstatic.com/firebasejs/',
   'https://cdnjs.cloudflare.com/ajax/libs/',
-  'https://fonts.googleapis.com/css',
-  'https://fonts.gstatic.com/',
 ];
 
 const STATIC_ASSETS = [
@@ -24,6 +22,13 @@ const STATIC_ASSETS = [
   './index.html',
   './manifest.json',
   './css/style.css',
+  './fonts/lexend.woff2',
+  './fonts/bricolage-grotesque.woff2',
+  './icons/logotype.svg',
+  './icons/icon-192.png',
+  './icons/icon-512.png',
+  './icons/icon-maskable-512.png',
+  './icons/apple-touch-icon.png',
   './js/firebase-init.js',
   './js/icons.js',
   './js/data.js',

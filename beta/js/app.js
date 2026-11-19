@@ -15,7 +15,7 @@ function initApp() {
     return;
   }
   _appInitialized = true;
-  console.log('🐝 Initialisation Ruchers VL v1.3…');
+  console.log('Initialisation Apicarnet v1.3…');
   renderAllSelects();
   renderJournal();
   renderSanitaire();
@@ -74,7 +74,7 @@ function updateProfileCard() {
   nameEl.textContent = nom || 'Mon exploitation';
   document.getElementById('profile-meta').textContent =
     [napi ? `NAPI ${napi}` : 'NAPI à renseigner', mail].filter(Boolean).join(' · ');
-  const initials = (nom || 'Ruchers VL').split(/\s+/).filter(Boolean).slice(0, 2).map(w => w[0]).join('').toUpperCase();
+  const initials = (nom || 'Apicarnet').split(/\s+/).filter(Boolean).slice(0, 2).map(w => w[0]).join('').toUpperCase();
   document.getElementById('profile-initials').textContent = initials || 'RV';
 }
 

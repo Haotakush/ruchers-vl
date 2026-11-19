@@ -92,12 +92,12 @@ function renderMouvMap() {
     const origIcon = L.divIcon({
       className: '',
       html: `<div style="
-        background:#D4820A;color:white;
+        background:#9A5B00;color:white;
         border-radius:50% 50% 50% 0;transform:rotate(-45deg);
         width:28px;height:28px;
         display:flex;align-items:center;justify-content:center;
         border:2px solid white;
-        box-shadow:0 2px 8px rgba(0,0,0,0.35);
+        box-shadow:0 2px 8px rgba(43, 33, 24,0.35);
         font-size:0.55rem;font-weight:800;font-family:monospace;">
           <span style="transform:rotate(45deg)">${r.id}</span>
       </div>`,
@@ -127,15 +127,15 @@ function renderMouvMap() {
       // Ligne pointillée origine → destination
       const line = L.polyline(
         [[r.lat, r.lng], [destCoords.lat, destCoords.lng]],
-        { color: '#D4820A', weight: 2.5, dashArray: '8, 5', opacity: 0.85 }
+        { color: '#9A5B00', weight: 2.5, dashArray: '8, 5', opacity: 0.85 }
       ).addTo(mouvMapInstance);
       _mouvLines.push(line);
 
       // Marqueur destination (cercle)
       const destMarker = L.circleMarker([destCoords.lat, destCoords.lng], {
         radius: 7,
-        color: '#D4820A',
-        fillColor: '#FFF8E7',
+        color: '#9A5B00',
+        fillColor: '#FBEBC4',
         fillOpacity: 0.9,
         weight: 2,
       }).addTo(mouvMapInstance)
@@ -238,7 +238,7 @@ function onMouvCheptelPreview() {
 
   previewEl.style.display = 'block';
   previewEl.innerHTML = `
-    <div style="font-size:0.78rem;font-weight:700;color:#D4820A;margin-bottom:6px;">
+    <div style="font-size:0.78rem;font-weight:700;color:#9A5B00;margin-bottom:6px;">
       📊 Mise à jour automatique des effectifs
     </div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
@@ -250,7 +250,7 @@ function onMouvCheptelPreview() {
       <div style="font-size:0.75rem;color:var(--ink);">
         <div style="color:var(--soft);margin-bottom:2px;">${dest.id} — ${dest.lieu}</div>
         <span style="text-decoration:line-through;color:var(--soft);">${destAvant} col.</span>
-        <span style="font-weight:700;color:#4A7C59;margin-left:4px;">→ ${destApres} col.</span>
+        <span style="font-weight:700;color:#3D7A4F;margin-left:4px;">→ ${destApres} col.</span>
       </div>
     </div>`;
 }
@@ -464,7 +464,7 @@ function renderMouvements() {
     const nbTxt = m.nbColonies ? `${m.nbColonies} colonie${m.nbColonies > 1 ? 's' : ''}` : '—';
     const hasGPS = parseDestCoords(m.destination) !== null;
     const gpsBadge = hasGPS
-      ? `<span class="badge" style="background:rgba(212,130,10,0.15);color:#D4820A;border:1px solid rgba(212,130,10,0.3);">📍 GPS</span>`
+      ? `<span class="badge" style="background:rgba(154, 91, 0,0.15);color:#9A5B00;border:1px solid rgba(154, 91, 0,0.3);">📍 GPS</span>`
       : '';
 
     return `
@@ -481,8 +481,8 @@ function renderMouvements() {
         ${m.obs ? `<span class="badge badge-couvain">${m.obs}</span>` : ''}
       </div>
       <button onclick="event.stopPropagation();openRecapDeclaration(${i})"
-        style="margin-top:10px;width:100%;padding:8px 0;border-radius:10px;border:1px solid rgba(212,130,10,0.35);
-               background:rgba(212,130,10,0.08);color:#D4820A;font-size:0.78rem;font-weight:600;
+        style="margin-top:10px;width:100%;padding:8px 0;border-radius:10px;border:1px solid rgba(154, 91, 0,0.35);
+               background:rgba(154, 91, 0,0.08);color:#9A5B00;font-size:0.78rem;font-weight:600;
                cursor:pointer;letter-spacing:0.01em;">
         📋 Récapitulatif déclaration
       </button>
@@ -538,7 +538,7 @@ Destination : ${m.destination !== '—' ? m.destination : '—'}
 Motif : ${m.motif !== '—' ? m.motif : '—'}
 ${m.obs ? 'Observations : ' + m.obs : ''}
 
-Généré par Ruchers VL`;
+Généré par Apicarnet`;
 
   // Injection dans le modal
   document.getElementById('recap-nom').textContent     = nom;

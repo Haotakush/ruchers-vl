@@ -62,7 +62,7 @@ function buildSection2_Ruchers() {
       <td>${r.lieu}</td>
       <td style="font-family:var(--font-body);font-size:0.8rem;">${gps}</td>
       <td style="font-weight:700;color:var(--honey);text-align:center;">${r.nb !== null && r.nb !== undefined ? r.nb : '—'}</td>
-      <td style="text-align:center;color:#E65100;">${r.nbRuchettes || '—'}</td>
+      <td style="text-align:center;color:#B4561A;">${r.nbRuchettes || '—'}</td>
       <td style="font-weight:700;text-align:center;">${total || '—'}</td>
     </tr>`;
   }).join('');
@@ -217,12 +217,12 @@ function exportPDF() {
   const header = `
     <div class="header-block">
       <h1>📖 Registre d'Élevage Apicole</h1>
-      <p><strong style="color:#F5A623;">${PARAMS.nom||'—'}</strong>
+      <p><strong style="color:#F2A916;">${PARAMS.nom||'—'}</strong>
          · NAPI ${PARAMS.napi||'—'}
          · SIRET ${PARAMS.siret||'—'}</p>
       <p>${PARAMS.adresse||'—'}</p>
       <p>Déclaration du ${PARAMS.dateDecl||'—'} · Réf. ${PARAMS.refDecl||'—'} · ${PARAMS.colonies||'—'} colonies</p>
-      <p style="margin-top:8px;font-size:10px;color:#6B5A3E;">
+      <p style="margin-top:8px;font-size:10px;color:#6A5D4F;">
         Généré le ${new Date().toLocaleDateString('fr-FR')} à
         ${new Date().toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'})}
       </p>
@@ -234,24 +234,24 @@ function exportPDF() {
 <title>Registre Élevage — ${PARAMS.nom||'Apiculteur'}</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
-body{font-family:Arial,sans-serif;font-size:11px;color:#2C1F0E;background:#FAF6EE;}
-.pdf-topbar{position:sticky;top:0;background:#1A1208;color:#F5A623;padding:14px 20px;display:flex;align-items:center;gap:16px;z-index:100;}
-.pdf-back-btn{background:rgba(245,166,35,.15);border:1px solid rgba(245,166,35,.4);color:#F5A623;padding:8px 16px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;}
-.pdf-print-btn{background:#D4820A;border:none;color:white;padding:8px 20px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;margin-left:auto;}
+body{font-family:Arial,sans-serif;font-size:11px;color:#2B2118;background:#F7F2E8;}
+.pdf-topbar{position:sticky;top:0;background:#2B2118;color:#F2A916;padding:14px 20px;display:flex;align-items:center;gap:16px;z-index:100;}
+.pdf-back-btn{background:rgba(242, 169, 22,.15);border:1px solid rgba(242, 169, 22,.4);color:#F2A916;padding:8px 16px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;}
+.pdf-print-btn{background:#9A5B00;border:none;color:white;padding:8px 20px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;margin-left:auto;}
 .pdf-title{font-size:14px;font-weight:700;}
 .pdf-content{max-width:960px;margin:0 auto;padding:24px 20px 60px;}
-.header-block{background:#1A1208;color:#FAF6EE;padding:18px 20px;border-radius:10px;margin-bottom:20px;}
-.header-block h1{font-size:16px;color:#F5A623;margin-bottom:8px;}
-.header-block p{font-size:11px;color:#A8916A;margin:3px 0;}
+.header-block{background:#2B2118;color:#F7F2E8;padding:18px 20px;border-radius:10px;margin-bottom:20px;}
+.header-block h1{font-size:16px;color:#F2A916;margin-bottom:8px;}
+.header-block p{font-size:11px;color:#6A5D4F;margin:3px 0;}
 table{width:100%;border-collapse:collapse;margin-bottom:16px;}
-th{background:#1A1208;color:#F5A623;padding:7px 10px;text-align:left;font-size:10px;}
-td{padding:6px 10px;border-bottom:1px solid #E8DCC8;vertical-align:top;font-size:11px;}
-tr:nth-child(even) td{background:#FEF3DC;}
+th{background:#2B2118;color:#F2A916;padding:7px 10px;text-align:left;font-size:10px;}
+td{padding:6px 10px;border-bottom:1px solid #EFE6D4;vertical-align:top;font-size:11px;}
+tr:nth-child(even) td{background:#FBEBC4;}
 .badge{padding:2px 8px;border-radius:20px;font-size:9px;font-weight:700;}
-.badge-sani{background:#F3E5F5;color:#6A1B9A;}
-.badge-couvain{background:#E8EAF6;color:#283593;}
-.registre-section-title{font-size:13px;color:#8B4513;border-bottom:2px solid #FEF3DC;padding-bottom:6px;margin:20px 0 12px;font-weight:700;}
-.empty{text-align:center;padding:30px;color:#A8916A;}
+.badge-sani{background:#EEE4EE;color:#7A4E7E;}
+.badge-couvain{background:#EEE4EE;color:#7A4E7E;}
+.registre-section-title{font-size:13px;color:#9A5B00;border-bottom:2px solid #FBEBC4;padding-bottom:6px;margin:20px 0 12px;font-weight:700;}
+.empty{text-align:center;padding:30px;color:#6A5D4F;}
 @media print{.pdf-topbar{display:none;}body{background:white;}.pdf-content{padding:10mm;}}
 </style></head><body>
 <div class="pdf-topbar">
@@ -307,10 +307,10 @@ async function partagerRegistre() {
   const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
 
   // Palette couleurs
-  const C_DARK  = [26, 18, 8];
-  const C_HONEY = [212, 137, 42];
-  const C_LIGHT = [250, 246, 238];
-  const C_TEXT  = [44, 31, 14];
+  const C_DARK  = [43, 33, 24];   // propolis
+  const C_HONEY = [154, 91, 0];   // miel foncé
+  const C_LIGHT = [247, 242, 232]; // cire
+  const C_TEXT  = [43, 33, 24];   // propolis
 
   const nom    = PARAMS.nom    || '—';
   const dateStr = new Date().toLocaleDateString('fr-FR');
@@ -318,16 +318,16 @@ async function partagerRegistre() {
   // ── HEADER ──────────────────────────────────────────────
   doc.setFillColor(...C_DARK);
   doc.rect(0, 0, 210, 38, 'F');
-  doc.setTextColor(245, 166, 35);
+  doc.setTextColor(242, 169, 22);
   doc.setFontSize(15); doc.setFont('helvetica', 'bold');
   doc.text("Registre d'Elevage Apicole", 14, 14);
   doc.setFontSize(8); doc.setFont('helvetica', 'normal');
-  doc.setTextColor(168, 145, 106);
+  doc.setTextColor(227, 211, 181);
   doc.text(`${nom}  ·  NAPI ${PARAMS.napi||'—'}  ·  SIRET ${PARAMS.siret||'—'}`, 14, 21);
   doc.text(PARAMS.adresse || '—', 14, 26);
   doc.text(`Declaration : ${PARAMS.dateDecl||'—'}  ·  Ref. ${PARAMS.refDecl||'—'}  ·  ${PARAMS.colonies||'—'} colonies`, 14, 31);
-  doc.setTextColor(120, 100, 70);
-  doc.text(`Genere le ${dateStr} par Ruchers VL  ·  Conforme arrete 11/08/1994`, 14, 36);
+  doc.setTextColor(217, 205, 182);
+  doc.text(`Genere le ${dateStr} par Apicarnet  ·  Conforme arrete 11/08/1994`, 14, 36);
 
   let y = 46;
 
@@ -347,7 +347,7 @@ async function partagerRegistre() {
       head: head.length ? [head] : [],
       body: body.length ? body : [Array(head.length || 2).fill('—')],
       styles: { fontSize: 8, cellPadding: 2.5, textColor: C_TEXT },
-      headStyles: { fillColor: C_DARK, textColor: [245, 166, 35], fontStyle: 'bold' },
+      headStyles: { fillColor: C_DARK, textColor: [242, 169, 22], fontStyle: 'bold' },
       alternateRowStyles: { fillColor: C_LIGHT },
       theme: 'striped',
       margin: { left: 14, right: 14 },
@@ -418,9 +418,9 @@ async function partagerRegistre() {
   const total = doc.internal.getNumberOfPages();
   for (let i = 1; i <= total; i++) {
     doc.setPage(i);
-    doc.setFontSize(7); doc.setTextColor(150, 130, 100);
+    doc.setFontSize(7); doc.setTextColor(106, 93, 79);
     doc.text(
-      `Ruchers VL  ·  Registre conforme arrete 11/08/1994  ·  Page ${i}/${total}`,
+      `Apicarnet  ·  Registre conforme arrete 11/08/1994  ·  Page ${i}/${total}`,
       105, 292, { align: 'center' }
     );
   }

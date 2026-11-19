@@ -17,8 +17,8 @@ let _distLine     = null;
 /* ---- Icône marqueur ---- */
 function _makeIcon(r, alertColor, selected) {
   const ring = selected
-    ? `box-shadow:0 0 0 3px white, 0 0 0 5px ${alertColor}, 0 2px 10px rgba(0,0,0,0.4);`
-    : `box-shadow:0 2px 8px rgba(0,0,0,0.3);`;
+    ? `box-shadow:0 0 0 3px white, 0 0 0 5px ${alertColor}, 0 2px 10px rgba(43, 33, 24,0.4);`
+    : `box-shadow:0 2px 8px rgba(43, 33, 24,0.3);`;
   return L.divIcon({
     className: '',
     html: `<div style="
@@ -57,7 +57,7 @@ function _updateDistance() {
   // Distance en mètres via Leaflet
   const metres  = L.latLng(a.r.lat, a.r.lng).distanceTo(L.latLng(b.r.lat, b.r.lng));
   const conforme = metres >= 1000;
-  const lineColor = conforme ? '#4CAF50' : '#EF5350';
+  const lineColor = conforme ? '#3D7A4F' : '#B3362B';
 
   // Ligne entre les deux (verte si ok, rouge si trop proches)
   _distLine = L.polyline(
@@ -69,8 +69,8 @@ function _updateDistance() {
     ? `${Math.round(metres)} m`
     : `${(metres / 1000).toFixed(1)} km`;
   const badge = conforme
-    ? `<span style="color:#4CAF50;font-weight:700;">✅ Conforme</span>`
-    : `<span style="color:#EF5350;font-weight:700;">⚠️ Trop proches !</span>`;
+    ? `<span style="color:#3D7A4F;font-weight:700;">✅ Conforme</span>`
+    : `<span style="color:#B3362B;font-weight:700;">⚠️ Trop proches !</span>`;
 
   // Panneau flottant au-dessus de la carte
   const div = document.createElement('div');
@@ -84,7 +84,7 @@ function _updateDistance() {
     position:absolute;bottom:16px;left:50%;transform:translateX(-50%);
     background:var(--card);border:1px solid ${lineColor};border-radius:12px;
     padding:8px 14px;display:flex;align-items:center;gap:4px;
-    box-shadow:0 4px 16px rgba(0,0,0,0.25);z-index:1000;white-space:nowrap;`;
+    box-shadow:0 4px 16px rgba(43, 33, 24,0.25);z-index:1000;white-space:nowrap;`;
   document.getElementById('map').appendChild(div);
 }
 
@@ -113,9 +113,9 @@ function initMap() {
   const lastVisitMap = buildLastVisitMap();
 
   const zoneColors = {
-    'Bas':       '#4CAF50',
-    'Mi-pentes': '#FFB300',
-    'Hauts':     '#1E88E5',
+    'Bas':       '#3D7A4F',
+    'Mi-pentes': '#F2A916',
+    'Hauts':     '#3F6A9E',
   };
 
   RUCHERS.forEach(r => {
@@ -125,13 +125,13 @@ function initMap() {
     let alertColor, alertLabel;
 
     if (days === null) {
-      alertColor = '#EF5350'; alertLabel = '🔴 Jamais visité';
+      alertColor = '#B3362B'; alertLabel = '🔴 Jamais visité';
     } else if (days > 30) {
-      alertColor = '#EF5350'; alertLabel = `🔴 ${days}j sans visite`;
+      alertColor = '#B3362B'; alertLabel = `🔴 ${days}j sans visite`;
     } else if (days > 14) {
-      alertColor = '#FF9800'; alertLabel = `🟡 ${days}j sans visite`;
+      alertColor = '#B4561A'; alertLabel = `🟡 ${days}j sans visite`;
     } else {
-      alertColor = zoneColors[r.zone] || '#D4820A'; alertLabel = `🟢 ${days}j`;
+      alertColor = zoneColors[r.zone] || '#9A5B00'; alertLabel = `🟢 ${days}j`;
     }
 
     // Cercle rayon mellifère 1km

@@ -196,7 +196,7 @@ function grabGPSForRucher(prefix) {
       document.getElementById(`${prefix}-lng`).value = lng;
       if (hint) {
         hint.textContent = `📍 Position enregistrée — précision ±${acc}m`;
-        hint.style.color = acc <= 20 ? 'var(--green, #4CAF50)' : 'var(--soft)';
+        hint.style.color = acc <= 20 ? 'var(--green, #3D7A4F)' : 'var(--soft)';
         hint.style.display = 'block';
       }
       if (btn) { btn.innerHTML = '✅ Position enregistrée'; btn.disabled = false; }
@@ -475,7 +475,7 @@ function renderGanttCalendrier() {
     'Mi-pente': '🌿 Mi-pente · 400 – 800 m',
     'Haut':     '⛰ Hauts · 800 m +',
   };
-  const ZONE_COLORS = { 'Bas': '#4CAF50', 'Mi-pente': '#FF9800', 'Haut': '#2196F3' };
+  const ZONE_COLORS = { 'Bas': '#3D7A4F', 'Mi-pente': '#B4561A', 'Haut': '#3F6A9E' };
 
   let bodyRows = '';
   ZONES.forEach(zone => {

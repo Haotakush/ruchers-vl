@@ -79,7 +79,7 @@ function checkRappelsNotifications() {
   journalData
     .filter(v => v.rappel && !v.rappel.fait && v.rappel.echeance <= today)
     .forEach(v => {
-      new Notification('🍯 Ruchers VL — Rappel', {
+      new Notification('Apicarnet — Rappel', {
         body: `${v.rappel.texte} (${getRucherLabel(v.rucher)})`,
         icon: '/ruchers-vl/icons/icon-192.png',
       });
@@ -186,8 +186,8 @@ function updateZoneBars() {
   if (totalEl) totalEl.textContent = total ? `${total} ruches` : '';
   const defs = [
     { z: 'Bas',       label: 'Bas · 0–400 m',       color: '#3D7A4F' },
-    { z: 'Mi-pentes', label: 'Mi-pentes · 400–800 m', color: '#C98A12' },
-    { z: 'Hauts',     label: 'Hauts · 800 m et +',   color: '#2F6DB5' },
+    { z: 'Mi-pentes', label: 'Mi-pentes · 400–800 m', color: '#9A5B00' },
+    { z: 'Hauts',     label: 'Hauts · 800 m et +',   color: '#3F6A9E' },
   ];
   if (!total) { el.innerHTML = `<div class="list-empty" style="padding:4px 0;">Aucune ruche enregistrée.</div>`; return; }
   el.innerHTML = `
@@ -241,7 +241,7 @@ function drawChartVisites() {
   const barW   = Math.floor(chartW / 6 * 0.6);
   const barGap = chartW / 6;
 
-  ctx.strokeStyle = '#ECE8DF';
+  ctx.strokeStyle = '#EFE6D4';
   ctx.lineWidth   = 1;
   [0, 0.25, 0.5, 0.75, 1].forEach(t => {
     const y = padT + chartH - (t * chartH);
