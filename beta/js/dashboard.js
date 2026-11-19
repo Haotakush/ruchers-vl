@@ -89,14 +89,31 @@ function checkRappelsNotifications() {
 function updateStats() {
   const nbRuches    = getTotalRuches();
   const nbRuchettes = getTotalRuchettes();
-  document.getElementById('s-ruches').textContent    = nbRuches;
-  document.getElementById('s-ruchettes').textContent = nbRuchettes;
-  document.getElementById('s-total').textContent     = nbRuches + nbRuchettes;
+  setCount('s-ruches', nbRuches);
+  setCount('s-ruchettes', nbRuchettes);
+  setCount('s-total', nbRuches + nbRuchettes);
   const bar = document.getElementById('herd-bar-ruches');
   if (bar) bar.style.width = (nbRuches + nbRuchettes ? (nbRuches / (nbRuches + nbRuchettes)) * 100 : 50) + '%';
-  document.getElementById('s-visites').textContent = journalData.length;
-  document.getElementById('s-traits').textContent  = sanitaireData.length;
-  document.getElementById('s-sites').textContent   = RUCHERS.length;
+  setCount('s-visites', journalData.length);
+  setCount('s-traits', sanitaireData.length);
+  setCount('s-sites', RUCHERS.length);
+}
+
+/* Chiffres clés : ils défilent jusqu'à leur valeur à la première ouverture (400 ms) */
+function setCount(id, value) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  const reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (!value) { el.textContent = value; return; }
+  if (el.dataset.counted || reduce) { el.textContent = value; el.dataset.counted = '1'; return; }
+  el.dataset.counted = '1';
+  const t0 = performance.now();
+  const step = t => {
+    const p = Math.min(1, (t - t0) / 400);
+    el.textContent = Math.round(value * (1 - Math.pow(1 - p, 3)));
+    if (p < 1) requestAnimationFrame(step);
+  };
+  requestAnimationFrame(step);
 }
 
 /* ---- RUCHERS À VISITER (fréquence + recommandations fusionnées) ---- */

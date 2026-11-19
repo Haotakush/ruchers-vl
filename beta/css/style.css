@@ -256,7 +256,7 @@ body {
 
 .section.active {
   display: block;
-  animation: fadeIn 0.2s ease;
+  animation: fadeIn 150ms ease;
 }
 
 @keyframes fadeIn {
@@ -840,7 +840,7 @@ body {
   overflow-y: scroll;              /* ✅ FIX iOS scroll dans modal */
   -webkit-overflow-scrolling: touch;
   overscroll-behavior: contain;
-  animation: slideUp 0.28s cubic-bezier(0.165, 0.84, 0.44, 1);
+  animation: slideUp 250ms cubic-bezier(0.165, 0.84, 0.44, 1);
   padding-bottom: calc(16px + var(--safe-bottom));
   /* ✅ FIX iOS : autoriser le scroll dans la modal */
   touch-action: pan-y;
@@ -3054,3 +3054,46 @@ h2.card-title { margin-top: 0; }
 /* Écrans vides : centrés, ton Apicarnet */
 .empty { text-align: center; }
 .empty p { color: var(--brun); line-height: 1.5; }
+
+/* ============================================================
+   Charte Apicarnet — lot 5 : animations
+   Elles confirment ou guident, jamais en boucle.
+   ============================================================ */
+/* Appui : léger enfoncement (100 ms) */
+.btn-save, .btn-cancel, .qbtn, .menu-row, .list-row-link, .seg-btn, .login-btn,
+.plus-choice, .topbar-btn, .fab, .nav-item {
+  transition: transform 100ms ease, background-color 150ms ease;
+}
+.btn-save:active, .btn-cancel:active, .qbtn:active, .menu-row:active,
+.list-row-link:active, .seg-btn:active, .login-btn:active, .topbar-btn:active { transform: scale(0.97); }
+
+/* Confirmation : l'alvéole se remplit de miel (300 ms), puis le texte */
+.toast .toast-cell-fill { transform-box: fill-box; transform-origin: 50% 100%; transform: scaleY(0); }
+.toast.show .toast-cell-fill { animation: cellFill 300ms ease-out forwards; }
+.toast.show .toast-text { animation: toastText 200ms ease-out 250ms both; }
+@keyframes cellFill { to { transform: scaleY(1); } }
+@keyframes toastText { from { opacity: 0; transform: translateX(-4px); } to { opacity: 1; transform: none; } }
+
+/* Bouton + : les choix se déplient (200 ms) */
+#modal-plus.open .plus-choice { animation: plusIn 200ms ease-out both; }
+#modal-plus.open .plus-choice:nth-child(2) { animation-delay: 40ms; }
+#modal-plus.open .plus-choice:nth-child(3) { animation-delay: 80ms; }
+@keyframes plusIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+
+/* Alertes : un léger battement, une seule fois à l'affichage */
+.section.active .note-card { animation: beatOnce 300ms ease-out 1; }
+@keyframes beatOnce { 0% { transform: scale(1); } 50% { transform: scale(1.02); } 100% { transform: scale(1); } }
+
+/* Écrans vides : illustration en fondu doux */
+.empty { animation: fadeIn 300ms ease-out; }
+
+/* Premier lancement : le logotype s'écrit (800 ms, une fois) */
+.ls-logo.ls-intro { animation: logoWrite 800ms cubic-bezier(.4,.0,.2,1) both; }
+@keyframes logoWrite { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0 0 0 0); } }
+
+/* Réduire les animations : tout s'affiche directement */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 1ms !important; animation-iteration-count: 1 !important; transition-duration: 1ms !important; }
+  .toast .toast-cell-fill { transform: none; }
+}
+.plus-sheet { padding-left: 16px; padding-right: 16px; }
