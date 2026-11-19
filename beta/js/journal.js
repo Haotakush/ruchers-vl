@@ -440,7 +440,7 @@ async function _doSaveJournal() {
     const savedIdx = isEditing ? journalData.indexOf(entry) : 0;
     showICSPrompt(entry.rappel, getRucherLabel(entry.rucher), savedIdx);
   } else {
-    toast(isEditing ? ' Visite mise à jour !' : ' Visite enregistrée !');
+    toast(isEditing ? 'Visite mise à jour.' : 'Visite enregistrée.');
   }
 }
 

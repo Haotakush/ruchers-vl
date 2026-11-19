@@ -704,7 +704,7 @@
         <span class="plus-ico" data-icon="inspection" data-size="28"></span>
         <span class="plus-txt"><b>Visite du rucher</b><small>Le compte rendu de votre passage</small></span>
       </button>
-      <button class="plus-choice" id="plus-grille" onclick="closeModal('modal-plus');if(typeof openGrilleRuches==='function')openGrilleRuches()" hidden>
+      <button class="plus-choice" id="plus-grille" onclick="closeModal('modal-plus');openGrilleRuches()">
         <span class="plus-ico" data-icon="cadre" data-size="28"></span>
         <span class="plus-txt"><b>Grille des ruches</b><small>Marquer les ruches une par une</small></span>
       </button>
@@ -717,6 +717,50 @@
   </div>
 </div>
 
+
+<!-- ============================================================
+     MODAL : GRILLE DES RUCHES (« cailloux »)
+     ============================================================ -->
+<div class="modal-overlay" id="modal-grille">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title">Grille des ruches</div>
+    <div class="modal-body">
+      <div class="form-row-2">
+        <div>
+          <label class="form-label" for="g-date">Date</label>
+          <input type="date" class="form-input" id="g-date">
+        </div>
+        <div>
+          <label class="form-label" for="g-rucher">Rucher</label>
+          <select class="form-select" id="g-rucher" onchange="onGrilleRucherChange()"></select>
+        </div>
+      </div>
+      <div class="form-row g-nb-row" hidden>
+        <label class="form-label" for="g-nb">Nombre de ruches</label>
+        <input type="number" inputmode="numeric" min="1" max="400" class="form-input g-nb" id="g-nb" onchange="onGrilleNbChange()">
+      </div>
+      <div class="g-marques" id="g-marques" role="radiogroup" aria-label="Marque à poser">
+        <button type="button" class="g-mk on" data-m="surveiller" style="--c:var(--etat-surveiller)" onclick="setGrilleMarque('surveiller')"><span data-icon="surveiller" data-size="22"></span>À surveiller</button>
+        <button type="button" class="g-mk" data-m="nourrie" style="--c:var(--int-nourrissement)" onclick="setGrilleMarque('nourrie')"><span data-icon="nourrissement" data-size="22"></span>Nourrie</button>
+        <button type="button" class="g-mk" data-m="traiter" style="--c:var(--int-traitement)" onclick="setGrilleMarque('traiter')"><span data-icon="traitement" data-size="22"></span>À traiter</button>
+        <button type="button" class="g-mk" data-m="ras" style="--c:var(--etat-ras)" onclick="setGrilleMarque('ras')"><span data-icon="ras" data-size="22"></span>RAS</button>
+      </div>
+      <p class="g-info" id="g-info"></p>
+      <div class="g-grid" id="g-grid"></div>
+      <button type="button" class="btn-cancel g-valider" onclick="validerAutresRuches()">Valider les autres ruches</button>
+      <div class="g-resume" id="g-resume" aria-live="polite"></div>
+      <div class="form-row">
+        <label class="form-label" for="g-obs">Note pour la prochaine visite</label>
+        <textarea class="form-input" id="g-obs" rows="2" placeholder="Repasser voir la 4, ponte faible…"></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancel" onclick="closeModal('modal-grille')">Annuler</button>
+      <button class="btn-save" id="g-save" onclick="saveGrilleRuches()">Enregistrer la visite</button>
+    </div>
+  </div>
+</div>
 
 <!-- ============================================================
      MODAL : NOUVELLE VISITE
@@ -1408,6 +1452,7 @@
 <script src="js/data.js"></script>
 <script src="js/ui.js"></script>
 <script src="js/journal.js"></script>
+<script src="js/grille.js"></script>
 <script src="js/sanitaire.js"></script>
 <script src="js/ruchers.js"></script>
 <script src="js/dashboard.js"></script>
