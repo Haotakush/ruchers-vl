@@ -4,6 +4,11 @@
 
 ## Bêta — Charte Apicarnet
 
+### Lot 2 : icônes sur mesure (bêta uniquement)
+- Nouveau jeu de 35 icônes Apicarnet, style duo (trait propolis + aplat miel ou couleur de l'intervention), tiré du matériel apicole : cadre, hausse, enfumoir, fiole de traitement, seau de nourrissement, pot de récolte…
+- Les emojis de l'interface sont remplacés par ces icônes, ou retirés quand ils n'apportaient rien.
+- Service worker v4.2.0.
+
 ### Lot 1 : couleurs, polices, nom (bêta uniquement)
 - **Nouveau nom : Apicarnet**, « Le carnet de rucher des apiculteurs ». Logotype « apicarnet. » sur l'écran de chargement et de connexion, nouvelle marque « a. » dans la barre du haut, nouvelles icônes d'appli (192, 512, maskable, Apple).
 - **Palette Apicarnet** : fond cire, cartes papier, kraft pour les bordures, miel foncé assombri pour la lisibilité au soleil (4,86:1), couleurs d'état et d'intervention unifiées dans tout le code (CSS, écrans, PDF du registre).

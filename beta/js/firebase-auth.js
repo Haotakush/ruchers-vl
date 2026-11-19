@@ -119,7 +119,7 @@ async function doForgotPassword() {
   try {
     await auth.sendPasswordResetEmail(email);
     msgEl.style.color = '#3D7A4F';
-    msgEl.textContent = '✅ Email envoyé ! Vérifiez votre boîte mail.';
+    msgEl.textContent = ' Email envoyé ! Vérifiez votre boîte mail.';
     btn.textContent   = 'Email envoyé ✓';
   } catch (err) {
     msgEl.style.color = '#B3362B';
@@ -135,7 +135,7 @@ async function doForgotPassword() {
 /* ---- Suppression de compte (RGPD) ---- */
 function confirmDeleteAccount() {
   showConfirm(
-    '⚠️ Supprimer définitivement votre compte et toutes vos données ? Cette action est irréversible.',
+    ' Supprimer définitivement votre compte et toutes vos données ? Cette action est irréversible.',
     () => doDeleteAccount()
   );
 }
@@ -143,18 +143,18 @@ function confirmDeleteAccount() {
 async function doDeleteAccount() {
   if (!currentUser) return;
   try {
-    toast('🗑 Suppression en cours…');
+    toast(' Suppression en cours…');
     // Supprimer les données Firestore de l'utilisateur
     if (typeof deleteAllUserData === 'function') await deleteAllUserData();
     // Supprimer le compte Firebase Auth
     await currentUser.delete();
-    toast('✅ Compte supprimé.');
+    toast(' Compte supprimé.');
   } catch (err) {
     if (err.code === 'auth/requires-recent-login') {
-      toast('⚠️ Reconnectez-vous puis réessayez.');
+      toast(' Reconnectez-vous puis réessayez.');
       await auth.signOut();
     } else {
-      toast('❌ Erreur : ' + err.message);
+      toast(' Erreur : ' + err.message);
     }
   }
 }
@@ -191,7 +191,7 @@ function handleCreateKeypress(e) { if (e.key === 'Enter') doCreateAccount(); }
 /* ---- Déconnexion ---- */
 async function doLogout() {
   try { await auth.signOut(); }
-  catch (err) { toast('❌ Erreur de déconnexion'); }
+  catch (err) { toast(' Erreur de déconnexion'); }
 }
 
 /* ---- Listener Auth ---- */

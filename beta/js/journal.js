@@ -35,7 +35,7 @@ function formatDuree(totalMinutes) {
 async function addVisitPhoto(input) {
   const files = Array.from(input.files);
   if (!files.length) return;
-  toast('📸 Compression…');
+  toast(' Compression…');
   for (const file of files) {
     try {
       const blob = await compressImage(file);
@@ -47,7 +47,7 @@ async function addVisitPhoto(input) {
       });
       currentVisitPhotos.push({ dataUrl, blob, isNew: true });
       renderVisitPhotoPreviews();
-    } catch (err) { toast('⚠️ Erreur photo'); }
+    } catch (err) { toast(' Erreur photo'); }
   }
   input.value = '';
 }
@@ -76,7 +76,7 @@ function renderVisitPhotoPreviews() {
 /* ---- AUDIO ---- */
 async function startRecording() {
   if (!navigator.mediaDevices?.getUserMedia) {
-    toast('⚠️ Micro non disponible sur ce navigateur'); return;
+    toast(' Micro non disponible sur ce navigateur'); return;
   }
   try {
     const stream   = await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -106,7 +106,7 @@ async function startRecording() {
       if (recordingSeconds >= MAX_RECORDING) stopRecording();
     }, 1000);
   } catch (err) {
-    toast('⚠️ Accès micro refusé ou indisponible');
+    toast(' Accès micro refusé ou indisponible');
   }
 }
 
@@ -132,8 +132,8 @@ function renderAudioPreview() {
     <div class="audio-preview">
       <audio controls src="${src}" style="width:100%;height:36px;margin-top:8px;"></audio>
       <div style="display:flex;justify-content:space-between;align-items:center;margin-top:4px;">
-        <span style="font-size:0.72rem;color:var(--soft);">🎙 ${m}:${s}</span>
-        <button type="button" class="audio-del-btn" onclick="deleteCurrentAudio()">🗑 Supprimer</button>
+        <span style="font-size:0.72rem;color:var(--soft);">${icon('mic',16,'ico-inline')} ${m}:${s}</span>
+        <button type="button" class="audio-del-btn" onclick="deleteCurrentAudio()">${icon('supprimer',16,'ico-inline')} Supprimer</button>
       </div>
     </div>`;
 }
@@ -165,12 +165,12 @@ function showICSPrompt(rappel, rucherLabel, idx) {
   if (!el) return;
   el.innerHTML = `
     <div style="display:flex;flex-direction:column;gap:8px;align-items:flex-start;">
-      <span>✅ Visite enregistrée !</span>
+      <span>${icon('ras',16,'ico-inline')} Visite enregistrée !</span>
       <div style="display:flex;gap:8px;align-items:center;">
         <span style="font-size:0.78rem;opacity:0.85;">Rappel le ${rappel.echeance}</span>
         <button onclick="exportRappelByIdx(${idx});this.closest('#toast').classList.remove('show');"
           style="background:#fff;color:#9A5B00;border:none;border-radius:10px;padding:4px 10px;font-size:0.78rem;font-weight:700;cursor:pointer;white-space:nowrap;">
-          📅 Calendrier
+           Calendrier
         </button>
       </div>
     </div>`;
@@ -208,7 +208,7 @@ function exportRappelICS(rappel, rucherLabel) {
     `DTSTAMP:${now}`,
     `DTSTART;VALUE=DATE:${dateICS}`,
     `DTEND;VALUE=DATE:${dateICS}`,
-    `SUMMARY:🍯 ${rappel.texte} — ${rucherLabel}`,
+    `SUMMARY: ${rappel.texte} — ${rucherLabel}`,
     `DESCRIPTION:Rappel créé depuis Apicarnet${rappel.jours ? ` (J+${rappel.jours})` : ''}`,
     'BEGIN:VALARM',
     'TRIGGER:-PT0M',
@@ -260,7 +260,7 @@ async function saveJournal() {
 async function _doSaveJournal() {
   const date   = document.getElementById('j-date').value;
   const rucher = document.getElementById('j-rucher').value;
-  if (!date || !rucher) { toast('⚠️ Date et rucher obligatoires'); return; }
+  if (!date || !rucher) { toast(' Date et rucher obligatoires'); return; }
 
   const interventions = Array.from(
     document.querySelectorAll('#j-interventions-grid .check-item.checked')
@@ -317,7 +317,7 @@ async function _doSaveJournal() {
     const last = JSON.parse(localStorage.getItem('_lastJournalSave') || '{}');
     const now  = Date.now();
     if (last.fp === fp && (now - last.ts) < 45000) {
-      toast('⚠️ Cette visite vient d\'être enregistrée !');
+      toast(' Cette visite vient d\'être enregistrée !');
       return;
     }
     localStorage.setItem('_lastJournalSave', JSON.stringify({ fp, ts: now }));
@@ -440,7 +440,7 @@ async function _doSaveJournal() {
     const savedIdx = isEditing ? journalData.indexOf(entry) : 0;
     showICSPrompt(entry.rappel, getRucherLabel(entry.rucher), savedIdx);
   } else {
-    toast(isEditing ? '✅ Visite mise à jour !' : '✅ Visite enregistrée !');
+    toast(isEditing ? ' Visite mise à jour !' : ' Visite enregistrée !');
   }
 }
 
@@ -577,7 +577,7 @@ async function delJournal(docId, i) {
   journalData.splice(i, 1);
   localStorage.setItem('journal', JSON.stringify(journalData));
   renderJournal(); updateDashboard(); drawChartVisites();
-  toast('🗑 Visite supprimée');
+  toast(' Visite supprimée');
 }
 
 /* ---- COMPTE RENDU ---- */
@@ -593,7 +593,7 @@ function openCompteRendu(idx) {
           <div style="font-size:1.1rem;font-weight:700;color:var(--ink);">${getRucherLabel(v.rucher)}</div>
           <div style="font-size:0.82rem;color:var(--mid);">${v.date}</div>
         </div>
-        <button class="btn-rucher-action" onclick="openEditJournal(${idx})" title="Modifier">✏️</button>
+        <button class="btn-rucher-action" onclick="openEditJournal(${idx})" title="Modifier">${icon('modifier',16,'ico-inline')}</button>
       </div>`;
 
   if (v.force && v.force !== '—') html += `
@@ -605,13 +605,13 @@ function openCompteRendu(idx) {
   html += `
     <div style="margin-bottom:12px;">
       <div class="cr-label">Ruches</div>
-      <div>🐝 ${v.nbRuches || '—'} ruches${v.nbRuchettes > 0 ? ` · 🪣 ${v.nbRuchettes} ruchette${v.nbRuchettes > 1 ? 's' : ''}` : ''}${v.duree ? ` · ⏱ ${formatDuree(v.duree)}` : ''}</div>
+      <div>${icon('cheptel',16,'ico-inline')} ${v.nbRuches || '—'} ruches${v.nbRuchettes > 0 ? ` ·  ${v.nbRuchettes} ruchette${v.nbRuchettes > 1 ? 's' : ''}` : ''}${v.duree ? ` · ⏱ ${formatDuree(v.duree)}` : ''}</div>
     </div>`;
 
   if (v.marquage?.length) html += `
     <div style="margin-bottom:12px;">
       <div class="cr-label">Marquage</div>
-      <div class="entry-tags">${v.marquage.map(m => `<span class="badge badge-marquage">🪨 ${m}</span>`).join('')}</div>
+      <div class="entry-tags">${v.marquage.map(m => `<span class="badge badge-marquage"> ${m}</span>`).join('')}</div>
     </div>`;
 
   html += `
@@ -628,7 +628,7 @@ function openCompteRendu(idx) {
     <div style="margin-bottom:12px;">
       <div class="cr-label">Observations</div>
       <div style="background:var(--cream);border-radius:8px;padding:10px;border:1px solid var(--border);font-size:0.85rem;">
-        💬 ${v.obs}
+         ${v.obs}
       </div>
     </div>`;
 
@@ -656,7 +656,7 @@ function openCompteRendu(idx) {
       <div class="cr-label">Mémo vocal</div>
       <div class="audio-preview">
         <audio controls src="${data}" style="width:100%;height:36px;"></audio>
-        <span style="font-size:0.72rem;color:var(--soft);margin-top:4px;display:block;">🎙 ${am}:${as_}</span>
+        <span style="font-size:0.72rem;color:var(--soft);margin-top:4px;display:block;">${icon('mic',16,'ico-inline')} ${am}:${as_}</span>
       </div>
     </div>`;
   }
@@ -670,12 +670,12 @@ function openCompteRendu(idx) {
         background:#FBEBC4;border-radius:10px;padding:10px 12px;">
         <div>
           <div style="font-size:0.88rem;font-weight:600;color:var(--ink);">${v.rappel.texte}</div>
-          <div style="font-size:0.72rem;color:var(--mid);margin-top:2px;">📅 ${v.rappel.echeance}${v.rappel.jours ? ` (J+${v.rappel.jours})` : ''}</div>
+          <div style="font-size:0.72rem;color:var(--mid);margin-top:2px;">${icon('calendar',16,'ico-inline')} ${v.rappel.echeance}${v.rappel.jours ? ` (J+${v.rappel.jours})` : ''}</div>
         </div>
         <button onclick="exportRappelByIdx(${idx})"
           style="background:var(--honey);color:#fff;border:none;border-radius:10px;
             padding:7px 12px;font-size:0.8rem;font-weight:700;cursor:pointer;white-space:nowrap;">
-          📅 Calendrier
+           Calendrier
         </button>
       </div>
     </div>`;

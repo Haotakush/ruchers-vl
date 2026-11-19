@@ -114,7 +114,7 @@ function renderMouvMap() {
         <div style="font-family:var(--font-body);min-width:160px;">
           <div style="font-weight:700;font-size:0.9rem;">${r.id} — ${r.lieu}</div>
           <div style="font-size:0.75rem;color:#666;margin:3px 0;">${m.date} · ${nbTxt}</div>
-          <div style="font-size:0.78rem;">🚛 → ${destTxt}</div>
+          <div style="font-size:0.78rem;">${icon('transhumance',16,'ico-inline')} → ${destTxt}</div>
           <div style="font-size:0.75rem;color:#888;margin-top:2px;">${m.motif}</div>
         </div>`);
     _mouvMarkers.push(origMarker);
@@ -141,7 +141,7 @@ function renderMouvMap() {
       }).addTo(mouvMapInstance)
         .bindPopup(`
           <div style="font-family:var(--font-body);">
-            <div style="font-weight:700;font-size:0.85rem;">📍 Destination</div>
+            <div style="font-weight:700;font-size:0.85rem;">${icon('ruchers',16,'ico-inline')} Destination</div>
             <div style="font-size:0.78rem;color:#666;">${destTxt}</div>
           </div>`);
       _mouvMarkers.push(destMarker);
@@ -172,7 +172,7 @@ function grabGPSForDestination() {
   const btn  = document.getElementById('btn-gps-dest');
   const hint = document.getElementById('gps-dest-hint');
   if (!navigator.geolocation) {
-    toast('⚠️ Géolocalisation non disponible sur cet appareil');
+    toast(' Géolocalisation non disponible sur cet appareil');
     return;
   }
   if (btn) { btn.textContent = '⏳'; btn.disabled = true; }
@@ -184,13 +184,13 @@ function grabGPSForDestination() {
       const destEl = document.getElementById('mouv-destination');
       if (destEl) destEl.value = `${lat}, ${lng}`;
       if (hint) hint.style.display = 'block';
-      if (btn) { btn.textContent = '✅'; btn.disabled = false; }
-      toast('📍 Position GPS enregistrée');
+      if (btn) { btn.textContent = ''; btn.disabled = false; }
+      toast(' Position GPS enregistrée');
     },
     (err) => {
       console.warn('GPS error:', err);
-      toast('⚠️ Impossible d\'obtenir la position GPS');
-      if (btn) { btn.textContent = '📍 GPS'; btn.disabled = false; }
+      toast(' Impossible d\'obtenir la position GPS');
+      if (btn) { btn.textContent = ' GPS'; btn.disabled = false; }
     },
     { enableHighAccuracy: true, timeout: 10000 }
   );
@@ -239,7 +239,7 @@ function onMouvCheptelPreview() {
   previewEl.style.display = 'block';
   previewEl.innerHTML = `
     <div style="font-size:0.78rem;font-weight:700;color:#9A5B00;margin-bottom:6px;">
-      📊 Mise à jour automatique des effectifs
+       Mise à jour automatique des effectifs
     </div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
       <div style="font-size:0.75rem;color:var(--ink);">
@@ -277,8 +277,8 @@ async function saveMouvement() {
 async function _doSaveMouvement() {
   const date    = document.getElementById('mouv-date').value;
   const origine = document.getElementById('mouv-origine').value;
-  if (!date)    { toast('⚠️ Date obligatoire');              return; }
-  if (!origine) { toast('⚠️ Sélectionne un rucher d\'origine'); return; }
+  if (!date)    { toast(' Date obligatoire');              return; }
+  if (!origine) { toast(' Sélectionne un rucher d\'origine'); return; }
 
   const destRucherId = document.getElementById('mouv-dest-rucher')?.value || '';
   const nbColonies   = parseInt(document.getElementById('mouv-nb').value) || 0;
@@ -306,12 +306,12 @@ async function _doSaveMouvement() {
     if (entry._docId) await updateMouvementInFirestore(entry._docId, entry);
     mouvementsData[editingMouvIdx] = entry;
     editingMouvIdx = null;
-    toast('✅ Mouvement mis à jour !');
+    toast(' Mouvement mis à jour !');
   } else {
     const docRef = await addMouvementToFirestore(entry);
     if (docRef) entry._docId = docRef.id;
     mouvementsData.unshift(entry);
-    toast('✅ Mouvement enregistré !');
+    toast(' Mouvement enregistré !');
   }
 
   // ---- Mise à jour automatique des effectifs ----
@@ -369,7 +369,7 @@ function resetMouvementForm() {
   // Reset bouton GPS et hint
   const btn  = document.getElementById('btn-gps-dest');
   const hint = document.getElementById('gps-dest-hint');
-  if (btn)  { btn.textContent = '📍 GPS'; btn.disabled = false; }
+  if (btn)  { btn.textContent = ' GPS'; btn.disabled = false; }
   if (hint) hint.style.display = 'none';
 
   editingMouvIdx = null;
@@ -385,7 +385,7 @@ function openEditMouvement(idx) {
   editingMouvIdx = idx;
 
   const modalTitle = document.querySelector('#modal-mouvement .modal-title');
-  if (modalTitle) modalTitle.textContent = '✏️ Modifier le mouvement';
+  if (modalTitle) modalTitle.textContent = ' Modifier le mouvement';
 
   populateMouvRucherSelect();
   document.getElementById('mouv-date').value        = m.date;
@@ -414,7 +414,7 @@ function openEditMouvement(idx) {
 function openNewMouvement() {
   editingMouvIdx = null;
   const modalTitle = document.querySelector('#modal-mouvement .modal-title');
-  if (modalTitle) modalTitle.textContent = '🚛 Nouveau mouvement de colonies';
+  if (modalTitle) modalTitle.textContent = ' Nouveau mouvement de colonies';
   populateMouvRucherSelect();
   resetMouvementForm();
   openModal('modal-mouvement');
@@ -433,7 +433,7 @@ async function delMouvement(docId, i) {
   mouvementsData.splice(i, 1);
   localStorage.setItem('mouvements', JSON.stringify(mouvementsData));
   renderMouvements();
-  toast('🗑 Supprimé');
+  toast(' Supprimé');
 }
 
 /* ============================================================
@@ -446,7 +446,7 @@ function renderMouvements() {
 
   if (!mouvementsData.length) {
     list.innerHTML = `<div class="empty">
-      <div class="empty-icon">🚛</div>
+      <div class="empty-icon">${icon('transhumance',16,'ico-inline')}</div>
       <p>Aucun mouvement enregistré.<br>
       <small>Ajoutez vos transhumances pour les retrouver dans le registre légal (Section 5).</small></p>
     </div>`;
@@ -464,17 +464,17 @@ function renderMouvements() {
     const nbTxt = m.nbColonies ? `${m.nbColonies} colonie${m.nbColonies > 1 ? 's' : ''}` : '—';
     const hasGPS = parseDestCoords(m.destination) !== null;
     const gpsBadge = hasGPS
-      ? `<span class="badge" style="background:rgba(154, 91, 0,0.15);color:#9A5B00;border:1px solid rgba(154, 91, 0,0.3);">📍 GPS</span>`
+      ? `<span class="badge" style="background:rgba(154, 91, 0,0.15);color:#9A5B00;border:1px solid rgba(154, 91, 0,0.3);">${icon('ruchers',16,'ico-inline')} GPS</span>`
       : '';
 
     return `
     <div class="entry-card" onclick="openEditMouvement(${i})" style="cursor:pointer;">
-      <button class="btn-delete" onclick="event.stopPropagation();${deleteAction}">🗑</button>
+      <button class="btn-delete" onclick="event.stopPropagation();${deleteAction}">${icon('supprimer',16,'ico-inline')}</button>
       <div class="entry-top">
         <span class="entry-date">${m.date}</span>
         <span class="entry-id">${rucherLabel}</span>
       </div>
-      <div class="entry-main" style="font-size:.9rem;">🚛 ${nbTxt} → ${m.destination !== '—' ? m.destination : '?'}</div>
+      <div class="entry-main" style="font-size:.9rem;">${icon('transhumance',16,'ico-inline')} ${nbTxt} → ${m.destination !== '—' ? m.destination : '?'}</div>
       <div class="entry-sub">${m.motif}</div>
       <div class="entry-tags">
         ${gpsBadge}
@@ -484,7 +484,7 @@ function renderMouvements() {
         style="margin-top:10px;width:100%;padding:8px 0;border-radius:10px;border:1px solid rgba(154, 91, 0,0.35);
                background:rgba(154, 91, 0,0.08);color:#9A5B00;font-size:0.78rem;font-weight:600;
                cursor:pointer;letter-spacing:0.01em;">
-        📋 Récapitulatif déclaration
+         Récapitulatif déclaration
       </button>
     </div>`;
   }).join('');

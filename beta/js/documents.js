@@ -5,12 +5,12 @@
    ============================================================ */
 
 const DOC_TYPES = {
-  ordonnance:  { label: 'Ordonnance',   emoji: '📋', color: '#7A4E7E', bg: '#EEE4EE' },
-  analyse:     { label: 'Analyse',      emoji: '🔬', color: '#3F6A9E', bg: '#E3EAF3' },
-  declaration: { label: 'Déclaration',  emoji: '📄', color: '#3D7A4F', bg: '#E4EEE6' },
-  controle:    { label: 'Contrôle vét.', emoji: '🛡', color: '#B4561A', bg: '#F6E6DA' },
-  facture:     { label: 'Facture',      emoji: '🧾', color: '#6A5D4F', bg: '#FBEBC4' },
-  autre:       { label: 'Autre',        emoji: '📎', color: '#6A5D4F', bg: '#EFE6D4' },
+  ordonnance:  { label: 'Ordonnance',   emoji: '', color: '#7A4E7E', bg: '#EEE4EE' },
+  analyse:     { label: 'Analyse',      emoji: '', color: '#3F6A9E', bg: '#E3EAF3' },
+  declaration: { label: 'Déclaration',  emoji: '', color: '#3D7A4F', bg: '#E4EEE6' },
+  controle:    { label: 'Contrôle vét.', emoji: '', color: '#B4561A', bg: '#F6E6DA' },
+  facture:     { label: 'Facture',      emoji: '', color: '#6A5D4F', bg: '#FBEBC4' },
+  autre:       { label: 'Autre',        emoji: '', color: '#6A5D4F', bg: '#EFE6D4' },
 };
 
 /* Fichier en attente d'upload (sélectionné dans le formulaire sanitaire) */
@@ -54,7 +54,7 @@ function renderDocuments() {
   /* Cartes documents */
   const cards = filtered.length === 0
     ? `<div class="empty">
-        <div class="empty-icon">📎</div>
+        <div class="empty-icon">${icon('documents',16,'ico-inline')}</div>
         <p>${_docsFilterType === 'all'
           ? 'Aucun document enregistré.<br><small>Ajoutez des ordonnances, analyses ou déclarations pour les retrouver ici.</small>'
           : 'Aucun document dans cette catégorie.'
@@ -64,7 +64,7 @@ function renderDocuments() {
 
   el.innerHTML = `
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
-      <div class="card-title" style="margin:0;">📎 Bibliothèque de documents</div>
+      <div class="card-title" style="margin:0;">${icon('documents',16,'ico-inline')} Bibliothèque de documents</div>
       <button class="btn-save" style="padding:6px 16px;font-size:0.8rem;" onclick="openModal('modal-new-doc')">+ Ajouter</button>
     </div>
     <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px;">${chips}</div>
@@ -79,7 +79,7 @@ function docCard(d) {
     ? `<div style="font-size:.7rem;color:var(--soft);margin-top:2px;word-break:break-all;">${d.originalName}</div>`
     : '';
   const linkedSani = d.sanitaireDocId
-    ? `<div style="font-size:.7rem;color:var(--honey);margin-top:2px;">🔗 Lié à un traitement sanitaire</div>`
+    ? `<div style="font-size:.7rem;color:var(--honey);margin-top:2px;">${icon('share',16,'ico-inline')} Lié à un traitement sanitaire</div>`
     : '';
 
   return `
@@ -97,10 +97,10 @@ function docCard(d) {
         <div style="display:flex;flex-direction:column;gap:6px;flex-shrink:0;">
           <a href="${d.url}" target="_blank" rel="noopener"
             style="display:flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:8px;background:var(--honey-pale);color:var(--honey);text-decoration:none;font-size:1rem;"
-            title="Ouvrir / télécharger">👁</a>
+            title="Ouvrir / télécharger"></a>
           <button onclick="confirmDeleteDoc('${d._docId}','${escAttr(d.label || d.originalName || 'ce document')}')"
             style="width:34px;height:34px;border-radius:8px;background:#F6E1DE;border:none;color:#B3362B;font-size:1rem;cursor:pointer;"
-            title="Supprimer">🗑</button>
+            title="Supprimer">${icon('supprimer',16,'ico-inline')}</button>
         </div>
       </div>
     </div>`;
@@ -131,9 +131,9 @@ async function saveNewDocument() {
   const fileInput = document.getElementById('doc-file');
   const file = fileInput?.files[0];
 
-  if (!label) { toast('⚠️ Donnez un nom au document'); return; }
-  if (!file)  { toast('⚠️ Sélectionnez un fichier'); return; }
-  if (file.size > 15 * 1024 * 1024) { toast('⚠️ Fichier trop lourd (max 15 Mo)'); return; }
+  if (!label) { toast(' Donnez un nom au document'); return; }
+  if (!file)  { toast(' Sélectionnez un fichier'); return; }
+  if (file.size > 15 * 1024 * 1024) { toast(' Fichier trop lourd (max 15 Mo)'); return; }
 
   const btn = document.getElementById('doc-save-btn');
   btn.disabled = true;
@@ -145,10 +145,10 @@ async function saveNewDocument() {
     closeModal('modal-new-doc');
     resetDocForm();
     renderDocuments();
-    toast('✅ Document enregistré !');
+    toast(' Document enregistré !');
   } catch (err) {
     console.error('Erreur upload document:', err);
-    toast('❌ Erreur lors de l\'upload');
+    toast(' Erreur lors de l\'upload');
   } finally {
     btn.disabled = false;
     btn.textContent = '✓ Enregistrer';
@@ -177,7 +177,7 @@ function confirmDeleteDoc(docId, label) {
     await deleteDocumentFromFirestore(docId);
     documentsData = documentsData.filter(d => d._docId !== docId);
     renderDocuments();
-    toast('🗑 Document supprimé');
+    toast(' Document supprimé');
   });
 }
 
@@ -221,10 +221,10 @@ async function uploadPendingDoc(sanitaireDocId) {
     });
     documentsData.unshift(doc);
     _pendingDocFile = null;
-    toast('📎 Document joint au traitement');
+    toast(' Document joint au traitement');
   } catch (err) {
     console.warn('Erreur upload doc sanitaire:', err);
-    toast('⚠️ Traitement enregistré mais échec du document');
+    toast(' Traitement enregistré mais échec du document');
   }
 }
 

@@ -28,7 +28,7 @@ async function initAdminConformite() {
     el.innerHTML = `
       <div style="background:#F6E1DE;border-left:3px solid var(--danger);border-radius:0 10px 10px 0;
            padding:14px 16px;margin:16px 0;">
-        <div style="color:#B3362B;font-weight:600;">⚠️ Erreur de chargement</div>
+        <div style="color:#B3362B;font-weight:600;">${icon('alerte',16,'ico-inline')} Erreur de chargement</div>
         <div style="color:var(--soft);font-size:0.8rem;margin-top:4px;">Vérifiez votre connexion et réessayez.</div>
       </div>`;
   }
@@ -119,11 +119,11 @@ function _renderAdminDashboard() {
 
       <!-- En-tête -->
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
-        <h2 style="margin:0;font-size:1.05rem;font-weight:700;color:var(--ink);">🛡 Admin &amp; Conformité</h2>
+        <h2 style="margin:0;font-size:1.05rem;font-weight:700;color:var(--ink);">${icon('reglementation',16,'ico-inline')} Admin &amp; Conformité</h2>
         <button onclick="openConformiteForm()"
           style="background:var(--honey);color:#fff;border:none;border-radius:12px;
                  padding:6px 14px;font-size:0.78rem;font-weight:600;cursor:pointer;">
-          ✏️ Déclarer
+           Déclarer
         </button>
       </div>
 
@@ -183,7 +183,7 @@ function _renderScoreRing(score, d) {
       }).join('')}
     </div>` : `
     <div style="margin-top:12px;font-size:0.78rem;color:#3D7A4F;">
-      🎉 Tout est en règle — registre et déclarations conformes.
+       Tout est en règle — registre et déclarations conformes.
     </div>`;
 
   return `
@@ -205,7 +205,7 @@ function _renderScoreRing(score, d) {
 function _renderMetricCards(d, lastSanitaire) {
   const anneeDecl  = _conformiteData?.annee || '—';
   const colDecl    = d.coloniesDeclarees || '—';
-  const regStatus  = d.registre ? '✅ À jour' : '⚠️ En retard';
+  const regStatus  = d.registre ? ' À jour' : ' En retard';
   const regColor   = d.registre ? '#3D7A4F'  : '#9A5B00';
 
   return `
@@ -249,7 +249,7 @@ function _renderAlertes(d) {
   if ([9, 10, 11, 12].includes(month) && !d.declaration) {
     alertes.push({
       level: 'danger',
-      icon:  '🚨',
+      icon:  '',
       text:  'Déclaration annuelle obligatoire non effectuée',
       sub:   'Délai impératif : 31 décembre',
       url:   'https://mesdemarches.agriculture.gouv.fr',
@@ -260,7 +260,7 @@ function _renderAlertes(d) {
   if (d.undeclaredCount > 0) {
     alertes.push({
       level: 'warning',
-      icon:  '⚠️',
+      icon:  '',
       text:  `${d.undeclaredCount} transhumance${d.undeclaredCount > 1 ? 's' : ''} non déclarée${d.undeclaredCount > 1 ? 's' : ''} à la DDPP`,
       sub:   'Déclaration obligatoire avant tout déplacement interdépartemental',
       url:   'https://agriculture.gouv.fr/ddpp',
@@ -271,7 +271,7 @@ function _renderAlertes(d) {
   if (!d.cheptel && d.coloniesDeclarees > 0) {
     alertes.push({
       level: 'warning',
-      icon:  '📊',
+      icon:  '',
       text:  `Écart de cheptel : ${d.coloniesActuelles} actuelles vs ${d.coloniesDeclarees} déclarées`,
       sub:   'À régulariser lors de la prochaine déclaration annuelle',
       url:   'https://mesdemarches.agriculture.gouv.fr',
@@ -282,7 +282,7 @@ function _renderAlertes(d) {
   if (d.registre) {
     alertes.push({
       level: 'success',
-      icon:  '✅',
+      icon:  '',
       text:  "Registre d'élevage à jour",
       sub:   'Un traitement a été saisi dans les 30 derniers jours',
       url:   null,
@@ -293,7 +293,7 @@ function _renderAlertes(d) {
   if (![9, 10, 11, 12].includes(month) && !d.declaration) {
     alertes.push({
       level: 'info',
-      icon:  '📅',
+      icon:  '',
       text:  'Déclaration annuelle — ouverture le 1er septembre',
       sub:   'En dehors de la période obligatoire',
       url:   null,
@@ -331,7 +331,7 @@ function _renderMouvements() {
   return `
     <div class="card" style="padding:16px;margin-bottom:16px;">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
-        <div style="font-size:0.88rem;font-weight:700;color:var(--ink);">🚛 Mouvements & DDPP</div>
+        <div style="font-size:0.88rem;font-weight:700;color:var(--ink);">${icon('transhumance',16,'ico-inline')} Mouvements & DDPP</div>
         <button onclick="openAddMouvement()"
           style="background:var(--honey);color:#fff;border:none;border-radius:8px;
                  padding:4px 12px;font-size:0.72rem;font-weight:600;cursor:pointer;">+ Nouveau</button>
@@ -358,7 +358,7 @@ function _renderMouvements() {
                           padding:5px 10px;font-size:0.7rem;cursor:pointer;white-space:nowrap;flex-shrink:0;">
                    ✓ Marquer déclaré
                  </button>`
-              : `<span style="font-size:0.72rem;color:#3D7A4F;font-weight:600;flex-shrink:0;">✅ Déclaré</span>`
+              : `<span style="font-size:0.72rem;color:#3D7A4F;font-weight:600;flex-shrink:0;">${icon('ras',16,'ico-inline')} Déclaré</span>`
             }
           </div>`).join('')
       }
@@ -374,7 +374,7 @@ function _renderCalendrier(coloniesActuelles) {
   const echeances = [
     {
       date:  `${currentYear}-09-01`,
-      icon:  '📬',
+      icon:  '',
       label: 'Ouverture déclarations',
       sub:   '1er septembre — début de la période obligatoire',
       done:  now.getMonth() >= 8,
@@ -382,7 +382,7 @@ function _renderCalendrier(coloniesActuelles) {
     },
     {
       date:  `${currentYear}-12-31`,
-      icon:  '📋',
+      icon:  '',
       label: 'Déclaration annuelle',
       sub:   '31 décembre — via MesDémarches Agriculture',
       done:  !!(_conformiteData?.dateDeclaration),
@@ -390,7 +390,7 @@ function _renderCalendrier(coloniesActuelles) {
     },
     {
       date:  `${currentYear + 1}-01-20`,
-      icon:  '💶',
+      icon:  '',
       label: 'Subvention FranceAgriMer',
       sub:   coloniesActuelles >= 50
                ? `20 janvier — Éligible (${coloniesActuelles} colonies ≥ 50)`
@@ -404,7 +404,7 @@ function _renderCalendrier(coloniesActuelles) {
   return `
     <div class="card" style="padding:16px;margin-bottom:16px;">
       <div style="font-size:0.88rem;font-weight:700;color:var(--ink);margin-bottom:14px;">
-        📅 Échéances réglementaires
+         Échéances réglementaires
       </div>
       <div style="position:relative;padding-left:28px;">
         <div style="position:absolute;left:8px;top:6px;bottom:6px;width:2px;
@@ -439,7 +439,7 @@ function _renderRegistreConsolide() {
 
   sanitaireData.forEach(s => entries.push({
     date:  s.date,
-    icon:  '💊',
+    icon:  '',
     label: `${s.produit && s.produit !== '—' ? s.produit : s.type || 'Traitement'} — ${getRucherLabel(s.rucher)}`,
     type:  'traitement',
     color: '#3D7A4F',
@@ -447,7 +447,7 @@ function _renderRegistreConsolide() {
 
   journalData.slice(0, 30).forEach(v => entries.push({
     date:  v.date,
-    icon:  '📋',
+    icon:  '',
     label: `Visite — ${getRucherLabel(v.rucher)}`,
     type:  'visite',
     color: 'var(--honey)',
@@ -455,8 +455,8 @@ function _renderRegistreConsolide() {
 
   _mouvementsData.forEach(m => entries.push({
     date:  m.date,
-    icon:  '🚛',
-    label: `Mouvement — ${getRucherLabel(m.rucher)}${m.ddppDeclaree === false ? ' ⚠️' : ''}`,
+    icon:  '',
+    label: `Mouvement — ${getRucherLabel(m.rucher)}${m.ddppDeclaree === false ? ' ' : ''}`,
     type:  'mouvement',
     color: m.ddppDeclaree === false ? '#F2A916' : '#3F6A9E',
   }));
@@ -467,10 +467,10 @@ function _renderRegistreConsolide() {
   return `
     <div class="card" style="padding:16px;margin-bottom:16px;">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
-        <div style="font-size:0.88rem;font-weight:700;color:var(--ink);">📖 Registre d'élevage</div>
+        <div style="font-size:0.88rem;font-weight:700;color:var(--ink);">${icon('registre',16,'ico-inline')} Registre d'élevage</div>
         <button onclick="alert('Export PDF — à implémenter')"
           style="background:#EFE6D4;color:var(--soft);border:none;border-radius:8px;
-                 padding:4px 10px;font-size:0.72rem;cursor:pointer;">📄 PDF</button>
+                 padding:4px 10px;font-size:0.72rem;cursor:pointer;">${icon('documents',16,'ico-inline')} PDF</button>
       </div>
       ${last10.length === 0
         ? `<div style="text-align:center;color:var(--soft);font-size:0.8rem;padding:12px 0;">
@@ -495,15 +495,15 @@ function _renderRegistreConsolide() {
 /* --- Liens officiels --- */
 function _renderLiensOfficiels() {
   const links = [
-    { icon: '📋', label: 'Déclaration annuelle',    sub: 'mesdemarches.agriculture.gouv.fr', url: 'https://mesdemarches.agriculture.gouv.fr' },
-    { icon: '🏛',  label: 'Trouver ma DDPP',        sub: 'agriculture.gouv.fr/ddpp',         url: 'https://agriculture.gouv.fr/ddpp' },
-    { icon: '💶', label: 'Subventions FranceAgriMer', sub: 'franceagrimer.fr',               url: 'https://www.franceagrimer.fr' },
-    { icon: '📚', label: 'Réglementation UNAF',     sub: 'unaf-apiculture.info',              url: 'https://www.unaf-apiculture.info/nos-services/informations-reglementaires/' },
+    { icon: '', label: 'Déclaration annuelle',    sub: 'mesdemarches.agriculture.gouv.fr', url: 'https://mesdemarches.agriculture.gouv.fr' },
+    { icon: '',  label: 'Trouver ma DDPP',        sub: 'agriculture.gouv.fr/ddpp',         url: 'https://agriculture.gouv.fr/ddpp' },
+    { icon: '', label: 'Subventions FranceAgriMer', sub: 'franceagrimer.fr',               url: 'https://www.franceagrimer.fr' },
+    { icon: '', label: 'Réglementation UNAF',     sub: 'unaf-apiculture.info',              url: 'https://www.unaf-apiculture.info/nos-services/informations-reglementaires/' },
   ];
 
   return `
     <div class="card" style="padding:16px;margin-bottom:8px;">
-      <div style="font-size:0.88rem;font-weight:700;color:var(--ink);margin-bottom:12px;">🔗 Liens officiels</div>
+      <div style="font-size:0.88rem;font-weight:700;color:var(--ink);margin-bottom:12px;">${icon('share',16,'ico-inline')} Liens officiels</div>
       ${links.map((l, i) => `
         <a href="${l.url}" target="_blank" rel="noopener noreferrer"
           style="display:flex;align-items:center;gap:12px;padding:11px 0;
@@ -537,7 +537,7 @@ function openConformiteForm() {
     <div style="background:#FFFDF8;border-radius:26px 26px 0 0;width:100%;max-width:480px;
                 padding:20px;padding-bottom:calc(20px + env(safe-area-inset-bottom));">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
-        <h3 style="margin:0;font-size:1rem;color:var(--ink);">✏️ Déclaration annuelle</h3>
+        <h3 style="margin:0;font-size:1rem;color:var(--ink);">${icon('modifier',16,'ico-inline')} Déclaration annuelle</h3>
         <button onclick="document.getElementById('conformite-overlay').remove()"
           style="background:none;border:none;color:var(--soft);font-size:1.3rem;cursor:pointer;
                  line-height:1;padding:2px 6px;">✕</button>
@@ -595,7 +595,7 @@ async function saveConformiteData() {
   _conformiteData = data;
 
   document.getElementById('conformite-overlay')?.remove();
-  if (typeof toast === 'function') toast('✅ Déclaration enregistrée');
+  if (typeof toast === 'function') toast(' Déclaration enregistrée');
   _renderAdminDashboard();
 }
 
@@ -618,7 +618,7 @@ function openAddMouvement() {
     <div style="background:#FFFDF8;border-radius:26px 26px 0 0;width:100%;max-width:480px;
                 padding:20px;padding-bottom:calc(20px + env(safe-area-inset-bottom));">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
-        <h3 style="margin:0;font-size:1rem;color:var(--ink);">🚛 Nouveau mouvement</h3>
+        <h3 style="margin:0;font-size:1rem;color:var(--ink);">${icon('transhumance',16,'ico-inline')} Nouveau mouvement</h3>
         <button onclick="document.getElementById('mouvement-overlay').remove()"
           style="background:none;border:none;color:var(--soft);font-size:1.3rem;cursor:pointer;
                  line-height:1;padding:2px 6px;">✕</button>
@@ -648,10 +648,10 @@ function openAddMouvement() {
         <div style="display:flex;gap:8px;margin-top:6px;">
           <button class="type-chip active" id="mouv-ddpp-oui"
             onclick="selectMouvDDPP(true)"
-            style="padding:6px 16px;">✅ Oui</button>
+            style="padding:6px 16px;">${icon('ras',16,'ico-inline')} Oui</button>
           <button class="type-chip" id="mouv-ddpp-non"
             onclick="selectMouvDDPP(false)"
-            style="padding:6px 16px;">❌ Non</button>
+            style="padding:6px 16px;">${icon('alerte',16,'ico-inline')} Non</button>
         </div>
       </div>
 
@@ -682,7 +682,7 @@ async function saveAdminMouvement() {
   const deptDestination = (document.getElementById('mouv-dept')?.value || '').trim();
 
   if (!date || !rucher) {
-    if (typeof toast === 'function') toast('⚠️ Date et rucher obligatoires');
+    if (typeof toast === 'function') toast(' Date et rucher obligatoires');
     return;
   }
 
@@ -695,7 +695,7 @@ async function saveAdminMouvement() {
   _mouvementsData.unshift(entry);
 
   document.getElementById('mouvement-overlay')?.remove();
-  if (typeof toast === 'function') toast('✅ Mouvement enregistré');
+  if (typeof toast === 'function') toast(' Mouvement enregistré');
   _renderAdminDashboard();
 }
 
@@ -713,10 +713,10 @@ async function markDDPPDeclare(docId) {
     const m = _mouvementsData.find(m => m._docId === docId);
     if (m) m.ddppDeclaree = true;
 
-    if (typeof toast === 'function') toast('✅ Mouvement marqué déclaré DDPP');
+    if (typeof toast === 'function') toast(' Mouvement marqué déclaré DDPP');
     _renderAdminDashboard();
   } catch (err) {
     console.error('[Admin] Erreur markDDPP:', err);
-    if (typeof toast === 'function') toast('⚠️ Erreur, réessayez');
+    if (typeof toast === 'function') toast(' Erreur, réessayez');
   }
 }
